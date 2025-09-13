@@ -1,9 +1,52 @@
-import { Hono } from "hono";
-import { cors } from "hono/cors";
+import { Hono } from 'hono';
+import { sign, verify } from 'hono/jwt';
+import { cors } from 'hono/cors';
+import { GoogleAuth } from 'google-auth-library';
 
 const app = new Hono();
 
-app.use("/*", cors());
+// In-memory store per il rate limiting
+const requests = new Map<string, { count: number; ts: number }>();
+
+app.use('/*', cors());
+
+// Middleware: API key check
+app.use('/*', async (c, next) => {
+  const clientKey = c.req.header('x-proxy-key');
+  const expectedKey = Bun.env.PROXY_SECRET;
+
+  if (!expectedKey) {
+    console.error('PROXY_SECRET mancante');
+    return c.text('Server misconfigured', 500);
+  }
+
+  if (clientKey !== expectedKey) {
+    return c.text('Unauthorized', 401);
+  }
+
+  await next();
+});
+
+// Middleware: rate limiting per IP
+app.use('/*', async (c, next) => {
+  const ip = c.req.header('x-forwarded-for') || 'unknown';
+  const limit = 60; // max richieste
+  const windowMs = 60 * 1000; // 1 minuto
+
+  const now = Date.now();
+  const entry = requests.get(ip);
+
+  if (!entry || now - entry.ts > windowMs) {
+    requests.set(ip, { count: 1, ts: now });
+  } else {
+    if (entry.count >= limit) {
+      return c.text('Too many requests', 429);
+    }
+    entry.count++;
+  }
+
+  await next();
+});
 
 app.get('/*', async (c) => {
   // c.req.path contiene la pathname richiesta, ad es. "/movie/popular"
@@ -22,7 +65,9 @@ app.get('/*', async (c) => {
   const tmdbUrl = `https://api.themoviedb.org/3${incomingPath}?${params.toString()}`;
 
   try {
-    const response = await fetch(tmdbUrl, { headers: { Authorization: 'Bearer ' + apiKey } }); // costruisci la query string nel URL
+    const response = await fetch(tmdbUrl, {
+      headers: { Authorization: 'Bearer ' + apiKey },
+    }); // costruisci la query string nel URL
     const data = await response.json();
     return c.json(data, response.status);
   } catch (err) {
