@@ -16,9 +16,6 @@ import { ReviewModel } from '../models/review.model';
   providedIn: 'root'
 })
 export class TMDBService {
-  private posterUrl = 'https://image.tmdb.org/t/p/original';
-  private sessionToken?: string;
-  private accountId?: string;
   private genres?: { [key: number]: string };
 
   private params = new HttpParams()
@@ -30,9 +27,9 @@ export class TMDBService {
    * Cerca film per query (stringa)
    */
   searchMovies(query: string, page: number = 1): Observable<SearchResultsModel> {
-    const params = this.params.set('path', '/search/movie').set('query', query).set('page', page.toString());
+    const params = this.params.set('query', query).set('page', page.toString());
 
-    return this.http.get<SearchResultsModel>(`${environment.apiUrl}`, { params }).pipe(
+    return this.http.get<SearchResultsModel>(`${environment.apiUrl}/search/movie`, { params }).pipe(
       map(results => ({
         ...results,
         results: results.results.map(movie => ({
@@ -49,9 +46,9 @@ export class TMDBService {
    * Cerca film raccomandati
    */
   recommendedMovies(id: number, page: number = 1): Observable<SearchResultsModel> {
-    const params = this.params.set('path', `/movie/${id}/recommendations`).set('page', page.toString());
+    const params = this.params.set('page', page.toString());
 
-    return this.http.get<SearchResultsModel>(environment.apiUrl, { params }).pipe(
+    return this.http.get<SearchResultsModel>(environment.apiUrl + `/movie/${id}/recommendations`, { params }).pipe(
       map(results => ({
         ...results,
         results: results.results.map(movie => ({
@@ -67,9 +64,9 @@ export class TMDBService {
    * Cerca film per query (stringa)
    */
   discoveryMovies(query: DiscoverMovieRequestModel, page: number = 1): Observable<SearchResultsModel> {
-    const params = this.params.set('path', '/discover/movie').appendAll({ ...query }).set('page', page.toString());
+    const params = this.params.appendAll({ ...query }).set('page', page.toString());
 
-    return this.http.get<SearchResultsModel>(environment.apiUrl, { params }).pipe(
+    return this.http.get<SearchResultsModel>(environment.apiUrl + '/discover/movie', { params }).pipe(
       map(results => ({
         ...results,
         results: results.results.map(movie => ({
@@ -85,17 +82,17 @@ export class TMDBService {
    * Ottieni dettagli di un film per ID
    */
   getMovieDetails(movieId: number): Observable<MovieModel> {
-    const params = this.params.set('path', `/movie/${movieId}`).set('movie_id', movieId.toString());
+    const params = this.params.set('movie_id', movieId.toString());
 
-    return this.http.get<MovieModel>(environment.apiUrl, { params }).pipe(
+    return this.http.get<MovieModel>(`${environment.apiUrl}/movie/${movieId}`, { params }).pipe(
       map(movie => ({ ...movie, poster_path: environment.posterUrl + movie.poster_path, backdrop_path: environment.posterUrl + movie.backdrop_path }) as MovieModel)
     );
   }
 
   getMovieCollection(type: 'popular' | 'upcoming' | 'top_rated' | 'now_playing', page: number = 1): Observable<SearchResultsModel> {
-    const params = this.params.set('path', '/movie/' + type).set('page', page.toString());
+    const params = this.params.set('page', page.toString());
 
-    return this.http.get<SearchResultsModel>(environment.apiUrl, { params }).pipe(
+    return this.http.get<SearchResultsModel>(environment.apiUrl + '/movie/' + type, { params }).pipe(
       map(results => ({
         ...results,
         results: results.results.map(movie => ({
@@ -110,35 +107,31 @@ export class TMDBService {
    * (Facoltativo) Ottieni video di un film per ID
    */
   getVideoOfMovie(id: number): Observable<{ id: string, results: VideoModel[] }> {
-    const params = this.params.set('path', `/movie/${id}/videos`);
 
-    return this.http.get<{ id: string, results: VideoModel[] }>(environment.apiUrl, { params });
+    return this.http.get<{ id: string, results: VideoModel[] }>(`${environment.apiUrl}/movie/${id}/videos`, { params: this.params });
   }
 
   /**
    * (Facoltativo) Ottieni immagini di un film per ID
    */
   getMovieImages(id: number): Observable<{ id: string, posters: ImageModel[], logos: ImageModel[], backdrops: ImageModel[] }> {
-    const params = this.params.set('path', `/movie/${id}/images`);
 
-    return this.http.get<{ id: string, posters: ImageModel[], logos: ImageModel[], backdrops: ImageModel[] }>(environment.apiUrl, { params });
+    return this.http.get<{ id: string, posters: ImageModel[], logos: ImageModel[], backdrops: ImageModel[] }>(`${environment.apiUrl}/movie/${id}/images`, { params: this.params });
   }
 
   getMovieCredits(id: number): Observable<CreditModel> {
-    const params = this.params.set('path', `/movie/${id}/credits`);
-    return this.http.get<CreditModel>(environment.apiUrl, { params });
+    return this.http.get<CreditModel>(`${environment.apiUrl}/movie/${id}/credits`, { params: this.params });
   }
 
   getMovieReviews(id: number, page: number = 1): Observable<{ id: number, page: number, results: ReviewModel[], total_pages: number, total_results: number }> {
-    const params = new HttpParams().set('path', `/movie/${id}/reviews`);
-    return this.http.get<{ id: number, page: number, results: ReviewModel[], total_pages: number, total_results: number }>(environment.apiUrl, { params });
+    return this.http.get<{ id: number, page: number, results: ReviewModel[], total_pages: number, total_results: number }>(`${environment.apiUrl}/movie/${id}/reviews`, { params: this.params });
   }
 
 
   getTvShowCollection(type: 'on_the_air' | 'airing_today' | 'popular' | 'top_rated', page: number = 1): Observable<SearchResultsModel> {
-    const params = this.params.set('path', '/tv/' + type).set('page', page.toString());
+    const params = this.params.set('page', page.toString());
 
-    return this.http.get<SearchResultsModel>(environment.apiUrl, { params }).pipe(
+    return this.http.get<SearchResultsModel>(environment.apiUrl + '/tv/' + type, { params }).pipe(
       map(results => ({
         ...results,
         results: results.results.map(movie => ({
@@ -151,9 +144,9 @@ export class TMDBService {
   }
 
   searchTvShow(query: string, page: number = 1): Observable<SearchResultsModel> {
-    const params = this.params.set('path', '/search/tv').set('query', query).set('page', page.toString());
+    const params = this.params.set('query', query).set('page', page.toString());
 
-    return this.http.get<SearchResultsModel>(`${environment.apiUrl}`, { params }).pipe(
+    return this.http.get<SearchResultsModel>(`${environment.apiUrl}/search/tv`, { params }).pipe(
       map(results => ({
         ...results,
         results: results.results.map(tv => ({
@@ -171,9 +164,9 @@ export class TMDBService {
    * Cerca film raccomandati
    */
   recommendedTvShows(id: number, page: number = 1): Observable<SearchResultsModel> {
-    const params = this.params.set('path', `/tv/${id}/recommendations`).set('page', page.toString());
+    const params = this.params.set('page', page.toString());
 
-    return this.http.get<SearchResultsModel>(environment.apiUrl, { params }).pipe(
+    return this.http.get<SearchResultsModel>(`environment.apiUrl/tv/${id}/recommendations`, { params }).pipe(
       map(results => ({
         ...results,
         results: results.results.map(movie => ({
@@ -190,9 +183,9 @@ export class TMDBService {
    * Cerca film per query (stringa)
    */
   discoveryTvShows(query: DiscoverMovieRequestModel, page: number = 1): Observable<SearchResultsModel> {
-    const params = this.params.set('path', '/discover/tv').appendAll({ ...query }).set('page', page.toString());
+    const params = this.params.appendAll({ ...query }).set('page', page.toString());
 
-    return this.http.get<SearchResultsModel>(environment.apiUrl, { params }).pipe(
+    return this.http.get<SearchResultsModel>(environment.apiUrl + '/discover/tv', { params }).pipe(
       map(results => ({
         ...results,
         results: results.results.map(movie => ({
@@ -209,29 +202,19 @@ export class TMDBService {
    * Ottieni dettagli di un film per ID
    */
   getTvShowDetails(id: number): Observable<TvShowModel> {
-    const params = this.params.set('path', `/tv/${id}`).set('series_id', id.toString());
+    const params = this.params.set('series_id', id.toString());
 
-    return this.http.get<TvShowModel>(environment.apiUrl, { params }).pipe(
+    return this.http.get<TvShowModel>(`environment.apiUrl/tv/${id}`, { params }).pipe(
       map(movie => ({ ...movie, title: movie.name, poster_path: environment.posterUrl + movie.poster_path }) as TvShowModel)
     );
   }
   getGenres(): Observable<{ [key: number]: string }> {
-    const params = this.params.set('path', '/genre/movie/list');
     if (!!this.genres) return of(this.genres);
     this.genres = {};
-    return this.http.get<{ genres: { id: number, name: string }[] }>(environment.apiUrl, { params }).pipe(
+    return this.http.get<{ genres: { id: number, name: string }[] }>(environment.apiUrl + '/genre/movie/list', { params: this.params }).pipe(
       tap(response => response.genres.map(genre => (this.genres![genre.id] = genre.name))),
       map(() => this.genres!),
       shareReplay()
     );
-  }
-  getAccount(sessionId: string): Observable<any> {
-    const params = this.params.set('path', '/account').set('session_id', sessionId);
-    return this.http.get(environment.apiUrl, {
-      params,
-    }).pipe(
-      tap((response: any) => {
-        this.accountId = response.id;
-      }));
   }
 }
