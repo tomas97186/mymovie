@@ -1,0 +1,4 @@
+<div class="collection-page-container">
+    <app-movie-list-dynamic [(currentPage)]="currentPage" [title]="collectionTitle[collectionType()?? 'popular']"
+        [searchResult]="this.result.value()" [isLoading]="this.result.isLoading()"></app-movie-list-dynamic>
+</div>

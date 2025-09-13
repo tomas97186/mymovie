@@ -1,0 +1,40 @@
+@if(userLists$ | async; as userLists) {
+<button mat-icon-button mat-dialog-close><mat-icon>close</mat-icon></button>
+<h3 mat-dialog-title>{{this.data.movie.title}}</h3>
+<mat-dialog-content>
+  <p class="description">Aggiungi o rimuovi il film dalle liste, oppure imposta il film come visto.</p>
+  <mat-list class="list-container">
+    @for(list$ of userLists; track $index) { @if(list$.listInfo| async; as list) {
+    @if(list$.movieStatus | async; as movieStatus) {
+    <mat-list-item>
+      <!-- <mat-icon matListItemIcon matIconSuffix>folder</mat-icon> -->
+      <h3 matListItemTitle>{{ list.name }}</h3>
+      <p matListItemLine>
+        <span>{{ movieStatus != movieStatusEnum.NOT_IN_LIST ? ("In Lista" + ((movieStatus === movieStatusEnum.WATCHED)?
+          ' · Visto' : '')) : "Non In Lista"
+          }}</span>
+      </p>
+      <div matListItemMeta>
+        @if(movieStatus != movieStatusEnum.NOT_IN_LIST) { @if(movieStatus === movieStatusEnum.TO_WATCH) {
+        <button mat-icon-button class="me-2" (click)="setAsWatched(this.data.movie, '-' + list.id)">
+          <mat-icon>visibility</mat-icon>
+        </button>
+        }
+        <button class="success" mat-icon-button (click)="removeMovieFromList(this.data.movie, '-' + list.id)">
+          <mat-icon>check</mat-icon>
+        </button>
+        } @else {
+        <button mat-icon-button (click)="addMovieToList(this.data.movie, '-' + list.id)">
+          <mat-icon>add</mat-icon>
+        </button>
+        }
+      </div>
+    </mat-list-item>
+    }
+    @else {
+    <mat-list-item class="loading-placeholder"></mat-list-item>
+    }
+    } }
+  </mat-list>
+</mat-dialog-content>
+}

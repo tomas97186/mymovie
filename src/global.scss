@@ -9,6 +9,9 @@
  * https://ionicframework.com/docs/layout/global-stylesheets
  */
 
+/* You can add global styles to this file, and also import other style files */
+@use '@angular/material' as mat;
+
 /* Core CSS required for Ionic components to work properly */
 @import "@ionic/angular/css/core.css";
 
@@ -35,3 +38,171 @@
 /* @import "@ionic/angular/css/palettes/dark.always.css"; */
 /* @import "@ionic/angular/css/palettes/dark.class.css"; */
 @import '@ionic/angular/css/palettes/dark.system.css';
+
+/* Importing Bootstrap SCSS file. */
+@import 'bootstrap/scss/bootstrap';
+
+html {
+    scroll-behavior: smooth;
+    color-scheme: light dark;
+    @include mat.theme((color: mat.$red-palette,
+            typography: Roboto,
+            density: 0));
+    --card-background-color: #211F26;
+    --container-background-color: #211F26;
+    --card-primary-color: #ffc9c9;
+    scroll-padding-top: 60px;
+}
+
+
+body {
+    margin: 0;
+    font-family: Roboto, "Helvetica Neue", sans-serif;
+    color: white;
+    background: #141218;
+}
+
+.search-field {
+    @include mat.form-field-overrides((filled-container-color: var(--card-background-color),
+            filled-input-text-color: #dcdada,
+            filled-input-text-placeholder-color: #B3B3B3,
+            trailing-icon-color: #1E1E1E,
+            filled-container-shape: 20px,
+            filled-focus-active-indicator-height: 0px));
+}
+
+.search-field .mdc-text-field--filled {
+    border-radius: 20px;
+}
+
+.search-field mat-mdc-form-field-subscript-wrapper {
+    display: none;
+}
+
+.header {
+    display: flex;
+    position: sticky;
+    top: 10px;
+    z-index: 100;
+    text-align: center;
+    margin-right: auto;
+    margin-left: auto;
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
+    padding-right: 1.2rem;
+    padding-left: 1.2rem;
+}
+
+:root {
+    @include mat.button-overrides((filled-container-color: orange,
+            filled-label-text-color: red,
+        ));
+}
+
+.card-background {
+    background-color: var(--card-background-color);
+    border-radius: 10px;
+    margin-bottom: 1.2rem;
+    margin-top: 1.2rem;
+}
+
+mat-tab-header.mat-mdc-tab-header {
+    background-color: var(--card-background-color) !important;
+}
+
+.mat-mdc-tab-group-dynamic-height .mat-mdc-tab-body-content {
+    overflow: auto !important;
+}
+
+
+mat-toolbar.glass-effect {
+    width: 100dvw !important;
+    position: fixed;
+    top: 0px;
+    height: 64px;
+    padding: 12px 0px;
+    /* From https://css.glass */
+    background: rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(5.1px);
+    -webkit-backdrop-filter: blur(5.1px);
+    z-index: 1000;
+}
+
+.profile-picture {
+    object-fit: cover;
+    object-position: center;
+    border-radius: 20%;
+    width: 100px;
+    height: 150px;
+}
+
+.app-logo {
+    max-width: 150px;
+}
+
+button.action-button {
+    width: 100%;
+    max-width: 400px;
+    margin-top: 1rem;
+    padding: 1.8rem !important;
+    font-size: 1rem !important;
+    border-radius: 10px;
+    color: white !important;
+    background-color: var(--card-background-color);
+
+    &.light {
+        background: #B3B3B3;
+        color: #6241b6;
+    }
+
+    &.primary {
+        background: #6241b6;
+        color: whitesmoke;
+    }
+
+    &.danger {
+        background: rgb(150, 10, 10);
+        color: whitesmoke;
+    }
+
+}
+
+.danger-text {
+    color: rgb(187 74 74) !important;
+}
+
+.description {
+    color: #a1a1a1;
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: 200% 0;
+    }
+
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+button.back-button {
+    color: #dddddd;
+    backdrop-filter: blur(5.1px);
+    -webkit-backdrop-filter: blur(5.1px);
+    background: rgba(0, 0, 0, 0.7);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    width: 50px;
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    &.fixed {
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        z-index: 100;
+    }
+}

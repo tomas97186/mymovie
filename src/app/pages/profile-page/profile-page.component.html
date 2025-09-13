@@ -1,0 +1,27 @@
+@let userInfo = this.userInfo$ | async;
+
+<div class="container">
+  <h3 class="text-center mt-4">Profilo</h3>
+  <div class="profile-info card-background">
+    <div class="profile-item">
+      Username <span class="colored-text">{{ userInfo?.username }}</span>
+    </div>
+    <div class="profile-item">
+      Email <span class="colored-text">{{ userInfo?.email }}</span>
+    </div>
+    <div class="profile-item">
+      Liste di cui sei membro<span class="colored-text">{{ userListsCount$ | async }}</span>
+    </div>
+  </div>
+  <div class="actions text-center">
+    <button mat-button class="action-button" (click)="changeName(userInfo!.username)">
+      <mat-icon>edit</mat-icon>Modifica Username
+    </button>
+    <button mat-button class="action-button" (click)="changePassword()">
+      <mat-icon>password</mat-icon>Modifica Password
+    </button>
+    <button mat-button class="danger-text mt-2" (click)="signout()">
+      <mat-icon>logout</mat-icon>Logout
+    </button>
+  </div>
+</div>

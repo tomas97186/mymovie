@@ -1,0 +1,36 @@
+@let searchResult = this.result.value();
+
+<div class="search-page-container">
+    <div class="header">
+        @if(this.searchQuery()) {
+        <button mat-icon-button class="back-button" @showBackButton
+            (click)="location.back()"><mat-icon>chevron_left</mat-icon></button>
+        }
+        <form (ngSubmit)="search()" [formGroup]="queryForm" class="search-form">
+            <mat-form-field appearance="fill" class="search-field" floatLabel="auto">
+                <input onfocus="this.select()" matInput placeholder="Cerca..." formControlName="query">
+                <mat-icon matSuffix>search</mat-icon>
+            </mat-form-field>
+        </form>
+    </div>
+
+    @if(this.result.isLoading() || (searchResult && searchResult.results.length > 0)) {<app-movie-list-dynamic
+        [(currentPage)]="currentPage" [searchResult]="this.result.value()" [paddingTop]="100"
+        [isLoading]="this.result.isLoading()"></app-movie-list-dynamic>
+    } @else if(searchResult && searchResult.results.length === 0) {
+    <div class="no-movies-banner"><mat-icon>sentiment_dissatisfied</mat-icon><span></span>
+        <span>Nessun risultato trovato.</span>
+    </div>} @else {
+    <div class="no-search">
+        <div class="genre-list row">
+            @for(genre of genres | async; track genre[0]) {
+            <button mat-button (click)="navigateToGenre({id: genre[0], name: genre[1]})" class="col-4 genre-card"
+                style="color: white;">
+                {{genre[1]}}
+            </button>
+            }
+        </div>
+    </div>
+    }
+
+</div>

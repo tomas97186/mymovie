@@ -1,0 +1,61 @@
+mat-list-item {
+  background-color: var(--card-background-color);
+  width: 100%;
+  border-radius: 10px;
+  height: min-content !important;
+  margin-bottom: 1rem;
+}
+
+span[matListItemTitle] {
+  font-size: 1.1rem;
+}
+
+span[matListItemLine] {
+  color: gray;
+  font-size: 0.8rem;
+}
+
+div[matListItemLine] {
+  display: flex;
+  align-items: center;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+::ng-deep div[matlistitemmeta] {
+  align-self: center !important;
+}
+
+.listInfo {
+  display: flex;
+  align-items: center;
+  margin-right: 1rem;
+  gap: 0.2rem;
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: gray;
+
+  & mat-icon {
+    scale: 0.8;
+  }
+}
+
+.section-description {
+  text-align: center;
+  font-size: 0.8rem;
+  color: gray;
+}
+
+button[mat-icon-button] {
+  color: #8d8d8d;
+  background: #141218;
+  text-align: center;
+
+  &.success {
+    color: #288b2c;
+  }
+
+  &.danger {
+    color: #8b2828;
+  }
+}

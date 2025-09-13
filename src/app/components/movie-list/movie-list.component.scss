@@ -1,0 +1,41 @@
+app-movie-card {
+    justify-items: center
+}
+
+.movie-list-container {
+    display: flex;
+    padding: 1rem;
+    flex-wrap: wrap;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    justify-content: start;
+    align-items: center;
+    // gap: 1rem;
+    width: 100%;
+    height: min-content;
+    -ms-overflow-style: none;
+    overflow-x: hidden;
+    /* Internet Explorer 10+ */
+    scrollbar-width: none;
+    /* Firefox, Safari 18.2+, Chromium 121+ */
+    overflow-y: auto;
+    height: 100%;
+    justify-content: space-around;
+
+    /* Older Safari and Chromium */
+    &.horizontal {
+        gap: 1rem;
+        height: min-content;
+        flex-direction: row;
+        overflow-x: auto;
+        overflow-y: hidden;
+        flex-wrap: nowrap;
+        justify-content: start;
+
+    }
+
+}
+
+.movie-list-container::-webkit-scrollbar {
+    display: none;
+}

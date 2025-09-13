@@ -1,0 +1,14 @@
+@let movies = this.movies()!;
+<div id="movieList" class="movie-list-container flex mx-auto w-100"
+    [ngStyle]="{'padding-top': paddingTop()? paddingTop() + 'px' : undefined}"
+    [ngClass]="{'horizontal': isHorizontal(),}">
+    @for(movie of movies; track movie.id) {
+    <app-movie-card [movie]="movie" class="mb-2 p-0"></app-movie-card>
+    }
+</div>
+@if(isLoading()) {
+<div class="d-flex justify-content-center w-100">
+    <mat-spinner diameter="50"></mat-spinner>
+
+</div>
+}

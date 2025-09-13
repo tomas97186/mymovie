@@ -1,0 +1,70 @@
+@let currentUser = this.authService.currentUser$ | async; @let details =
+this.details()!; @let members = this.members();
+
+<div class="container pb-4">
+  <div class="card-background list-code-container">
+    <div class="w-100 text-center">
+      <h6>Codice Lista</h6>
+    </div>
+    <div class="code-list-container">
+      {{ details.id }}
+      <mat-icon class="ms-2" (click)="copyToClipboardNotification()" [cdkCopyToClipboard]="details.id!"
+        [cdkCopyToClipboardAttempts]="2">content_copy</mat-icon>
+    </div>
+    <div class="text-description">
+      Condividi questo codice con i tuoi amici per unirsi alla lista.
+    </div>
+  </div>
+  <div class="text-description">Dettagli Lista</div>
+  <div class="statistics card-background">
+    <div class="statistic-item">
+      Film nella lista:
+      <span class="colored-text fw-bold">{{ details.moviesCount }}</span>
+    </div>
+    <div class="statistic-item">
+      Film da vedere:
+      <span class="colored-text fw-bold">{{
+        details.moviesCount - details.watchedMovies
+        }}</span>
+    </div>
+    <div class="statistic-item">
+      Film visti:
+      <span class="colored-text fw-bold">{{ details.watchedMovies }}</span>
+    </div>
+  </div>
+  <div class="text-description">Membri della lista</div>
+  <div class="card-background">
+    <mat-list class="members-list">
+      @for(member$ of members; track $index) { @if(member$ | async; as member ){
+      <mat-list-item class="member-item my-2 card-background">
+        <div matListItemMeta>
+          <!-- @if(currentUser?.uid === details.createdBy && member.uid != currentUser?.uid) {
+                      <mat-icon style="color: red">delete</mat-icon>
+                      } -->
+          @if(member.uid === details.createdBy) {
+          <mat-icon style="color: aliceblue">star_outline</mat-icon>
+          }
+        </div>
+        <h3 matListItemTitle>
+          {{ member.username || "Sconosciuto" }} @if(member.uid ===
+          currentUser?.uid) { (Tu) }
+        </h3>
+      </mat-list-item>
+      } }
+    </mat-list>
+  </div>
+  <div class="actions">
+    <button mat-button class="action-button" (click)="this.openInviteUserDialog()">
+      <mat-icon>add</mat-icon> Invita utente
+    </button>
+    @if(currentUser?.uid === details.createdBy) {
+    <button mat-button class="danger-text" (click)="deleteList()">
+      <mat-icon>delete</mat-icon>Elimina lista
+    </button>
+    } @else {
+    <button mat-button class="danger-text" (click)="exitListFn.emit()">
+      <mat-icon>logout</mat-icon>Abbandona
+    </button>
+    }
+  </div>
+</div>

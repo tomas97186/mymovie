@@ -1,0 +1,27 @@
+@let list = this.list();
+
+<mat-list-item [routerLink]="invitation() ? undefined : '-' + list.id">
+  <div matListItemMeta>
+    @if(invitation()) {
+    <button class="danger me-2" mat-icon-button (click)="declineInvitation()">
+      <mat-icon>close</mat-icon>
+    </button>
+    <button class="success" mat-icon-button (click)="acceptInvitation()">
+      <mat-icon>check</mat-icon>
+    </button>
+
+    } @else {
+    <mat-icon>chevron_right</mat-icon>
+    }
+  </div>
+  <span matListItemTitle>{{ list.name }}</span>
+  <div matListItemLine>
+    <div class="listInfo">
+      {{ list.moviesCount }} <mat-icon style="color: brown">movie</mat-icon>
+    </div>
+    <div class="listInfo">
+      {{ list.membersCount }}
+      <mat-icon style="color: aquamarine">person</mat-icon>
+    </div>
+  </div>
+</mat-list-item>

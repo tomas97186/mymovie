@@ -1,0 +1,12 @@
+.discover-page-container {
+    height: calc(100vh - 60px);
+    overflow-y: auto;
+}
+
+
+.sort-menu-button {
+    position: fixed;
+    bottom: 80px;
+    left: 20px;
+    z-index: 1000;
+}

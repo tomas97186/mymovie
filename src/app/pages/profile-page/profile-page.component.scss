@@ -1,0 +1,25 @@
+.profile-info {
+    padding-top: 1.2rem;
+    padding-bottom: 1.2rem;
+    padding-right: 1.2rem;
+    padding-left: 1.2rem;
+
+    & .profile-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.5rem 1rem;
+
+        &:last-child {
+            border-bottom: none;
+        }
+    }
+}
+
+.actions {
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+}

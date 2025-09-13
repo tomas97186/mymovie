@@ -1,0 +1,28 @@
+.add-button {
+  position: absolute;
+  bottom: 80px;
+  right: 20px;
+  z-index: 1000;
+}
+
+.container {
+  padding-bottom: 60px !important;
+}
+
+.invitations-container {
+  border: 2px solid var(--card-background-color);
+  border-radius: 10px;
+  padding: 1rem;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+.subtitle {
+  font-size: .8rem;
+  color: gray;
+}
+
+.section-description {
+  color: gray;
+  text-align: center;
+}

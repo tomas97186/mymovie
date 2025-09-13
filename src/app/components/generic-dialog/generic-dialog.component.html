@@ -1,0 +1,24 @@
+<h2 mat-dialog-title>{{ data.title }}</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="form" class="form">
+    @if(data.description) {
+    <p>{{ data.description }}</p>
+    }
+    <mat-form-field class="w-100">
+      <mat-label>{{ data.field }}</mat-label>
+      <input matInput formControlName="name" />
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-button (click)="close()">Annulla</button>
+  <button
+    mat-button
+    [mat-dialog-close]="form.value.name"
+    [disabled]="!form.valid"
+    cdkFocusInitial
+  >
+    Conferma
+  </button>
+</mat-dialog-actions>

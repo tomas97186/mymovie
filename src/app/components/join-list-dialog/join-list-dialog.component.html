@@ -1,0 +1,17 @@
+<h2 mat-dialog-title>Unisciti ad una Lista</h2>
+<mat-dialog-content>
+    <p class="description">Inserisci il codice della lista</p>
+    <form [formGroup]="form">
+        <mat-form-field class="w-100">
+            <mat-label>Codice lista</mat-label>
+            <input matInput formControlName="code" />
+        </mat-form-field>
+    </form>
+    <!-- <mat-checkbox [(ngModel)]="private" labelPosition="before">Privata</mat-checkbox> -->
+
+</mat-dialog-content>
+<mat-dialog-actions>
+    <button mat-button class="action-button" [mat-dialog-close]="form.value.code"
+        [disabled]="!form.valid" cdkFocusInitial>Conferma</button>
+    <button mat-button class="w-100 mt-2" (click)="close()">Annulla</button>
+</mat-dialog-actions>

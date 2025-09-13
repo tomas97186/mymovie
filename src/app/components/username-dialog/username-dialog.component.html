@@ -1,0 +1,30 @@
+<h2 mat-dialog-title>Modifica Username</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="form" class="form">
+    <mat-form-field class="w-100">
+      <mat-label>Username</mat-label>
+      <input matInput formControlName="name" />
+    </mat-form-field>
+  </form>
+  @if(form.get('name')!.hasError('minlength')) {
+  <mat-error>Lo username non può contenere meno di 5 caratteri.</mat-error>
+  }
+  @if(form.get('name')!.hasError('maxlength')) {
+  <mat-error>Lo username non può contenere più di 15 caratteri.</mat-error>
+  }
+  @if(form.get('name')!.hasError('pattern')) {
+  <mat-error>Lo username può contenere solo il seguente carattere speciale: _</mat-error>
+  }
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-button (click)="close()">Annulla</button>
+  <button
+    mat-button
+    [mat-dialog-close]="form.value.name"
+    [disabled]="!form.valid || form.value.name === initialValue"
+    cdkFocusInitial
+  >
+    Conferma
+  </button>
+</mat-dialog-actions>

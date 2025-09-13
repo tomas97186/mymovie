@@ -1,0 +1,16 @@
+<div class="container no-list-container">
+  <div class="text-description">
+    <div style="color: rgb(135, 135, 135)">
+      <mat-icon style="scale: 2" class="mb-2">sentiment_dissatisfied</mat-icon>
+      <h4>Non fai parte di nessuna lista.</h4>
+    </div>
+    <!-- <span> Per accedere a una lista esistente, inserisci il codice </span> -->
+  </div>
+  <div class="actions">
+    <button mat-raised-button class="action-button mt-3" color="primary" (click)="joinList.emit()">
+      <mat-icon>check</mat-icon> Unisciti ad una lista
+    </button>
+    <div class="text-description mt-3 mb-2">Oppure</div>
+    <button mat-button class="action-button" (click)="createList.emit()"><mat-icon>add</mat-icon> Crea una nuova lista</button>
+  </div>
+</div>

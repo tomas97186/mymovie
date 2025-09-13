@@ -1,0 +1,103 @@
+.header {
+    display: flex;
+    position: fixed;
+    justify-content: center;
+    align-items: center;
+    top: 10px;
+    display: flex;
+    z-index: 100;
+    gap: 1rem;
+    text-align: center;
+    margin-right: auto;
+    margin-left: auto;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+    padding-right: 1.2rem;
+    padding-left: 1.2rem;
+    padding-top: 1.2rem;
+
+    & form.search-form {
+        width: 100%;
+        // max-width: 500px;
+        // flex: 1;
+        transition: flex-grow 0.3s ease-in-out;
+
+        & mat-form-field {
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+
+        & .mdc-line-ripple {
+            display: none;
+        }
+    }
+}
+
+
+::ng-deep .mat-mdc-text-field-wrapper .mdc-line-ripple {
+    display: none;
+}
+
+::ng-deep .header .mat-mdc-form-field-subscript-wrapper {
+    display: none;
+}
+
+.search-page-container {
+    height: calc(100vh - 60px);
+    overflow-y: auto;
+}
+
+
+.genre-card {
+    background-color: var(--card-background-color);
+    border-radius: 10px;
+    margin: 0.6rem;
+    padding: 0.8rem;
+    text-align: center;
+
+    & a {
+        text-decoration: none;
+        color: white;
+    }
+}
+
+.genre-list {
+    width: 100%;
+    margin-top: 1.2rem;
+    align-items: center;
+    justify-content: center;
+    margin-right: 0px !important;
+    margin-left: 0px !important;
+}
+
+#movieList {
+    scroll-margin-top: 100px;
+}
+
+.go-up-button {
+    position: fixed;
+    bottom: 80px;
+    right: 20px;
+    z-index: 1000;
+}
+
+.no-movies-banner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 1.5rem;
+    color: #6c757d;
+    text-align: center;
+    padding: 2rem;
+    margin-top: 100px;
+
+    & mat-icon {
+        scale: 2;
+        margin-bottom: 2rem;
+    }
+}
+
+.no-search {
+    margin-top: 100px;
+}

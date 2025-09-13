@@ -1,0 +1,23 @@
+<h2 mat-dialog-title>Nuova Lista</h2>
+<mat-dialog-content>
+    <p class="description">Inserisci il nome della nuova lista</p>
+    <form [formGroup]="form">
+        <mat-form-field class="w-100">
+            <mat-label>Nome</mat-label>
+            <input matInput formControlName="name" />
+        </mat-form-field>
+    </form>
+    @if(form.get('name')!.hasError('minlength')) {
+    <mat-error>Il nome non può contenere meno di 5 caratteri.</mat-error>
+    }
+    @if(form.get('name')!.hasError('maxlength')) {
+    <mat-error>Il nome non può contenere più di 15 caratteri.</mat-error>
+    }
+    <!-- <mat-checkbox [(ngModel)]="private" labelPosition="before">Privata</mat-checkbox> -->
+
+</mat-dialog-content>
+<mat-dialog-actions>
+    <button mat-button class="action-button" [mat-dialog-close]="{name: form.value.name, private: private}"
+        [disabled]="!form.valid" cdkFocusInitial>Conferma</button>
+    <button mat-button class="w-100 mt-2" (click)="close()">Annulla</button>
+</mat-dialog-actions>

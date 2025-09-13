@@ -1,0 +1,11 @@
+.page-container {
+    overflow-y: hidden;
+    height: calc(100dvh - 60px);
+}
+
+.go-up-button {
+    position: fixed;
+    bottom: 80px;
+    right: 20px;
+    z-index: 1000;
+}

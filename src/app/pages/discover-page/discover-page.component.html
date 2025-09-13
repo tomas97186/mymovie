@@ -1,0 +1,10 @@
+<div class="discover-page-container">
+    <app-movie-list-dynamic [(currentPage)]="currentPage" [title]="title" [searchResult]="this.result.value()"
+        [isLoading]="this.result.isLoading()"></app-movie-list-dynamic>
+    <button mat-fab [matMenuTriggerFor]="menu" class="sort-menu-button"><mat-icon>sort</mat-icon></button>
+    <mat-menu #menu="matMenu">
+        <button mat-menu-item (click)="setOrderBy('popularity.desc')">Più popolari</button>
+        <button mat-menu-item (click)="setOrderBy('release_date.desc')">Più recenti</button>
+        <button mat-menu-item (click)="setOrderBy('vote_average.desc')">Più votati</button>
+    </mat-menu>
+</div>

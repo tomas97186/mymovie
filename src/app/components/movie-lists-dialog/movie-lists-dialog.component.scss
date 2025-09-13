@@ -1,0 +1,53 @@
+::ng-deep .mat-mdc-dialog-surface.mdc-dialog__surface {
+  background: #211F26 !important;
+}
+
+mat-dialog-content {
+  padding: 1rem !important;
+}
+
+mat-list-item {
+  width: 100%;
+  background: #141218;
+  border-radius: 10px;
+  margin-bottom: .2rem;
+
+  & p[matListItemLine] {
+    color: gray;
+  }
+
+  & button[mat-icon-button] {
+    background: #2E2C31;
+    color: #8D8D8D;
+
+    &.success {
+      background: #38B13C;
+      color: whitesmoke;
+    }
+  }
+}
+
+div[matListItemMeta] {
+  justify-content: center !important;
+  display: flex !important;
+  align-items: center !important;
+  height: 100% !important;
+}
+
+button[mat-dialog-close] {
+  position: absolute;
+  top: 12px;
+  right: 20px;
+  z-index: 1000;
+}
+
+[mat-dialog-title] {
+  width: 90%;
+}
+
+.loading-placeholder {
+  height: 64px !important;
+  animation: shimmer 3s infinite;
+  background: linear-gradient(90deg, #141218 25%, #18171c 50%, #18171c 75%);
+  background-size: 200% 100%;
+}

@@ -1,0 +1,16 @@
+<div class="menu-container">
+    @if(opened) {
+    @for(button of menuButtons(); let i = $index; track i) {
+    @if(button.name) {
+    <button mat-fab extended @openMenu
+        (click)="button.fn!(); this.opened = !this.opened"><mat-icon>{{button.icon}}</mat-icon>{{button.name}}</button>
+    } @else {
+    <button mat-fab @openMenu
+        (click)="button.fn!(); this.opened = !this.opened"><mat-icon>{{button.icon}}</mat-icon></button>
+    }
+    }
+
+    }
+    <button class="menu-button" (click)="opened = !opened" mat-fab><mat-icon>{{opened? 'close':
+            customIcon()}}</mat-icon></button>
+</div>

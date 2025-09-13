@@ -1,0 +1,19 @@
+.no-list-container {
+  height: calc(100vh - 60px - 70px);
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  margin-top: 4rem;
+  align-items: center;
+  text-align: center;
+
+  & button {
+    width: 100%;
+    max-width: 400px;
+    margin-top: 1rem;
+    padding: 1.8rem;
+    border-radius: 10px;
+    background-color: var(--card-background-color);
+  }
+}
+

@@ -1,0 +1,15 @@
+<div class="home-container">
+    <!-- <div class="title mb-2"> -->
+    <!-- <img src="assets/icon.png" alt="" class="app-logo"> -->
+    <!-- <span class="title-1">M</span><span class="title-2">ovie</span> -->
+    <!-- <span class="title-1"> N</span><span class="title-2">ights</span> -->
+    <!-- </div> -->
+    <app-movie-hero [movie]="movieToWatch$"></app-movie-hero>
+
+    <app-home-category
+        [settings]="{title: 'Di Tendenza', filter: customMovieFilter, data$: upcomingMovies$}"></app-home-category>
+    <app-home-category
+        [settings]="{title: 'Ultime Uscite', url: 'now_playing', data$: nowPlayingMovies$}"></app-home-category>
+    <app-home-category [settings]="{title: 'Popolari', url: 'popular', data$: popularMovies$}"></app-home-category>
+    <app-home-category [settings]="{title: 'Più Votati', url: 'top_rated', data$: topRatedMovies$}"></app-home-category>
+</div>

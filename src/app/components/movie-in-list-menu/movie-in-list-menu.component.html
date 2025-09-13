@@ -1,0 +1,19 @@
+<mat-nav-list class="movie-menu">
+    <h4 class="mt-2">{{this.data.movie.title}}</h4>
+    <hr>
+    @if(!this.data.movie.watched) {
+    <mat-list-item (click)="setAsWatched()">
+        <mat-icon matListItemIcon>check</mat-icon>
+        <span matListItemTitle>Segna come visto</span>
+    </mat-list-item>
+    }
+    <mat-list-item (click)="removeMovieFromList()">
+        <mat-icon matListItemIcon>delete</mat-icon>
+        <span matListItemTitle>Rimuovi dalla lista</span>
+    </mat-list-item>
+    <mat-list-item (click)="navigateToMovieDetails()">
+        <mat-icon matListItemIcon>search</mat-icon>
+        <span matListItemTitle>Visualizza Dettagli</span>
+    </mat-list-item>
+
+</mat-nav-list>
