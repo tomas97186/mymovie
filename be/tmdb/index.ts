@@ -10,7 +10,27 @@ const requests = new Map<string, { count: number; ts: number }>();
 // Config
 const JWT_SECRET = Bun.env.JWT_SECRET || 'super-secret';
 
-app.use('/*', cors());
+app.use(
+  '/*',
+  cors({
+    origin: (origin) => {
+      // Permetti il tuo dominio in dev e prod
+      if (!origin) return '*'; // per richieste server-to-server
+      if (
+        origin === Bun.env.DEV_HOST ||
+        origin.endsWith(Bun.env.PROD_HOST!)
+      ) {
+        return origin;
+      }
+      return ''; // blocca altri origin
+    },
+    allowHeaders: ['Authorization', 'Content-Type'],
+    allowMethods: ['GET', 'POST', 'OPTIONS'],
+    exposeHeaders: ['Content-Length'],
+    maxAge: 600, // cache preflight
+    credentials: true,
+  })
+);
 
 // Endpoint per ottenere un JWT (es: login fake)
 app.post('/auth', async (c) => {
