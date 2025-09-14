@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import {
   HttpRequest,
   HttpHandler,
@@ -6,10 +6,11 @@ import {
   HttpInterceptor,
   HttpErrorResponse,
 } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { from, Observable } from 'rxjs';
+import { switchMap, tap } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { environment } from 'src/environments/environment';
+import { AuthTokenService } from '../services/auth-token.service';
 
 @Injectable()
 export class ProxyInterceptor implements HttpInterceptor {
@@ -19,17 +20,25 @@ export class ProxyInterceptor implements HttpInterceptor {
     request: HttpRequest<any>,
     next: HttpHandler
   ): Observable<HttpEvent<any>> {
+    const auth = inject(AuthTokenService);
     // except for /login endpoint
-    if (!request.url.startsWith(environment.apiUrl)) {
+    if (
+      !request.url.startsWith(environment.apiUrl) ||
+      request.url.endsWith('auth')
+    ) {
       return next.handle(request);
     }
-    // edit request
-    request = request.clone({
-      // bring token from sessionStorage and add as header
-      setHeaders: {
-        'x-proxy-key': `${environment.proxySecret}`,
-      },
-    });
-    return next.handle(request);
+    return from(auth.getToken()).pipe(
+      switchMap((token) => {
+        // edit request
+        request = request.clone({
+          // bring token from sessionStorage and add as header
+          setHeaders: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        return next.handle(request);
+      })
+    );
   }
 }
