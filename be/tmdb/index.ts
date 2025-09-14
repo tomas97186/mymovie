@@ -10,7 +10,14 @@ const requests = new Map<string, { count: number; ts: number }>();
 // Config
 const JWT_SECRET = Bun.env.JWT_SECRET || 'super-secret';
 
-app.use('/*', cors());
+app.use(
+  '/*',
+  cors({
+    origin: '*',
+    allowHeaders: ['*'],
+    allowMethods: ['*'],
+  })
+);
 
 // Middleware: rate limiting per IP
 app.use('/*', async (c, next) => {
