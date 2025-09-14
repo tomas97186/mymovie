@@ -18,6 +18,7 @@ app.use('/*', async (c, next) => {
 
   const now = Date.now();
   const entry = requests.get(ip);
+  console.log('IP: ', ip);
 
   if (!entry || now - entry.ts > windowMs) {
     requests.set(ip, { count: 1, ts: now });
