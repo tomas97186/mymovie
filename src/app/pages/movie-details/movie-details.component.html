@@ -1,5 +1,10 @@
-@let movie = this.movie.value(); @if(movie) { @let recommendations =
-this.recommendations.value(); @let trailer = this.trailer.value();
+@let movie = this.movie.value(); @let isLoading = this.movie.isLoading();
+@if(isLoading) {
+<div class="loading-page">
+  <mat-spinner diameter="50"></mat-spinner>
+</div>
+} @if(movie) { @let recommendations = this.recommendations.value(); @let trailer
+= this.trailer.value();
 <button mat-fab class="list-button" (click)="openListDialog()">
   <mat-icon>add</mat-icon>
 </button>
@@ -7,13 +12,20 @@ this.recommendations.value(); @let trailer = this.trailer.value();
   <mat-icon>chevron_left</mat-icon>
 </button>
 <div class="movie-details-container">
-  <app-movie-hero [movie]="movie" [hideDetailsButton]="true" [hideDescription]="true"
-    [showPoster]="true"></app-movie-hero>
+  <app-movie-hero
+    [movie]="movie"
+    [hideDetailsButton]="true"
+    [hideDescription]="true"
+    [showPoster]="true"
+  ></app-movie-hero>
   <div class="movie-info-container">
     <div class="genre-container">
       @for(genre of movie.genres; track genre.id) {
       <div class="genre-tag">
-        <a routerLink="/discovery/movie" [queryParams]="{ with_genres: genre.id, title: genre.name }">
+        <a
+          routerLink="/discovery/movie"
+          [queryParams]="{ with_genres: genre.id, title: genre.name }"
+        >
           {{ genre.name }}
         </a>
       </div>
@@ -34,52 +46,91 @@ this.recommendations.value(); @let trailer = this.trailer.value();
   } -->
     @if(!!movie.overview && movie.overview.length > 0) {
     <div class="movie-overview mt-3">
-      <p>{{ isOverviewExpanded? movie.overview : ((movie.overview | slice:0:200) + (movie.overview.length > 200 ?
-        '...' : '')) }}
+      <p>
+        {{
+          isOverviewExpanded
+            ? movie.overview
+            : (movie.overview | slice : 0 : 200) +
+              (movie.overview.length > 200 ? "..." : "")
+        }}
         @if(movie.overview.length > 200) {
-        <button class="see-more-btn" mat-button (click)="isOverviewExpanded = !isOverviewExpanded">{{isOverviewExpanded?
-          'Vedi meno' : 'Vedi tutto'}}</button>
+        <button
+          class="see-more-btn"
+          mat-button
+          (click)="isOverviewExpanded = !isOverviewExpanded"
+        >
+          {{ isOverviewExpanded ? "Vedi meno" : "Vedi tutto" }}
+        </button>
         }
       </p>
     </div>
-    <hr class="mx-3">
+    <hr class="mx-3" />
     } @if(trailer) {
     <div class="trailer-container mt-4">
       <h3 class="p-2">Trailer Ufficiale</h3>
       <div class="text-center">
-        <iframe class="trailer" [src]="trailer" title="YouTube video player" frameborder="0"
+        <iframe
+          class="trailer"
+          [src]="trailer"
+          title="YouTube video player"
+          frameborder="0"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowfullscreen></iframe>
+          allowfullscreen
+        ></iframe>
       </div>
     </div>
     } @if(recommendations && recommendations.results.length > 0) {
     <div class="related-movies mt-4 p-2">
       <h3>Film Raccomandati</h3>
-      <app-movie-list [movies]="recommendations!.results" [isHorizontal]="true"></app-movie-list>
+      <app-movie-list
+        [movies]="recommendations!.results"
+        [isHorizontal]="true"
+      ></app-movie-list>
     </div>
     } @if(cast(); as cast) {
     <div class="cast-container mt-2 p-2">
       <h3>Cast</h3>
       <div class="cast-list row mt-3">
-        @for (p of cast; let i = $index; track p.id) { @if(i < 6 || isCastExpanded) { <div class="cast-item col"
-          routerLink="/discovery/movie" [queryParams]="{ with_cast: p.id, title: 'Film con ' + p.name }">
+        @for (p of cast; let i = $index; track p.id) { @if(i < 6 ||
+        isCastExpanded) {
+        <div
+          class="cast-item col-6 col-sm-4"
+          routerLink="/discovery/movie"
+          [queryParams]="{ with_cast: p.id, title: 'Film con ' + p.name }"
+        >
           @if(p.profile_path) {
-          <img [src]="posterUrl + p.profile_path" [alt]="p.name" class="profile-picture" />
+          <img
+            [src]="posterUrl + p.profile_path"
+            [alt]="p.name"
+            class="profile-picture"
+          />
           } @else {
           <div class="profile-picture-placeholder"></div>
           }
           <div class="actor-name">{{ p.name }}</div>
           <div class="actor-role">{{ p.character }}</div>
+        </div>
+        } }
       </div>
-      } }
+      @if(!isCastExpanded && cast.length > 6) {
+      <button
+        mat-button
+        (click)="isCastExpanded = true"
+        class="text-center w-100"
+      >
+        Mostra Tutti
+      </button>
+      } @if(isCastExpanded) {
+      <button
+        mat-button
+        (click)="isCastExpanded = false"
+        class="text-center w-100"
+      >
+        Mostra Meno
+      </button>
+      }
     </div>
-    @if(!isCastExpanded && cast.length > 6) {
-    <button mat-button (click)="isCastExpanded = true" class="text-center w-100">
-      Mostra Tutti
-    </button>
     }
   </div>
-  }
-</div>
 </div>
 }

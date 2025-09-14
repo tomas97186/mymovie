@@ -1,19 +1,37 @@
 @if(title(); as title) {
 <mat-toolbar class="glass-effect">
-    <button (click)="location.back()" mat-icon-button class="example-icon"
-        aria-label="Example icon-button with menu icon">
-        <mat-icon>chevron_left</mat-icon>
-    </button>
-    <div class="movie-title">
-        <span>{{title}}</span>
-    </div>
+  <button
+    (click)="location.back()"
+    mat-icon-button
+    class="example-icon"
+    aria-label="Example icon-button with menu icon"
+  >
+    <mat-icon>chevron_left</mat-icon>
+  </button>
+  <div class="movie-title">
+    <span>{{ title }}</span>
+  </div>
 </mat-toolbar>
 }
 <div class="page-container">
-    @if(currentList.length > 0) {
-    <app-movie-list [paddingTop]="!!title()? 70 : paddingTop()" [movies]="currentList" (loadData)="loadMoreMovies()"
-        class="w-100" [isLoading]="isLoading()"></app-movie-list>
-    <button mat-fab class="go-up-button" (click)="scrollToTop()"><mat-icon>arrow_upward</mat-icon></button>
+  @if(currentList.length > 0) {
+  <app-movie-list
+    [paddingTop]="!!title() ? 70 : paddingTop()"
+    [movies]="currentList"
+    (loadData)="loadMoreMovies()"
+    class="w-100"
+    [isLoading]="isLoading()"
+  ></app-movie-list>
+  <button mat-fab class="go-up-button" (click)="scrollToTop()">
+    <mat-icon>arrow_upward</mat-icon>
+  </button>
+  } @else if(this.isLoading()) {
+  <div class="placeholder-container" [style.padding-top]="(paddingTop()?? 70) + 'px'">
+    @for(n of [].constructor(20); track $index) {
+    <div
+      class="image-placeholder mb-2"
+    ></div>
     }
-
+  </div>
+  }
 </div>

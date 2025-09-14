@@ -1,6 +1,13 @@
+.loading-page {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .movie-info-container {
   padding: 0rem .6rem;
-  padding-bottom: 60px !important;
 }
 
 .movie-details-container {
@@ -9,7 +16,7 @@
 
 button.floating-button {
   position: static;
-  bottom: 80px;
+  bottom: 20px;
   right: 20px;
   z-index: 1500;
 }
@@ -172,6 +179,6 @@ button.floating-button {
 .list-button {
   position: fixed;
   right: 20px;
-  bottom: 80px;
+  bottom: 20px;
   z-index: 1000;
 }

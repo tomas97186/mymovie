@@ -5,7 +5,23 @@
 
 .go-up-button {
     position: fixed;
-    bottom: 80px;
+    bottom: 20px;
     right: 20px;
     z-index: 1000;
+}
+
+
+.placeholder-container {
+    display: flex;
+    padding: 1rem;
+    flex-wrap: wrap;
+    justify-content: start;
+    align-items: center;
+    width: 100%;
+    height: min-content;
+    overflow-x: hidden;
+    overflow-y: hidden;
+    height: 100%;
+    justify-content: space-around;
+
 }

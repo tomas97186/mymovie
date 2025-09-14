@@ -9,9 +9,15 @@ import { CommonModule, Location } from '@angular/common';
 
 @Component({
   selector: 'app-movie-list-dynamic',
-  imports: [CommonModule, MovieListComponent, MatIconModule, MatButtonModule, MatToolbarModule,],
+  imports: [
+    CommonModule,
+    MovieListComponent,
+    MatIconModule,
+    MatButtonModule,
+    MatToolbarModule,
+  ],
   templateUrl: './movie-list-dynamic.component.html',
-  styleUrl: './movie-list-dynamic.component.scss'
+  styleUrl: './movie-list-dynamic.component.scss',
 })
 export class MovieListDynamicComponent {
   location = inject(Location);
@@ -22,7 +28,7 @@ export class MovieListDynamicComponent {
 
   currentPage = model<number>(1);
 
-  searchResult = input<SearchResultsModel>()
+  searchResult = input<SearchResultsModel>();
 
   title = input<string>();
 
@@ -32,19 +38,25 @@ export class MovieListDynamicComponent {
 
   private changedPage = false;
 
+  private updateCurrentListEff = effect(() =>
+    this.searchResult() ? this.updateCurrentList(this.searchResult()!) : null
+  );
 
-  private updateCurrentListEff = effect(() => this.searchResult() ? this.updateCurrentList(this.searchResult()!) : null);
-
-  private resetList = effect(() => this.isLoading() && !this.changedPage ? this.resetPage() : null);
-
+  private resetList = effect(() =>
+    this.isLoading() && !this.changedPage ? this.resetPage() : null
+  );
 
   scrollToTop() {
     const element = document.querySelector('#movieList');
-    element?.scroll({top: 0, behavior: 'smooth'});
+    element?.scroll({ top: 0, behavior: 'smooth' });
   }
   loadMoreMovies() {
-    if (this.searchResult() && this.currentPage() < this.searchResult()!.total_pages) {
-      this.currentPage.update(page => page + 1);
+    if (
+      this.searchResult() &&
+      this.currentPage() < this.searchResult()!.total_pages
+    ) {
+      console.log('LOAD MORE MOVEIS');
+      this.currentPage.update((page) => page + 1);
       this.changedPage = true;
     }
   }
@@ -52,37 +64,38 @@ export class MovieListDynamicComponent {
     this.updateCurrentListEff.destroy();
   }
   private resetPage() {
+    console.log('RESET LIST 1');
     this.currentList = [];
     this.currentIds = new Set<number>();
     this.scrollToTop();
   }
   private updateCurrentList(results: SearchResultsModel) {
     if (this.changedPage) {
-      this.currentList = [...this.currentList, ...this.searchResult()!.results.filter(
-        res => {
+      console.log('CAMBIO PAGINA');
+      this.currentList = [
+        ...this.currentList,
+        ...this.searchResult()!.results.filter((res) => {
           if (this.currentIds.has(res.id)) {
-            return false
+            return false;
           } else {
             this.currentIds.add(res.id);
             return true;
           }
-        }
-      )];
+        }),
+      ];
       this.changedPage = false;
     } else {
+      console.log('RESET LIST 2');
       this.currentList = [];
-      this.currentIds = new Set<number>;
-      this.currentList = this.searchResult()!.results.filter(
-        res => {
-          if (this.currentIds.has(res.id)) {
-            return false
-          } else {
-            this.currentIds.add(res.id);
-            return true;
-          }
+      this.currentIds = new Set<number>();
+      this.currentList = this.searchResult()!.results.filter((res) => {
+        if (this.currentIds.has(res.id)) {
+          return false;
+        } else {
+          this.currentIds.add(res.id);
+          return true;
         }
-      );
+      });
     }
   }
-
 }

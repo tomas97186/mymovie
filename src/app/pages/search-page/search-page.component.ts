@@ -71,7 +71,7 @@ export class SearchPageComponent {
   search() {
     this.router.navigate([], {
       queryParams: { query: this.queryForm.get('query')!.value },
-      replaceUrl: true
+      replaceUrl: !!this.searchQuery()
     }
     );
   }

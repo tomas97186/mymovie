@@ -1,27 +1,50 @@
 import { Hono } from 'hono';
-import { sign, verify } from 'hono/jwt';
 import { cors } from 'hono/cors';
-import { GoogleAuth } from 'google-auth-library';
+import jwt from 'jsonwebtoken';
 
 const app = new Hono();
 
 // In-memory store per il rate limiting
 const requests = new Map<string, { count: number; ts: number }>();
 
+// Config
+const JWT_SECRET = Bun.env.JWT_SECRET || 'super-secret';
+
 app.use('/*', cors());
 
-// Middleware: API key check
-app.use('/*', async (c, next) => {
-  const clientKey = c.req.header('x-proxy-key');
-  const expectedKey = Bun.env.PROXY_SECRET;
+// Endpoint per ottenere un JWT (es: login fake)
+app.post('/auth', async (c) => {
+  const body = await c.req.json();
+  const { apiKey } = body;
 
-  if (!expectedKey) {
-    console.error('PROXY_SECRET mancante');
-    return c.text('Server misconfigured', 500);
+  // Semplice check con la tua PROXY_SECRET
+  if (apiKey !== Bun.env.PROXY_SECRET) {
+    return c.text('Unauthorized', 401);
   }
 
-  if (clientKey !== expectedKey) {
+  // Creazione token JWT valido 15 minuti
+  const token = jwt.sign(
+    { role: 'client' }, // payload
+    JWT_SECRET,
+    { expiresIn: '15m' }
+  );
+
+  return c.json({ token });
+});
+
+// Middleware: JWT check
+app.use('/*', async (c, next) => {
+  const authHeader = c.req.header('authorization');
+  if (!authHeader?.startsWith('Bearer ')) {
     return c.text('Unauthorized', 401);
+  }
+
+  const token = authHeader.split(' ')[1];
+
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET);
+  } catch (err) {
+    return c.text('Invalid or expired token', 401);
   }
 
   await next();

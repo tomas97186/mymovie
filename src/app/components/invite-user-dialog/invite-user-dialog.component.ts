@@ -1,6 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
@@ -28,12 +34,7 @@ export class InviteUserDialogComponent {
 
   constructor(private fb: FormBuilder) {
     this.form = this.fb.group({
-      name: [
-        '',
-        [
-          Validators.required,
-        ],
-      ],
+      name: ['', [Validators.required, Validators.pattern('^[A-Za-z0-9_]+$')]],
     });
   }
 

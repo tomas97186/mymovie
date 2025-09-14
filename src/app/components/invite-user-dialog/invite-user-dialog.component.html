@@ -7,6 +7,11 @@
       <input matInput formControlName="name" />
     </mat-form-field>
   </form>
+  @if(form.get('name')!.hasError('pattern')) {
+  <mat-error
+    >Lo username può contenere solo il seguente carattere speciale: _</mat-error
+  >
+  }
   <!-- <mat-checkbox [(ngModel)]="private" labelPosition="before">Privata</mat-checkbox> -->
 </mat-dialog-content>
 <mat-dialog-actions>

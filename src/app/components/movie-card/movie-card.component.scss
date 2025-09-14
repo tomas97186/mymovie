@@ -10,7 +10,7 @@ img.movie-poster {
   width: 100%;
   height: auto;
   border-radius: 10px;
-    box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
 }
 
 .movie-footer {
@@ -56,7 +56,7 @@ img.movie-poster {
   display: flex;
   top: 0px;
   right: 0px;
-  background-color: #1a1a1a;
+  background-color: rgba(0, 0, 0, 0.8);
   border-radius: 0px 10px 0px 10px;
   padding-left: 12px;
   padding-right: 12px;
@@ -68,25 +68,6 @@ img.movie-poster {
 .add-button {
   flex-grow: 1;
   scale: 1.5;
-}
-
-.image-placeholder {
-  width: 150px;
-  min-width: 150px;
-  height: 225px;
-  border-radius: 10px;
-  flex-grow: 1;
-  // background-color: var(--card-background-color);
-  display: flex;
-  align-items: center;
-  flex-direction: column;
-  justify-content: center;
-  padding: 1rem;
-  color: #b1b1b1;
-
-  background: linear-gradient(90deg, #211f26 25%, #2b2832 50%, #211f26 75%);
-  background-size: 200% 100%;
-  animation: shimmer 3s infinite;
 }
 
 @keyframes pulse {
@@ -102,4 +83,3 @@ img.movie-poster {
     opacity: 1;
   }
 }
-

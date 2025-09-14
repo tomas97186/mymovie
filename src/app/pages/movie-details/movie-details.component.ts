@@ -10,7 +10,10 @@ import {
   rxResource,
   takeUntilDestroyed
 } from '@angular/core/rxjs-interop';
+import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, RouterModule } from '@angular/router';
@@ -27,8 +30,6 @@ import { MovieModel } from '../../models/movie.model';
 import { TimePipe } from '../../pipes/time.pipe';
 import { MovieListService } from '../../services/movie-list.service';
 import { TMDBService } from '../../services/tmdb.service';
-import { MatIconModule } from '@angular/material/icon';
-import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-movie-details',
@@ -40,8 +41,9 @@ import { MatButtonModule } from '@angular/material/button';
     MatFabMenuComponent,
     MatIconModule,
     MatButtonModule,
-    MovieHeroComponent
-  ],
+    MovieHeroComponent,
+    MatProgressSpinnerModule
+],
   templateUrl: './movie-details.component.html',
   styleUrl: './movie-details.component.scss',
 })
