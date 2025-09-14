@@ -14,12 +14,10 @@ app.use(
   '/*',
   cors({
     origin: (origin) => {
+      console.log(origin);
       // Permetti il tuo dominio in dev e prod
       if (!origin) return '*'; // per richieste server-to-server
-      if (
-        origin === Bun.env.DEV_HOST ||
-        origin.endsWith(Bun.env.PROD_HOST!)
-      ) {
+      if (origin === Bun.env.DEV_HOST || origin.endsWith(Bun.env.PROD_HOST!)) {
         return origin;
       }
       return ''; // blocca altri origin
