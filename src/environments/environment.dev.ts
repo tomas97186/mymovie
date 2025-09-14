@@ -1,5 +1,5 @@
 const protocol: 'http' | 'https' = 'https'
-const host = 'mymovie.up.railway.app';
+const host = 'tmdb.up.railway.app';
 const port = 8080
 
 export const environment = {

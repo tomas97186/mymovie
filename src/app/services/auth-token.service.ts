@@ -40,6 +40,11 @@ export class AuthTokenService {
       const res = await firstValueFrom(
         this.http.post<AuthResponse>(`${environment.apiUrl}/auth`, {
           apiKey: environment.proxySecret
+        }, {
+            headers: {
+                'Content-Type':  'application/json',
+                
+            }
         })
       );
 
