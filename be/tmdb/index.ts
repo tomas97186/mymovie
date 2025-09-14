@@ -10,11 +10,33 @@ const requests = new Map<string, { count: number; ts: number }>();
 // Config
 const JWT_SECRET = Bun.env.JWT_SECRET || 'super-secret';
 
+// Middleware: rate limiting per IP
+app.use('/*', async (c, next) => {
+  const ip = c.req.header('x-forwarded-for') || 'unknown';
+  const limit = 60; // max richieste
+  const windowMs = 60 * 1000; // 1 minuto
+
+  const now = Date.now();
+  const entry = requests.get(ip);
+
+  if (!entry || now - entry.ts > windowMs) {
+    requests.set(ip, { count: 1, ts: now });
+  } else {
+    if (entry.count >= limit) {
+      return c.text('Too many requests', 429);
+    }
+    entry.count++;
+  }
+
+  await next();
+});
+
 app.use(
   '/*',
   cors({
     origin: (origin) => {
       console.log(origin);
+      return '*';
       // Permetti il tuo dominio in dev e prod
       if (!origin) return '*'; // per richieste server-to-server
       if (origin === Bun.env.DEV_HOST || origin.endsWith(Bun.env.PROD_HOST!)) {
@@ -63,27 +85,6 @@ app.use('/*', async (c, next) => {
     const decoded = jwt.verify(token, JWT_SECRET);
   } catch (err) {
     return c.text('Invalid or expired token', 401);
-  }
-
-  await next();
-});
-
-// Middleware: rate limiting per IP
-app.use('/*', async (c, next) => {
-  const ip = c.req.header('x-forwarded-for') || 'unknown';
-  const limit = 60; // max richieste
-  const windowMs = 60 * 1000; // 1 minuto
-
-  const now = Date.now();
-  const entry = requests.get(ip);
-
-  if (!entry || now - entry.ts > windowMs) {
-    requests.set(ip, { count: 1, ts: now });
-  } else {
-    if (entry.count >= limit) {
-      return c.text('Too many requests', 429);
-    }
-    entry.count++;
   }
 
   await next();
