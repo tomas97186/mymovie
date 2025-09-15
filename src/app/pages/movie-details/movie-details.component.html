@@ -94,7 +94,7 @@
         @for (p of cast; let i = $index; track p.id) { @if(i < 6 ||
         isCastExpanded) {
         <div
-          class="cast-item col-6 col-sm-4"
+          class="cast-item col-6 col-sm-4 col-md-3"
           routerLink="/discovery/movie"
           [queryParams]="{ with_cast: p.id, title: 'Film con ' + p.name }"
         >

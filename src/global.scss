@@ -236,3 +236,12 @@ button.back-button {
   background-size: 200% 100%;
   animation: shimmer 3s infinite;
 }
+
+ion-tab-bar {
+  border: none;
+  background: transparent;
+
+  & ion-tab-button {
+    background: transparent;
+  }
+}
