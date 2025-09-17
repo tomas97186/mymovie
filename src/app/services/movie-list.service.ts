@@ -167,6 +167,7 @@ export class MovieListService {
       map((res) =>
         res.map((m) => ({
           ...m,
+          watched: watched,
           poster_path: m.poster_path.startsWith(environment.posterUrl)
             ? m.poster_path
             : environment.posterUrl + m.poster_path,
@@ -262,9 +263,9 @@ export class MovieListService {
   /**
    * Modifica il nome di una lista
    */
-  async changeListName(name: string): Promise<void> {
+  async changeListName(name: string, listId: string): Promise<void> {
     if (!this.currentUser) throw new Error('Utente non autenticato');
-    await set(ref(database, `lists/${this.currentListId}/info/name`), name);
+    await set(ref(database, `lists/${listId}/info/name`), name);
   }
 
   /**
@@ -285,7 +286,7 @@ export class MovieListService {
   /**
    * Modifica il contenuto dei film della lista di cui l'utente è membro
    */
-  async addMovie(newMovie: MovieModel, listId?: string): Promise<void> {
+  async addMovie(newMovie: SearchItemModel, listId?: string): Promise<void> {
     if (!this.currentListId)
       throw new Error('Utente non presente in nessuna lista');
 

@@ -8,10 +8,11 @@ import {
   MatDialogRef,
 } from '@angular/material/dialog';
 import { MatInputModule } from '@angular/material/input';
+import { IonButton, ModalController, IonHeader, IonItem, IonTitle, IonToolbar, IonButtons, IonInput } from "@ionic/angular/standalone";
 
 @Component({
   selector: 'app-generic-dialog',
-  imports: [
+  imports: [IonInput, IonButtons, IonToolbar, IonTitle, IonItem, IonHeader, IonButton,
     CommonModule,
     ReactiveFormsModule,
     FormsModule,
@@ -23,7 +24,7 @@ import { MatInputModule } from '@angular/material/input';
   styleUrl: './generic-dialog.component.scss',
 })
 export class GenericDialogComponent {
-  readonly dialogRef = inject(MatDialogRef<GenericDialogComponent>);
+  readonly dialogRef = inject(ModalController);
   private fb = inject(FormBuilder);
   readonly data = inject<{
     title: string;
@@ -39,12 +40,12 @@ export class GenericDialogComponent {
 
   ngOnInit() {
     this.form.get('name')?.setValue(this.data.value || '');
-    if(this.data.validators) {
+    if (this.data.validators) {
       this.form.get('name')?.addValidators(this.data.validators!);
     }
   }
 
   close(): void {
-    this.dialogRef.close();
+    this.dialogRef.dismiss(this.form.get('name')!.value);
   }
 }

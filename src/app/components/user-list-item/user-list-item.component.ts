@@ -7,16 +7,16 @@ import { InfoListModel } from '../../models/movie-list.model';
 import { MatButtonModule } from '@angular/material/button';
 import { MovieListService } from '../../services/movie-list.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { IonIcon, IonButton, IonLabel, IonNote } from "@ionic/angular/standalone";
 
 @Component({
   selector: 'app-user-list-item',
-  imports: [
+  imports: [IonNote, IonButton, IonIcon,
     CommonModule,
     RouterModule,
     MatButtonModule,
     MatListModule,
-    MatIconModule,
-  ],
+    MatIconModule, IonLabel],
   templateUrl: './user-list-item.component.html',
   styleUrl: './user-list-item.component.scss',
 })

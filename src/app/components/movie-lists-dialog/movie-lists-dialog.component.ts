@@ -14,10 +14,12 @@ import { MovieModel } from '../../models/movie.model';
 import { MovieListService } from '../../services/movie-list.service';
 import { MovieStatusEnum } from '../../enum/movie-status.enum';
 import { RouterModule } from '@angular/router';
+import { SearchItemModel } from 'src/app/models/search-item.model';
+import { IonIcon, IonButton } from "@ionic/angular/standalone";
 
 @Component({
   selector: 'app-movie-lists-dialog',
-  imports: [
+  imports: [IonButton, IonIcon, 
     CommonModule,
     RouterModule,
     MatDialogModule,
@@ -58,7 +60,7 @@ export class MovieListsDialogComponent {
   addMovieToList(movie: MovieModel, listId: string): void {
     movie.genre_ids = movie.genre_ids || movie.genres?.map((g) => g.id) || [];
     this.listService
-      .addMovie(movie, listId)
+      .addMovie(<unknown>movie as SearchItemModel, listId)
       .then(() => {
         this._snackBar.open('Film aggiunto alla lista con successo', 'Chiudi', {
           duration: 3000,

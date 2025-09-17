@@ -49,26 +49,12 @@
 }
 
 
-.genre-card {
-    background-color: var(--card-background-color);
-    border-radius: 10px;
-    margin: 0.6rem;
-    padding: 0.8rem;
-    text-align: center;
-
-    & a {
-        text-decoration: none;
-        color: white;
-    }
-}
-
 .genre-list {
-    width: 100%;
     margin-top: 1.2rem;
     align-items: center;
     justify-content: center;
-    margin-right: 0px !important;
-    margin-left: 0px !important;
+    margin-right: 1rem;
+    margin-left: 1rem;
 }
 
 #movieList {

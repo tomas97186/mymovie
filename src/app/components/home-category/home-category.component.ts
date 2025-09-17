@@ -6,10 +6,11 @@ import { SearchResultsModel } from '../../models/search-results.model';
 import { MovieListComponent } from '../movie-list/movie-list.component';
 import { DiscoverMovieRequestModel } from '../../models/discover-movie-request.model';
 import { MatButtonModule } from '@angular/material/button';
+import { IonButton, IonIcon } from "@ionic/angular/standalone";
 
 @Component({
   selector: 'app-home-category',
-  imports: [CommonModule, RouterModule, MovieListComponent, MatButtonModule],
+  imports: [IonIcon, IonButton, CommonModule, RouterModule, MovieListComponent, MatButtonModule],
   templateUrl: './home-category.component.html',
   styleUrl: './home-category.component.scss'
 })

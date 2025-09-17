@@ -2,43 +2,30 @@ import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import {
   FormBuilder,
+  FormControl,
   FormGroup,
   FormsModule,
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
-import { MatInputModule } from '@angular/material/input';
+import { IonButton, IonButtons, IonHeader, IonItem, IonTitle, IonToolbar, ModalController, IonInput } from "@ionic/angular/standalone";
 
 @Component({
   selector: 'app-invite-user-dialog',
-  imports: [
+  imports: [IonInput, IonItem, IonButton, IonTitle, IonToolbar, IonButtons, IonHeader,
     CommonModule,
     ReactiveFormsModule,
     FormsModule,
-    MatCheckboxModule,
-    MatDialogModule,
-    MatButtonModule,
-    MatInputModule,
   ],
   templateUrl: './invite-user-dialog.component.html',
   styleUrl: './invite-user-dialog.component.scss',
 })
 export class InviteUserDialogComponent {
-  readonly dialogRef = inject(MatDialogRef<InviteUserDialogComponent>);
-  name: string = '';
+  readonly dialogRef = inject(ModalController);
   private: boolean = true;
-  form: FormGroup;
-
-  constructor(private fb: FormBuilder) {
-    this.form = this.fb.group({
-      name: ['', [Validators.required, Validators.pattern('^[A-Za-z0-9_]+$')]],
-    });
-  }
+  usernameControl = new FormControl('', [Validators.required, Validators.pattern('^[A-Za-z0-9_]+$')]);
 
   close(): void {
-    this.dialogRef.close();
+    this.dialogRef.dismiss(this.usernameControl.value);
   }
 }

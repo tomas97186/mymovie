@@ -21,15 +21,16 @@ import { MovieListService } from '../../services/movie-list.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Validators } from '@angular/forms';
 import { UsernameDialogComponent } from '../../components/username-dialog/username-dialog.component';
+import { IonButton, IonIcon, ModalController } from "@ionic/angular/standalone";
 
 @Component({
   selector: 'app-profile-page',
-  imports: [CommonModule, MatButtonModule, MatIconModule],
+  imports: [IonIcon, IonButton, CommonModule, MatButtonModule, MatIconModule],
   templateUrl: './profile-page.component.html',
   styleUrl: './profile-page.component.scss',
 })
 export class ProfilePageComponent {
-  readonly dialog = inject(MatDialog);
+  readonly dialog = inject(ModalController);
   readonly router = inject(Router);
   private readonly snackBar = inject(MatSnackBar);
   authService = inject(AuthService);
@@ -39,84 +40,75 @@ export class ProfilePageComponent {
     .getUserLists()
     .pipe(map((res) => res.length));
 
-  changePassword(): void {
-    const dialogRef = this.dialog.open(PasswordDialogComponent, {});
-    dialogRef
-      .afterClosed()
-      .pipe(first())
-      .subscribe((res) => {
-        if (res && res.newPassword && res.newPassword.trim().length >= 8) {
-          this.authService.currentUser$
-            .pipe(
-              filter((user) => !!user),
-              first(),
-              switchMap((user) =>
-                from(
-                  reauthenticateWithCredential(
-                    user!,
-                    EmailAuthProvider.credential(user!.email!, res.oldPassword)
-                  )
-                ).pipe(map(() => user!))
-              ),
-              switchMap((user) =>
-                updatePassword(user!, res.newPassword.trim())
-              ),
-              tap(() =>
-                this.snackBar.open(
-                  'Password aggiornata con successo',
-                  'Chiudi',
-                  { duration: 3000 }
-                )
-              ),
-              catchError((err) => {
-                console.error('Error updating password:', err);
-                this.snackBar.open(
-                  "Errore nell'aggiornamento della password",
-                  'Chiudi',
-                  { duration: 3000 }
-                );
-                throw err;
-              })
+  async changePassword() {
+    const dialogRef = await this.dialog.create({ component: PasswordDialogComponent, initialBreakpoint: .5, expandToScroll: false });
+
+    dialogRef.present();
+    const { data } = await dialogRef.onWillDismiss();
+
+    if (data && data.newPassword && data.newPassword.trim().length >= 8) {
+      this.authService.currentUser$
+        .pipe(
+          filter((user) => !!user),
+          first(),
+          switchMap((user) =>
+            from(
+              reauthenticateWithCredential(
+                user!,
+                EmailAuthProvider.credential(user!.email!, data.oldPassword)
+              )
+            ).pipe(map(() => user!))
+          ),
+          switchMap((user) =>
+            updatePassword(user!, data.newPassword.trim())
+          ),
+          tap(() =>
+            this.snackBar.open(
+              'Password aggiornata con successo',
+              'Chiudi',
+              { duration: 3000 }
             )
-            .subscribe();
-        }
-      });
+          ),
+          catchError((err) => {
+            console.error('Error updating password:', err);
+            this.snackBar.open(
+              "Errore nell'aggiornamento della password",
+              'Chiudi',
+              { duration: 3000 }
+            );
+            throw err;
+          })
+        )
+        .subscribe();
+    }
   }
 
-  changeName(currentUsername: string): void {
-    const dialogRef = this.dialog.open(UsernameDialogComponent, {
-      data: {
-        value: currentUsername,
-      },
-    });
-
-    dialogRef
-      .afterClosed()
-      .pipe(first())
-      .subscribe((name) => {
-        if (
-          name !== undefined &&
-          name != currentUsername &&
-          name.trim().length > 5
-        ) {
-          this.movieListService
-            .setUsername(name.trim())
-            .then(() => {
-              this.authService.currentUser$.pipe(
-                filter((user) => !!user),
-                first(),
-                tap((user) => updateProfile(user, { displayName: name.trim() }))
-              );
-              this.snackBar.open('Username modificato.', 'Chiudi');
-            })
-            .catch((e) => {
-              console.log(e);
-              this.snackBar.open('Username già esistente.', 'Chiudi', {
-                duration: 3000,
-              });
-            });
-        }
-      });
+  async changeName(currentUsername: string) {
+    const dialogRef = await this.dialog.create({ component: UsernameDialogComponent, componentProps: { currentUsername }, initialBreakpoint: .20, expandToScroll: false });
+    dialogRef.present();
+    const { data } = await dialogRef.onWillDismiss();
+    if (
+      data !== undefined &&
+      data != currentUsername &&
+      data.trim().length > 5
+    ) {
+      this.movieListService
+        .setUsername(data.trim())
+        .then(() => {
+          this.authService.currentUser$.pipe(
+            filter((user) => !!user),
+            first(),
+            tap((user) => updateProfile(user, { displayName: data.trim() }))
+          );
+          this.snackBar.open('Username modificato.', 'Chiudi');
+        })
+        .catch((e) => {
+          console.log(e);
+          this.snackBar.open('Username già esistente.', 'Chiudi', {
+            duration: 3000,
+          });
+        });
+    }
   }
 
   signout() {

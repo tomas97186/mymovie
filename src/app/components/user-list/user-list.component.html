@@ -1,0 +1,5 @@
+<div class="user-list">
+  @for(list$ of this.userList(); track $index) { @if(list$ | async; as list) {
+  <app-user-list-item [list]="list"></app-user-list-item>
+  } }
+</div>

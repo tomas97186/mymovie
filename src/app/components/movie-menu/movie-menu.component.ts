@@ -13,10 +13,12 @@ import { tap } from 'rxjs';
 import { MovieModel } from '../../models/movie.model';
 import { MovieListService } from '../../services/movie-list.service';
 import { MovieListsDialogComponent } from '../movie-lists-dialog/movie-lists-dialog.component';
+import { IonActionSheet } from "@ionic/angular/standalone";
+import { SearchItemModel } from 'src/app/models/search-item.model';
 
 @Component({
   selector: 'app-movie-menu',
-  imports: [CommonModule, RouterModule, MatListModule, MatIconModule],
+  imports: [IonActionSheet, CommonModule, RouterModule, MatListModule, MatIconModule],
   templateUrl: './movie-menu.component.html',
   styleUrl: './movie-menu.component.scss'
 })
@@ -63,19 +65,19 @@ export class MovieMenuComponent {
     this.bottomSheet.dismiss(true);
   }
 
-  addMovieToList(listId: string): void {
-    this.movieService.addMovie(this.data.movie, listId).then(() => {
-      this._snackBar.open('Film aggiunto alla lista con successo', 'Chiudi', {
-        duration: 3000,
-      });
-      this.bottomSheet.dismiss();
-    }).catch(error => {
-      this._snackBar.open('Errore nell\'aggiungere il film alla lista', 'Chiudi', {
-        duration: 3000,
-      });
-      console.error('Errore nell\'aggiungere il film alla lista:', error);
-    });
-  }
+  // addMovieToList(listId: string): void {
+  //   this.movieService.addMovie(this.data.movie as SearchItemModel, listId).then(() => {
+  //     this._snackBar.open('Film aggiunto alla lista con successo', 'Chiudi', {
+  //       duration: 3000,
+  //     });
+  //     this.bottomSheet.dismiss();
+  //   }).catch(error => {
+  //     this._snackBar.open('Errore nell\'aggiungere il film alla lista', 'Chiudi', {
+  //       duration: 3000,
+  //     });
+  //     console.error('Errore nell\'aggiungere il film alla lista:', error);
+  //   });
+  // }
 
   removeMovieFromList(listId: string): void {
     this.movieService.removeMovie(this.data.movie.id, listId).then(() => {

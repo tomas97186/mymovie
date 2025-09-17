@@ -10,10 +10,11 @@ import { DiscoverMovieRequestModel } from '../../models/discover-movie-request.m
 import { SearchResultsModel } from '../../models/search-results.model';
 import { of } from 'rxjs';
 import { MatMenuModule } from '@angular/material/menu';
+import { IonButton, IonIcon, IonFab, IonFabButton, IonFabList } from "@ionic/angular/standalone";
 
 @Component({
   selector: 'app-discover-page',
-  imports: [MovieListDynamicComponent, MatButtonModule, MatIconModule, MatMenuModule],
+  imports: [IonFabList, IonFabButton, IonFab, IonIcon, IonButton, MovieListDynamicComponent, MatButtonModule, MatIconModule, MatMenuModule],
   templateUrl: './discover-page.component.html',
   styleUrl: './discover-page.component.scss'
 })

@@ -8,7 +8,7 @@ app-movie-card {
     flex-wrap: wrap;
     scroll-snap-type: x mandatory;
     -webkit-overflow-scrolling: touch;
-    justify-content: start;
+    justify-content: space-around;
     align-items: center;
     // gap: 1rem;
     width: 100%;
@@ -19,7 +19,7 @@ app-movie-card {
     scrollbar-width: none;
     /* Firefox, Safari 18.2+, Chromium 121+ */
     overflow-y: auto;
-    height: 100%;
+    height: min-content;
     justify-content: space-around;
 
     /* Older Safari and Chromium */

@@ -2,69 +2,66 @@
 this.details()!; @let members = this.members();
 
 <div class="container pb-4">
-  <div class="card-background list-code-container">
-    <div class="w-100 text-center">
-      <h6>Codice Lista</h6>
-    </div>
-    <div class="code-list-container">
-      {{ details.id }}
-      <mat-icon class="ms-2" (click)="copyToClipboardNotification()" [cdkCopyToClipboard]="details.id!"
-        [cdkCopyToClipboardAttempts]="2">content_copy</mat-icon>
-    </div>
-    <div class="text-description">
-      Condividi questo codice con i tuoi amici per unirsi alla lista.
-    </div>
+  <div class="text-description">Codice Lista</div>
+  <div class="code-list-container">
+    {{ details.id }}
+    <ion-icon class="ms-2" (click)="copyToClipboardNotification()" [cdkCopyToClipboard]="details.id!"
+      [cdkCopyToClipboardAttempts]="2" name="clipboard-outline" size="medium"></ion-icon>
+  </div>
+  <div class="code-description">
+    Condividi questo codice con i tuoi amici per unirsi alla lista.
   </div>
   <div class="text-description">Dettagli Lista</div>
   <div class="statistics card-background">
-    <div class="statistic-item">
-      Film nella lista:
-      <span class="colored-text fw-bold">{{ details.moviesCount }}</span>
-    </div>
-    <div class="statistic-item">
-      Film da vedere:
-      <span class="colored-text fw-bold">{{
-        details.moviesCount - details.watchedMovies
-        }}</span>
-    </div>
-    <div class="statistic-item">
-      Film visti:
-      <span class="colored-text fw-bold">{{ details.watchedMovies }}</span>
-    </div>
+    <ion-list [inset]="true">
+      <ion-item>
+        <ion-label>
+          Film nella lista:
+        </ion-label>
+        <span class="colored-text fw-bold">{{ details.moviesCount }}</span>
+      </ion-item>
+      <ion-item>
+        <ion-label>
+          Film da vedere:
+        </ion-label>
+        <span class="colored-text fw-bold">{{
+          details.moviesCount - details.watchedMovies
+          }}</span>
+      </ion-item>
+      <ion-item>
+        <ion-label>
+          Film visti:
+        </ion-label>
+        <span class="colored-text fw-bold">{{ details.watchedMovies }}</span>
+      </ion-item>
+    </ion-list>
   </div>
   <div class="text-description">Membri della lista</div>
   <div class="card-background">
-    <mat-list class="members-list">
+    <ion-list [inset]="true">
       @for(member$ of members; track $index) { @if(member$ | async; as member ){
-      <mat-list-item class="member-item my-2 card-background">
-        <div matListItemMeta>
-          <!-- @if(currentUser?.uid === details.createdBy && member.uid != currentUser?.uid) {
-                      <mat-icon style="color: red">delete</mat-icon>
-                      } -->
-          @if(member.uid === details.createdBy) {
-          <mat-icon style="color: aliceblue">star_outline</mat-icon>
-          }
-        </div>
-        <h3 matListItemTitle>
-          {{ member.username || "Sconosciuto" }} @if(member.uid ===
-          currentUser?.uid) { (Tu) }
-        </h3>
-      </mat-list-item>
-      } }
-    </mat-list>
+      <ion-item>
+        <ion-label>{{ member.username || "Sconosciuto" }} @if(member.uid ===
+          currentUser?.uid) { (Tu) }</ion-label>
+        @if(member.uid === details.createdBy) {
+        <ion-icon slot="end" name="star-outline"></ion-icon>
+        }
+      </ion-item>
+      }}
+    </ion-list>
   </div>
   <div class="actions">
-    <button mat-button class="action-button" (click)="this.openInviteUserDialog()">
-      <mat-icon>add</mat-icon> Invita utente
-    </button>
+    <ion-button (click)="this.openInviteUserDialog()" color="light">
+      <ion-icon name="person-add-outline" slot="start"></ion-icon> Invita utente
+    </ion-button>
     @if(currentUser?.uid === details.createdBy) {
-    <button mat-button class="danger-text" (click)="deleteList()">
-      <mat-icon>delete</mat-icon>Elimina lista
-    </button>
+    <ion-button (click)="deleteList()" fill="clear" color="danger">
+      <ion-icon name="trash" slot="start"></ion-icon>Elimina lista
+    </ion-button>
     } @else {
-    <button mat-button class="danger-text" (click)="exitListFn.emit()">
-      <mat-icon>logout</mat-icon>Abbandona
-    </button>
+    <ion-button (click)="exitListFn.emit()" fill="clear" color="danger">
+      <ion-icon name="log-out" slot="start"></ion-icon>Abbandona
+    </ion-button>
     }
   </div>
 </div>

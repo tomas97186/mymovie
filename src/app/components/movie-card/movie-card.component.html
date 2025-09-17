@@ -1,30 +1,22 @@
 @let movie = this.movie()!;
 <!-- @let genres = this.tmdbService.getGenres() | async; -->
-<div class="movie-container" [id]="movie.id" (click)="openMovieMenu(movie)">
+<div class="movie-container" [id]="'open-action-sheet'" (click)="presentActionSheet()">
   @if(!isImgLoaded) {
   <div class="image-placeholder">
     {{ movie.title }}
-    <mat-icon>image</mat-icon>
+    <ion-icon name="image"></ion-icon>
   </div>
   }
   <img src="movie.poster_path" [src]="movie.poster_path" [alt]="movie.title" class="movie-poster"
     (load)="isImgLoaded = true" [hidden]="!isImgLoaded" />
-  <!-- @if(!!genres && !!movie.genre_ids && movie.genre_ids.length > 0) {
-    <div class="movie-genre">
-        {{genres![movie.genre_ids[0]]}}
-    </div>
-    } -->
 
   @if(movie.vote_average) {
   <div class="movie-ranking">
-    <mat-icon matListItemIcon class="me-2">star_outline</mat-icon><span>{{ movie.vote_average | number : "1.0-1" }} /
+    <ion-icon matListItemIcon class="me-2" name="star"></ion-icon><span>{{ movie.vote_average | number : "1.0-1":'en'
+      }} /
       10</span>
   </div>
   }
   <div class="movie-footer">
-    <!-- <div class="movie-title">{{movie.title | truncate:30}}</div> -->
-    <!-- <button class="add-button" mat-icon-button aria-label="Aggiungi">
-            <mat-icon>add</mat-icon>
-        </button> -->
   </div>
 </div>

@@ -10,10 +10,11 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MovieListService } from '../../services/movie-list.service';
+import { IonButton, IonIcon } from "@ionic/angular/standalone";
 
 @Component({
   selector: 'app-no-list-page',
-  imports: [
+  imports: [IonIcon, IonButton, 
     CommonModule,
     ReactiveFormsModule,
     MatIconModule,

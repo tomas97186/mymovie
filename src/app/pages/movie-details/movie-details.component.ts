@@ -17,12 +17,9 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, RouterModule } from '@angular/router';
+import { IonContent, IonFab, IonFabButton, IonIcon, IonBackButton, IonButton, IonSpinner } from "@ionic/angular/standalone";
 import { map, of, tap } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import {
-  MatFabMenuComponent,
-  MenuButton,
-} from '../../components/mat-fab-menu/mat-fab-menu.component';
 import { MovieHeroComponent } from "../../components/movie-hero/movie-hero.component";
 import { MovieListComponent } from '../../components/movie-list/movie-list.component';
 import { MovieListsDialogComponent } from '../../components/movie-lists-dialog/movie-lists-dialog.component';
@@ -33,17 +30,16 @@ import { TMDBService } from '../../services/tmdb.service';
 
 @Component({
   selector: 'app-movie-details',
-  imports: [
+  imports: [IonSpinner, IonButton, IonBackButton, IonFab, IonIcon, IonFabButton,
     CommonModule,
     RouterModule,
     TimePipe,
     MovieListComponent,
-    MatFabMenuComponent,
     MatIconModule,
     MatButtonModule,
     MovieHeroComponent,
-    MatProgressSpinnerModule
-],
+    MatProgressSpinnerModule,
+    IonContent, IonBackButton],
   templateUrl: './movie-details.component.html',
   styleUrl: './movie-details.component.scss',
 })
@@ -141,51 +137,6 @@ export class MovieDetailsComponent {
       });
   }
 
-  getMenuButtons(movie: MovieModel, movieInList?: MovieModel): MenuButton[] {
-    const buttons: MenuButton[] = [];
-    if (!movieInList) {
-      buttons.push({
-        icon: 'add',
-        name: 'Aggiungi',
-        fn: () => this.addMovieToList(movie),
-      });
-    } else {
-      if (!movieInList.watched) {
-        buttons.push({
-          icon: 'check',
-          name: 'Segna come visto',
-          fn: () => this.setAsWatched(movie),
-        });
-      }
-      buttons.push({
-        icon: 'delete',
-        name: 'Rimuovi',
-        fn: () => this.removeMovieFromList(movie),
-      });
-    }
-    return buttons;
-  }
-
-  addMovieToList(movie: MovieModel): void {
-    movie.genre_ids = movie.genre_ids || movie.genres?.map((g) => g.id) || [];
-    this.movieService
-      .addMovie(movie)
-      .then(() => {
-        this._snackBar.open('Film aggiunto alla lista con successo', 'Chiudi', {
-          duration: 3000,
-        });
-      })
-      .catch((error) => {
-        this._snackBar.open(
-          "Errore nell'aggiungere il film alla lista",
-          'Chiudi',
-          {
-            duration: 3000,
-          }
-        );
-        console.error("Errore nell'aggiungere il film alla lista:", error);
-      });
-  }
 
   removeMovieFromList(movie: MovieModel): void {
     this.movieService

@@ -5,10 +5,11 @@ import { RouterModule } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { isObservable, Observable, of } from 'rxjs';
+import { IonIcon } from "@ionic/angular/standalone";
 
 @Component({
   selector: 'app-movie-hero',
-  imports: [CommonModule, RouterModule, MatIconModule, MatButtonModule],
+  imports: [IonIcon, CommonModule, RouterModule, MatIconModule, MatButtonModule],
   templateUrl: './movie-hero.component.html',
   styleUrl: './movie-hero.component.scss'
 })

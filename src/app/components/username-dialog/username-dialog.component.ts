@@ -1,38 +1,31 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, effect, inject, input } from '@angular/core';
 import {
   FormBuilder,
   FormsModule,
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { MatButtonModule } from '@angular/material/button';
-import {
-  MAT_DIALOG_DATA,
-  MatDialogModule,
-  MatDialogRef,
-} from '@angular/material/dialog';
-import { MatInputModule } from '@angular/material/input';
+import { IonButton, IonButtons, IonHeader, IonInput, IonItem, IonTitle, IonToolbar, ModalController } from "@ionic/angular/standalone";
 
 @Component({
   selector: 'app-username-dialog',
-  imports: [
+  imports: [IonInput, IonToolbar, IonItem, IonButtons, IonHeader, IonTitle, IonButton,
     CommonModule,
     ReactiveFormsModule,
-    FormsModule,
-    MatDialogModule,
-    MatInputModule,
-    MatButtonModule,
+    FormsModule
   ],
   templateUrl: './username-dialog.component.html',
   styleUrl: './username-dialog.component.scss',
 })
 export class UsernameDialogComponent {
-  readonly dialogRef = inject(MatDialogRef<UsernameDialogComponent>);
+  readonly dialogRef = inject(ModalController);
   private fb = inject(FormBuilder);
-  readonly data = inject<{
-    value?: string;
-  }>(MAT_DIALOG_DATA);
+  currentUsername = input<string>();
+  readonly setUsername = effect(() => {
+    this.form.get('name')?.setValue(this.currentUsername() || '');
+    this.form.markAsPristine();
+  })
 
   readonly form = this.fb.group({
     name: [
@@ -46,15 +39,7 @@ export class UsernameDialogComponent {
     ],
   });
 
-  initialValue?: string;
-
-  ngOnInit() {
-    this.initialValue = this.data.value;
-    this.form.get('name')?.setValue(this.initialValue || '');
-    this.form.markAsPristine();
-  }
-
   close(): void {
-    this.dialogRef.close();
+    this.dialogRef.dismiss(this.form.get('name')!.value);
   }
 }

@@ -3,55 +3,38 @@
 <div class="search-page-container">
   <div class="header">
     @if(this.searchQuery()) {
-    <button
-      mat-icon-button
-      class="back-button"
-      @showBackButton
-      (click)="location.back()"
-    >
-      <mat-icon>chevron_left</mat-icon>
-    </button>
+    <ion-button ion-icon-button class="back-button" @showBackButton (click)="location.back()">
+      <ion-icon name="chevron_left"></ion-icon>
+    </ion-button>
     }
     <form (ngSubmit)="search()" [formGroup]="queryForm" class="search-form">
       <mat-form-field appearance="fill" class="search-field" floatLabel="auto">
-        <input
-          matInput
-          placeholder="Cerca..."
-          formControlName="query"
-        />
+        <input matInput placeholder="Cerca..." formControlName="query" />
         @if(!!queryForm.get('query')?.value) {
-        <mat-icon matSuffix (click)="this.queryForm.reset()">cancel</mat-icon>
+        <ion-icon matSuffix (click)="this.queryForm.reset()" name="cancel"></ion-icon>
         } @else {
-        <mat-icon matSuffix>search</mat-icon>
+        <ion-icon matSuffix name="search"></ion-icon>
         }
       </mat-form-field>
     </form>
   </div>
 
   @if(this.result.isLoading() || (searchResult && searchResult.results.length >
-  0)) {<app-movie-list-dynamic
-    [(currentPage)]="currentPage"
-    [searchResult]="this.result.value()"
-    [paddingTop]="100"
-    [isLoading]="this.result.isLoading()"
-  ></app-movie-list-dynamic>
+  0)) {<app-movie-list-dynamic [(currentPage)]="currentPage" [searchResult]="this.result.value()" [paddingTop]="100"
+    [isLoading]="this.result.isLoading()"></app-movie-list-dynamic>
   } @else if(searchResult && searchResult.results.length === 0) {
   <div class="no-movies-banner">
-    <mat-icon>sentiment_dissatisfied</mat-icon><span></span>
+    <ion-icon name="sentiment_dissatisfied"></ion-icon><span></span>
     <span>Nessun risultato trovato.</span>
   </div>
   } @else {
   <div class="no-search">
-    <div class="genre-list row">
+    <div class="row genre-list">
       @for(genre of genres | async; track genre[0]) {
-      <button
-        mat-button
-        (click)="navigateToGenre({ id: genre[0], name: genre[1] })"
-        class="col-4 genre-card"
-        style="color: white"
-      >
+      <ion-button  (click)="navigateToGenre({ id: genre[0], name: genre[1] })" class="col-6 col-sm-4 mx-0 mt-2"
+        style="color: white" color="light">
         {{ genre[1] }}
-      </button>
+      </ion-button>
       }
     </div>
   </div>

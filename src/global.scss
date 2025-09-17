@@ -45,13 +45,10 @@
 html {
   scroll-behavior: smooth;
   color-scheme: light dark;
-  @include mat.theme(
-    (
-      color: mat.$red-palette,
+  @include mat.theme((color: mat.$red-palette,
       typography: Roboto,
       density: 0,
-    )
-  );
+    ));
   --card-background-color: #211f26;
   --container-background-color: #211f26;
   --card-primary-color: #ffc9c9;
@@ -66,16 +63,13 @@ body {
 }
 
 .search-field {
-  @include mat.form-field-overrides(
-    (
-      filled-container-color: var(--card-background-color),
+  @include mat.form-field-overrides((filled-container-color: var(--card-background-color),
       filled-input-text-color: #dcdada,
       filled-input-text-placeholder-color: #b3b3b3,
       trailing-icon-color: #b3b3b3,
       filled-container-shape: 20px,
       filled-focus-active-indicator-height: 0px,
-    )
-  );
+    ));
 }
 
 .search-field .mdc-text-field--filled {
@@ -89,7 +83,7 @@ body {
 .header {
   display: flex;
   position: sticky;
-  top: 10px;
+  top: 10px + env(safe-area-inset-top);
   z-index: 100;
   text-align: center;
   margin-right: auto;
@@ -102,12 +96,9 @@ body {
 }
 
 :root {
-  @include mat.button-overrides(
-    (
-      filled-container-color: orange,
+  @include mat.button-overrides((filled-container-color: orange,
       filled-label-text-color: red,
-    )
-  );
+    ));
 }
 
 .card-background {
@@ -128,7 +119,7 @@ mat-tab-header.mat-mdc-tab-header {
 mat-toolbar.glass-effect {
   width: 100dvw !important;
   position: fixed;
-  top: 0px;
+  top: env(safe-area-inset-top);
   height: 64px;
   padding: 12px 0px;
   /* From https://css.glass */
@@ -195,24 +186,28 @@ button.action-button {
   }
 }
 
-button.back-button {
-  color: #dddddd;
-  backdrop-filter: blur(5.1px);
+ion-fab-button.back-button {
+  // backdrop-filter: blur(5.1px);
   -webkit-backdrop-filter: blur(5.1px);
-  background: rgba(0, 0, 0, 0.7);
+  --background: rgba(74, 74, 74, 0.9);
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-  width: 50px;
-  height: 50px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+}
 
-  &.fixed {
-    position: fixed;
-    top: 20px;
-    left: 20px;
-    z-index: 100;
+ion-fab-button {
+  --color: whitesmoke
+}
+
+ion-button {
+  --color: whitesmoke;
+  --padding-top: 1rem;
+  --padding-bottom: 1rem;
+
+  &[size="small"] {
+    --padding-top: .6rem;
+    --padding-bottom: .6rem;
   }
+
+  --border-radius: 10px !important;
 }
 
 .image-placeholder {
@@ -243,5 +238,16 @@ ion-tab-bar {
 
   & ion-tab-button {
     background: transparent;
+  }
+}
+
+ion-header.glass-effect {
+  position: fixed;
+  /* From https://css.glass */
+
+  & ion-toolbar {
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(5.1px);
+    -webkit-backdrop-filter: blur(5.1px);
   }
 }

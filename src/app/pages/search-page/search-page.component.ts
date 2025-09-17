@@ -11,14 +11,14 @@ import { MatInputModule } from '@angular/material/input';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { IonButton, IonIcon } from "@ionic/angular/standalone";
 import { map, of } from 'rxjs';
 import { MovieListDynamicComponent } from "../../components/movie-list-dynamic/movie-list-dynamic.component";
-import { DiscoverMovieRequestModel } from '../../models/discover-movie-request.model';
 import { TMDBService } from '../../services/tmdb.service';
 
 @Component({
   selector: 'app-search-page',
-  imports: [CommonModule, RouterModule, FormsModule, ReactiveFormsModule, MatMenuModule, MatGridListModule, MatButtonModule, MatInputModule, MatFormFieldModule, MatIconModule, MatToolbarModule, MovieListDynamicComponent],
+  imports: [IonIcon, IonButton, CommonModule, RouterModule, FormsModule, ReactiveFormsModule, MatMenuModule, MatGridListModule, MatButtonModule, MatInputModule, MatFormFieldModule, MatIconModule, MatToolbarModule, MovieListDynamicComponent],
   templateUrl: './search-page.component.html',
   styleUrl: './search-page.component.scss',
   animations: [

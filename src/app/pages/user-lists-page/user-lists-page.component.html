@@ -1,45 +1,43 @@
 @let userInvitations = userInvitations$ | async;
-<div class="container">
-  <h3 class="mt-4 text-center">Liste Utente</h3>
-  <div class="section-description">
-    Gestisci le liste di cui fai parte oppure aggiungine di nuove!
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Liste Utente</ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <div class="container">
+    <div class="section-description">
+      Gestisci le liste di cui fai parte oppure aggiungine di nuove!
+    </div>
+    @if(userInvitations) { @if(userInvitations.length
+    > 0) {
+    <div class="invitations-container">
+      <h3>Inviti</h3>
+      <p class="subtitle">
+        Hai degli inviti in sospeso, scegli se accettare o declinare gli inviti
+        alle liste.
+      </p>
+      <app-user-list [userList]="userInvitations"></app-user-list>
+    </div>
+    } } @if(userLists$ | async; as userLists){ @if(userLists.length > 0) {
+    <app-user-list [userList]="userLists"></app-user-list>
+    <ion-fab slot="fixed" horizontal="end" vertical="bottom">
+      <ion-fab-button>
+        <ion-icon name="add"></ion-icon>
+      </ion-fab-button>
+      <ion-fab-list side="top">
+        <ion-button>
+          <ion-icon name="person-add"></ion-icon>
+          Unisciti ad una lista
+        </ion-button>
+        <ion-button>
+          <ion-icon name="add"></ion-icon>
+          Crea una lista
+        </ion-button>
+      </ion-fab-list>
+    </ion-fab>
+    }　@else {
+    <app-no-list-page (joinList)="openJoinDialog()" (createList)="openCreateDialog()"></app-no-list-page>
+    } }
   </div>
-  <hr>
-  @if(userInvitations) { @if(userInvitations.length
-  > 0) {
-  <div class="invitations-container">
-    <h3>Inviti</h3>
-    <p class="subtitle">
-      Hai degli inviti in sospeso, scegli se accettare o declinare gli inviti
-      alle liste.
-    </p>
-    <mat-list>
-      @for(list$ of userInvitations; track $index) { @if(list$ | async; as list)
-      { @if(list) {
-      <app-user-list-item [list]="list" [invitation]="true"></app-user-list-item>
-      } } }
-    </mat-list>
-  </div>
-  } } @if(userLists$ | async; as userLists){ @if(userLists.length > 0) {
-  <mat-list>
-    @for(list$ of userLists; track $index) { @if(list$ | async; as list) {
-    @if(list) {
-    <app-user-list-item [list]="list"></app-user-list-item>
-    } } }
-  </mat-list>
-  <app-mat-fab-menu [customIcon]="'add'" [menuButtons]="[
-      {
-        name: 'Unisciti ad una lista',
-        icon: 'person_add',
-        fn: this.openJoinDialog.bind(this)
-      },
-      {
-        name: 'Crea una lista',
-        icon: 'add',
-        fn: this.openCreateDialog.bind(this)
-      }
-    ]"></app-mat-fab-menu>
-  }　@else {
-  <app-no-list-page (joinList)="openJoinDialog()" (createList)="openCreateDialog()"></app-no-list-page>
-  } }
-</div>
+</ion-content>

@@ -1,26 +1,25 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
-import { Validators } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
+import { MatMenuModule } from '@angular/material/menu';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { Router, RouterModule } from '@angular/router';
-import { first, map, tap } from 'rxjs';
-import { GenericDialogComponent } from '../../components/generic-dialog/generic-dialog.component';
+import { first, map } from 'rxjs';
+import { JoinListDialogComponent } from '../../components/join-list-dialog/join-list-dialog.component';
 import { NewListDialogComponent } from '../../components/new-list-dialog/new-list-dialog.component';
+import { UserListItemComponent } from "../../components/user-list-item/user-list-item.component";
 import { MovieListService } from '../../services/movie-list.service';
 import { NoListPageComponent } from '../no-list-page/no-list-page.component';
-import { MatMenuModule } from '@angular/material/menu';
-import { MatButtonModule } from '@angular/material/button';
-import { MatFabMenuComponent } from '../../components/mat-fab-menu/mat-fab-menu.component';
-import { JoinListDialogComponent } from '../../components/join-list-dialog/join-list-dialog.component';
-import { UserListItemComponent } from "../../components/user-list-item/user-list-item.component";
+import { IonFab, IonFabButton, IonIcon, IonFabList, IonButton, IonTitle, IonHeader, IonToolbar, IonContent, IonList } from "@ionic/angular/standalone";
+import { UserListComponent } from "src/app/components/user-list/user-list.component";
 
 @Component({
   selector: 'app-user-lists-page',
-  imports: [
+  imports: [IonContent, IonToolbar, IonHeader, IonTitle, IonButton, IonFabList, IonIcon, IonFabButton, IonFab,
     CommonModule,
     RouterModule,
     MatListModule,
@@ -29,9 +28,7 @@ import { UserListItemComponent } from "../../components/user-list-item/user-list
     MatMenuModule,
     MatButtonModule,
     NoListPageComponent,
-    MatFabMenuComponent,
-    UserListItemComponent
-],
+    UserListItemComponent, IonList, UserListComponent],
   templateUrl: './user-lists-page.component.html',
   styleUrl: './user-lists-page.component.scss',
 })

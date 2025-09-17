@@ -5,10 +5,11 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { IonButton } from "@ionic/angular/standalone";
 
 @Component({
   selector: 'app-join-list-dialog',
-  imports: [CommonModule, ReactiveFormsModule, MatDialogModule, MatFormFieldModule, MatButtonModule, MatInputModule],
+  imports: [IonButton, CommonModule, ReactiveFormsModule, MatDialogModule, MatFormFieldModule, MatButtonModule, MatInputModule],
   templateUrl: './join-list-dialog.component.html',
   styleUrl: './join-list-dialog.component.scss'
 })

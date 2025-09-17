@@ -7,27 +7,20 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
-import { MatInputModule } from '@angular/material/input';
+import { IonButton, IonButtons, IonCheckbox, IonContent, IonHeader, IonInput, IonItem, IonModal, IonTitle, IonToolbar, ModalController, IonList } from "@ionic/angular/standalone";
 
 @Component({
   selector: 'app-new-list-dialog',
-  imports: [
+  imports: [IonList, IonInput, IonCheckbox, IonItem, IonContent, IonButton, IonButtons, IonTitle, IonToolbar, IonModal, IonHeader,
     CommonModule,
     ReactiveFormsModule,
     FormsModule,
-    MatCheckboxModule,
-    MatDialogModule,
-    MatButtonModule,
-    MatInputModule,
   ],
   templateUrl: './new-list-dialog.component.html',
   styleUrl: './new-list-dialog.component.scss',
 })
 export class NewListDialogComponent {
-  readonly dialogRef = inject(MatDialogRef<NewListDialogComponent>);
+  readonly dialogRef = inject(ModalController);
   name: string = '';
   private: boolean = true;
   form: FormGroup;
@@ -46,6 +39,6 @@ export class NewListDialogComponent {
   }
 
   close(): void {
-    this.dialogRef.close();
+    this.dialogRef.dismiss(this.form.get('name')?.value);
   }
 }

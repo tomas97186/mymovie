@@ -1,136 +1,96 @@
 @let movie = this.movie.value(); @let isLoading = this.movie.isLoading();
 @if(isLoading) {
 <div class="loading-page">
-  <mat-spinner diameter="50"></mat-spinner>
+  <ion-spinner style="width: 100px;height: 100px" name="bubbles"></ion-spinner>
 </div>
 } @if(movie) { @let recommendations = this.recommendations.value(); @let trailer
 = this.trailer.value();
-<button mat-fab class="list-button" (click)="openListDialog()">
-  <mat-icon>add</mat-icon>
-</button>
-<button mat-icon-button class="back-button fixed" (click)="location.back()">
-  <mat-icon>chevron_left</mat-icon>
-</button>
-<div class="movie-details-container">
-  <app-movie-hero
-    [movie]="movie"
-    [hideDetailsButton]="true"
-    [hideDescription]="true"
-    [showPoster]="true"
-  ></app-movie-hero>
-  <div class="movie-info-container">
-    <div class="genre-container">
-      @for(genre of movie.genres; track genre.id) {
-      <div class="genre-tag">
-        <a
-          routerLink="/discovery/movie"
-          [queryParams]="{ with_genres: genre.id, title: genre.name }"
-        >
-          {{ genre.name }}
-        </a>
-      </div>
-      }
-    </div>
-
-    <!-- @if(director(); as director) {
-  <div class="director-container">
-    <p>
-      <span>Diretto da: </span>
-      <a class="director-link" routerLink="/discovery/movie" [queryParams]="{
-              with_crew: director.id,
-              title: 'Diretto da ' + director.name
-            }">{{ director.name }}</a>
-    </p>
-  </div>
-  <hr class="mx-3">
-  } -->
-    @if(!!movie.overview && movie.overview.length > 0) {
-    <div class="movie-overview mt-3">
-      <p>
-        {{
-          isOverviewExpanded
-            ? movie.overview
-            : (movie.overview | slice : 0 : 200) +
-              (movie.overview.length > 200 ? "..." : "")
-        }}
-        @if(movie.overview.length > 200) {
-        <button
-          class="see-more-btn"
-          mat-button
-          (click)="isOverviewExpanded = !isOverviewExpanded"
-        >
-          {{ isOverviewExpanded ? "Vedi meno" : "Vedi tutto" }}
-        </button>
+<ion-fab slot="fixed" vertical="bottom" horizontal="end">
+  <ion-fab-button (click)="openListDialog()" color>
+    <ion-icon name="add"></ion-icon>
+  </ion-fab-button>
+</ion-fab>
+<ion-fab slot="fixed" vertical="top" horizontal="start">
+  <ion-fab-button class="back-button" (click)="this.location.back()">
+    <ion-icon name="chevron-back"></ion-icon>
+  </ion-fab-button>
+</ion-fab>
+<ion-content>
+  <div class="movie-details-container">
+    <app-movie-hero [movie]="movie" [hideDetailsButton]="true" [hideDescription]="true"
+      [showPoster]="true"></app-movie-hero>
+    <div class="movie-info-container">
+      <div class="genre-container">
+        @for(genre of movie.genres; track genre.id) {
+        <div class="genre-tag">
+          <a routerLink="/discovery/movie" [queryParams]="{ with_genres: genre.id, title: genre.name }">
+            {{ genre.name }}
+          </a>
+        </div>
         }
-      </p>
-    </div>
-    <hr class="mx-3" />
-    } @if(trailer) {
-    <div class="trailer-container mt-4">
-      <h3 class="p-2">Trailer Ufficiale</h3>
-      <div class="text-center">
-        <iframe
-          class="trailer"
-          [src]="trailer"
-          title="YouTube video player"
-          frameborder="0"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowfullscreen
-        ></iframe>
       </div>
-    </div>
-    } @if(recommendations && recommendations.results.length > 0) {
-    <div class="related-movies mt-4 p-2">
-      <h3>Film Raccomandati</h3>
-      <app-movie-list
-        [movies]="recommendations!.results"
-        [isHorizontal]="true"
-      ></app-movie-list>
-    </div>
-    } @if(cast(); as cast) {
-    <div class="cast-container mt-2 p-2">
-      <h3>Cast</h3>
-      <div class="cast-list row mt-3">
-        @for (p of cast; let i = $index; track p.id) { @if(i < 6 ||
-        isCastExpanded) {
-        <div
-          class="cast-item col-6 col-sm-4 col-md-3"
-          routerLink="/discovery/movie"
-          [queryParams]="{ with_cast: p.id, title: 'Film con ' + p.name }"
-        >
-          @if(p.profile_path) {
-          <img
-            [src]="posterUrl + p.profile_path"
-            [alt]="p.name"
-            class="profile-picture"
-          />
-          } @else {
-          <div class="profile-picture-placeholder"></div>
-          }
-          <div class="actor-name">{{ p.name }}</div>
-          <div class="actor-role">{{ p.character }}</div>
+      
+      @if(!!movie.overview && movie.overview.length > 0) {
+      <div class="movie-overview mt-3">
+        <p>
+          {{
+          isOverviewExpanded
+          ? movie.overview
+          : (movie.overview | slice : 0 : 200) +
+          (movie.overview.length > 200 ? "..." : "")
+          }}
+        </p>
+        @if(movie.overview.length > 200) {
+        <ion-button class="see-more-btn" (click)="isOverviewExpanded = !isOverviewExpanded" fill="clear" size="small">
+          {{ isOverviewExpanded ? "Vedi meno" : "Vedi tutto" }}
+        </ion-button>
+        }
+      </div>
+      <hr class="mx-3" />
+      } @if(trailer) {
+      <div class="trailer-container mt-4">
+        <h3 class="p-2">Trailer Ufficiale</h3>
+        <div class="text-center">
+          <iframe class="trailer" [src]="trailer" title="YouTube video player" frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen></iframe>
+        </div>
+      </div>
+      } @if(recommendations && recommendations.results.length > 0) {
+      <div class="related-movies mt-4 p-2">
+        <h3>Film Raccomandati</h3>
+        <app-movie-list [movies]="recommendations!.results" [isHorizontal]="true"></app-movie-list>
+      </div>
+      } @if(cast(); as cast) {
+      <div class="cast-container mt-2 p-2">
+        <h3>Cast</h3>
+        <div class="cast-list row mt-3">
+          @for (p of cast; let i = $index; track p.id) { @if(i < 6 || isCastExpanded) { <div
+            class="cast-item col-6 col-sm-4 col-md-3" routerLink="/discovery/movie"
+            [queryParams]="{ with_cast: p.id, title: 'Film con ' + p.name }">
+            @if(p.profile_path) {
+            <img [src]="posterUrl + p.profile_path" [alt]="p.name" class="profile-picture" />
+            } @else {
+            <div class="profile-picture-placeholder"></div>
+            }
+            <div class="actor-name">{{ p.name }}</div>
+            <div class="actor-role">{{ p.character }}</div>
         </div>
         } }
       </div>
       @if(!isCastExpanded && cast.length > 6) {
-      <button
-        mat-button
-        (click)="isCastExpanded = true"
-        class="text-center w-100"
-      >
+      <ion-button size="small" fill="clear" (click)="isCastExpanded = true" expand="full">
         Mostra Tutti
-      </button>
+      </ion-button>
       } @if(isCastExpanded) {
-      <button
-        mat-button
-        (click)="isCastExpanded = false"
-        class="text-center w-100"
-      >
+      <ion-button size="small" fill="clear" (click)="isCastExpanded = false" expand="full">
         Mostra Meno
-      </button>
+      </ion-button>
       }
     </div>
     }
   </div>
-</div>
+  </div>
+
+</ion-content>
 }

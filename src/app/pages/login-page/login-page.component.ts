@@ -14,14 +14,14 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { AuthService } from '../../services/auth.service';
 import { Subscription } from 'rxjs';
-
+import { IonButton, IonIcon } from "@ionic/angular/standalone";
 
 @Component({
   selector: 'app-login',
   standalone: true,
   templateUrl: './login-page.component.html',
   styleUrls: ['./login-page.component.scss'],
-  imports: [
+  imports: [IonIcon, IonButton, 
     CommonModule,
     ReactiveFormsModule,
     // Material

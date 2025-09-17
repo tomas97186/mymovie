@@ -6,16 +6,17 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { SearchItemModel } from '../../models/search-item.model';
 import { SearchResultsModel } from '../../models/search-results.model';
 import { CommonModule, Location } from '@angular/common';
+import { IonHeader, IonToolbar, IonTitle, IonBackButton, IonButtons, IonContent, IonButton, IonIcon, IonFabButton, IonFab } from "@ionic/angular/standalone";
 
 @Component({
   selector: 'app-movie-list-dynamic',
-  imports: [
+  imports: [IonIcon, IonButton, IonButtons, IonBackButton, IonTitle, IonToolbar, IonHeader,
     CommonModule,
     MovieListComponent,
     MatIconModule,
     MatButtonModule,
     MatToolbarModule,
-  ],
+    IonHeader, IonContent, IonFabButton, IonFab],
   templateUrl: './movie-list-dynamic.component.html',
   styleUrl: './movie-list-dynamic.component.scss',
 })

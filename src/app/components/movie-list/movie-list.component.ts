@@ -1,35 +1,30 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, input, model, output } from '@angular/core';
+import { Component, effect, input, model, output, ViewChild } from '@angular/core';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { Router } from '@angular/router';
+import { InfiniteScrollCustomEvent, IonInfiniteScroll, IonInfiniteScrollContent, } from "@ionic/angular/standalone";
 import { SearchItemModel } from '../../models/search-item.model';
 import { MovieCardComponent } from "../movie-card/movie-card.component";
 
 @Component({
   selector: 'app-movie-list',
-  imports: [CommonModule, MatGridListModule, MovieCardComponent, MatProgressSpinnerModule],
+  imports: [IonInfiniteScrollContent, IonInfiniteScroll, CommonModule, MatGridListModule, MovieCardComponent, MatProgressSpinnerModule],
   templateUrl: './movie-list.component.html',
   styleUrl: './movie-list.component.scss'
 })
 export class MovieListComponent {
+  private infiniteScroll?: HTMLIonInfiniteScrollElement;
 
   movies = model<SearchItemModel[]>();
   isLoading = model<boolean>(false);
   loadData = output();
   isHorizontal = model<boolean>(false);
   paddingTop = input<number>();
-  
-  ngOnInit() {
-    if (!this.isHorizontal()) {
-      window.addEventListener('scroll', this.scroll, true);
-    }
-  }
+  private stopLoading = effect(() => (!this.isLoading()) ? this.infiniteScroll?.complete() : undefined);
 
-  ngOnDestroy() {
-    if (!this.isHorizontal()) {
-      window.removeEventListener('scroll', this.scroll, true);
-    }
+  loadMore(event: InfiniteScrollCustomEvent) {
+    this.loadData.emit();
+    this.infiniteScroll ??= event.target;
   }
 
   scroll = (event: any): void => {
@@ -41,13 +36,5 @@ export class MovieListComponent {
       this.loadData.emit();
     }
   };
-
-  // @HostListener("window:scroll", ['$event'])
-  // onScroll(): void {
-  //   console.log('Scroll event detected:', window.innerHeight, window.scrollY, document.body.offsetHeight);
-  //   if (!this.isHorizontal() && (window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
-  //     this.loadData.emit();
-  //   }
-  // }
 
 }

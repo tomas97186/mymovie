@@ -1,24 +1,21 @@
-<h2 mat-dialog-title>{{ data.title }}</h2>
-
-<mat-dialog-content>
-  <form [formGroup]="form" class="form">
-    @if(data.description) {
-    <p>{{ data.description }}</p>
-    }
-    <mat-form-field class="w-100">
-      <mat-label>{{ data.field }}</mat-label>
-      <input matInput formControlName="name" />
-    </mat-form-field>
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="dialogRef.dismiss()" size="small">Annulla</ion-button>
+    </ion-buttons>
+    <ion-title>{{ data.title }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="close()" color="success" [disabled]="!form.valid">Conferma</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+<div class="p-3 h-100">
+  @if(data.description) {
+  <p>{{ data.description }}</p>
+  }
+  <form [formGroup]="form">
+    <ion-item>
+      <ion-input label="{{data.field}}" labelPlacement="stacked" type="text" [formControlName]="'name'"></ion-input>
+    </ion-item>
   </form>
-</mat-dialog-content>
-<mat-dialog-actions>
-  <button mat-button (click)="close()">Annulla</button>
-  <button
-    mat-button
-    [mat-dialog-close]="form.value.name"
-    [disabled]="!form.valid"
-    cdkFocusInitial
-  >
-    Conferma
-  </button>
-</mat-dialog-actions>
+</div>

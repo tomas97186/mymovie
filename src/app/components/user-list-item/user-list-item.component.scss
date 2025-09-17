@@ -1,26 +1,23 @@
-mat-list-item {
+.list-item {
   background-color: var(--card-background-color);
   width: 100%;
   border-radius: 10px;
   height: min-content !important;
   margin-bottom: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: .6rem 1rem;
 }
 
-span[matListItemTitle] {
-  font-size: 1.1rem;
-}
 
-span[matListItemLine] {
+.list-meta {
   color: gray;
   font-size: 0.8rem;
-}
-
-div[matListItemLine] {
   display: flex;
   align-items: center;
-  margin-top: 1rem;
-  margin-bottom: 1rem;
 }
+
 
 ::ng-deep div[matlistitemmeta] {
   align-self: center !important;

@@ -3,62 +3,62 @@ this.listDetails.isLoading(); @let members = this.members.value()!;
 
 <div class="list-details-container">
   @if(isLoading) {
-  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  <ion-progress-bar type="indeterminate"></ion-progress-bar>
   } @else if(!!details && !!details.id) { @let moviesToWatch =
   this.moviesToWatch.value(); @let watchedMovies = this.watchedMovies.value();
-  <mat-toolbar>
-    <button (click)="location.back()" mat-icon-button class="example-icon">
-      <mat-icon>chevron_left</mat-icon>
-    </button>
-    <div class="movie-title">
-      <span>{{ details.name }}</span>
-    </div>
-
-    <button
-      class="ms-auto"
-      mat-icon-button
-      (click)="openUpdateDialog()"
-      aria-label="edit-button"
-    >
-      <mat-icon>edit</mat-icon>
-    </button>
-  </mat-toolbar>
-  <mat-tab-group preserveContent dynamicHeight="true">
-    <mat-tab label="Da Vedere">
-      @if(moviesToWatch && moviesToWatch.length > 0) {
-      <app-movie-list [movies]="moviesToWatch"></app-movie-list>
-      } @else {
-      <div class="no-movies-banner">
-        <mat-icon>sentiment_dissatisfied</mat-icon
-        ><span>Nessun film da vedere.</span
-        ><span style="font-size: 0.9rem"
-          >Cerca un film da aggiungere alla lista.</span
-        >
-      </div>
-      }
-    </mat-tab>
-    <mat-tab label="Visti">
-      @if(watchedMovies && watchedMovies.length > 0) {
-      <app-movie-list [movies]="watchedMovies"></app-movie-list>
-      } @else {
-      <div class="no-movies-banner">
-        <mat-icon>sentiment_dissatisfied</mat-icon
-        ><span>Nessun film ancora visto.</span>
-      </div>
-      }
-    </mat-tab>
-    <mat-tab label="Impostazioni">
-      <app-list-page-settings
-        [details]="details"
-        [members]="members"
-        (exitListFn)="exitList()"
-        (updateListNameFn)="openUpdateDialog()"
-      ></app-list-page-settings>
-    </mat-tab>
-  </mat-tab-group>
+  <ion-header>
+    <ion-toolbar>
+      <ion-buttons slot="start">
+        <ion-back-button default-href="#"></ion-back-button>
+      </ion-buttons>
+      <ion-title>{{details.name}}</ion-title>
+      <ion-buttons slot="end">
+        <ion-button (click)="openUpdateDialog()">
+          <ion-icon slot="icon-only" name="pencil"></ion-icon>
+        </ion-button>
+      </ion-buttons>
+    </ion-toolbar>
+    <ion-toolbar>
+      <ion-segment value="da_vedere">
+        <ion-segment-button value="da_vedere" content-id="da_vedere">
+          <ion-label class="small">Da Vedere</ion-label>
+        </ion-segment-button>
+        <ion-segment-button value="visti" content-id="visti">
+          <ion-label class="small">Visti</ion-label>
+        </ion-segment-button>
+        <ion-segment-button value="settings" content-id="settings">
+          <ion-label class="small">Impostazioni</ion-label>
+        </ion-segment-button>
+      </ion-segment>
+    </ion-toolbar>
+  </ion-header>
+    <ion-segment-view>
+      <ion-segment-content id="da_vedere">
+        @if(moviesToWatch && moviesToWatch.length > 0) {
+        <app-movie-list [movies]="moviesToWatch"></app-movie-list>
+        } @else {
+        <div class="no-movies-banner">
+          <ion-icon name="sentiment_dissatisfied"></ion-icon><span>Nessun film da vedere.</span><span
+            style="font-size: 0.9rem">Cerca un film da aggiungere alla lista.</span>
+        </div>
+        }
+      </ion-segment-content>
+      <ion-segment-content id="visti">
+        @if(watchedMovies && watchedMovies.length > 0) {
+        <app-movie-list [movies]="watchedMovies"></app-movie-list>
+        } @else {
+        <div class="no-movies-banner">
+          <ion-icon name="sentiment_dissatisfied"></ion-icon><span>Nessun film ancora visto.</span>
+        </div>
+        }
+      </ion-segment-content>
+      <ion-segment-content id="settings">
+        <app-list-page-settings [details]="details" [members]="members" (exitListFn)="exitList()"
+          (updateListNameFn)="openUpdateDialog()"></app-list-page-settings></ion-segment-content>
+    </ion-segment-view>
   } @else {
   <div class="list-error">
-    <mat-icon>sentiment_dissatisfied</mat-icon>
+    <ion-icon name="sentiment_dissatisfied"></ion-icon>
     <h4>Errore! Lista non trovata.</h4>
   </div>
   }

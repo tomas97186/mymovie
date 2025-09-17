@@ -27,7 +27,7 @@ import { ProxyInterceptor } from './interceptors/proxy.interceptor';
 export const appConfig: ApplicationConfig = {
   providers: [
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
-    provideIonicAngular(),
+    provideIonicAngular({ useSetInputAPI: true }),
     ProxyInterceptor,
     provideHttpClient(
       withInterceptorsFromDi()

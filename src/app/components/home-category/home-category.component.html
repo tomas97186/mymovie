@@ -1,7 +1,8 @@
 @if(settings(); as settings) {
 <div class="section-header">
     <h4>{{settings.title}}</h4>
-    <button mat-button (click)="navigateToAll()">Vedi Altri</button>
+    <ion-button (click)="navigateToAll()" fill="clear">Vedi Altri<ion-icon
+            name="chevron-forward" slot="end"></ion-icon></ion-button>
 </div>
 @if(settings.data$ | async; as data) {
 <app-movie-list [movies]="data.results" [isHorizontal]="true"></app-movie-list>

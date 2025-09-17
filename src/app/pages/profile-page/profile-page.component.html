@@ -14,14 +14,14 @@
     </div>
   </div>
   <div class="actions text-center">
-    <button mat-button class="action-button" (click)="changeName(userInfo!.username)">
-      <mat-icon>edit</mat-icon>Modifica Username
-    </button>
-    <button mat-button class="action-button" (click)="changePassword()">
-      <mat-icon>password</mat-icon>Modifica Password
-    </button>
-    <button mat-button class="danger-text mt-2" (click)="signout()">
-      <mat-icon>logout</mat-icon>Logout
-    </button>
+    <ion-button (click)="changeName(userInfo!.username)" color="light">
+      <ion-icon name="pencil" slot="start" class="me-2"></ion-icon>Modifica Username
+    </ion-button>
+    <ion-button (click)="changePassword()" color="light">
+      <ion-icon name="ellipsis-horizontal-outline" slot="start" class="me-2"></ion-icon>Modifica Password
+    </ion-button>
+    <ion-button (click)="signout()" fill="clear" color="danger">
+      <ion-icon name="log-out" slot="start" class="me-2"></ion-icon>Logout
+    </ion-button>
   </div>
 </div>

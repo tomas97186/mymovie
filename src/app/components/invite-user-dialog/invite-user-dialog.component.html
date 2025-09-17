@@ -1,28 +1,17 @@
-<h2 mat-dialog-title>Invita utente</h2>
-<mat-dialog-content>
-  <p class="description">Inserisci lo username dell'utente da invitare.</p>
-  <form [formGroup]="form">
-    <mat-form-field class="w-100">
-      <mat-label>Username</mat-label>
-      <input matInput formControlName="name" />
-    </mat-form-field>
-  </form>
-  @if(form.get('name')!.hasError('pattern')) {
-  <mat-error
-    >Lo username può contenere solo il seguente carattere speciale: _</mat-error
-  >
-  }
-  <!-- <mat-checkbox [(ngModel)]="private" labelPosition="before">Privata</mat-checkbox> -->
-</mat-dialog-content>
-<mat-dialog-actions>
-  <button
-    mat-button
-    class="action-button"
-    [mat-dialog-close]="{ name: form.value.name, private: private }"
-    [disabled]="!form.valid"
-    cdkFocusInitial
-  >
-    Conferma
-  </button>
-  <button mat-button class="w-100 mt-2" (click)="close()">Annulla</button>
-</mat-dialog-actions>
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="dialogRef.dismiss()" size="small">Annulla</ion-button>
+    </ion-buttons>
+    <ion-title>Invita Utente</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="close()" color="success" [disabled]="!usernameControl.valid">Conferma</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+<div class="p-3 h-100">
+  <ion-item>
+    <ion-input label="Username" labelPlacement="stacked" type="text" placeholder="Username utente"
+      [formControl]="usernameControl"></ion-input>
+  </ion-item>
+</div>
