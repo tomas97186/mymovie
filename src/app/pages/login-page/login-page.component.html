@@ -1,56 +1,86 @@
 <div class="login-wrap">
-    <div class="title mb-2">
-        <span class="title-1">M</span><span class="title-2">ovie</span>
-        <span class="title-1"> N</span><span class="title-2">ights</span>
+  <div class="title mb-2">
+    <span class="title-1">M</span><span class="title-2">ovie</span>
+    <span class="title-1"> N</span><span class="title-2">ights</span>
+  </div>
+  <div class="login-container">
+    <div class="brand">
+      <h1>Accedi</h1>
+      <p class="subtitle">Inserisci le tue credenziali per continuare</p>
     </div>
-    <div class="login-container">
-        <div class="brand">
-            <h1>Accedi</h1>
-            <p class="subtitle">Inserisci le tue credenziali per continuare</p>
-        </div>
 
+    <form [formGroup]="form" (ngSubmit)="submit()" class="form">
+      <mat-form-field appearance="outline" class="full">
+        <mat-label>Email</mat-label>
+        <input
+          matInput
+          type="email"
+          formControlName="email"
+          placeholder="tuo@email.com"
+          autocomplete="email"
+        />
+        <ion-icon matSuffix fontIcon="mail"></ion-icon>
+        <mat-error *ngIf="form.controls['email'].hasError('required')"
+          >Email obbligatoria</mat-error
+        >
+        <mat-error *ngIf="form.controls['email'].hasError('email')"
+          >Formato email non valido</mat-error
+        >
+      </mat-form-field>
 
-        <form [formGroup]="form" (ngSubmit)="submit()" class="form">
-            <mat-form-field appearance="outline" class="full">
-                <mat-label>Email</mat-label>
-                <input matInput type="email" formControlName="email" placeholder="tuo@email.com" autocomplete="email" />
-                <ion-icon matSuffix fontIcon="mail"></ion-icon>
-                <mat-error *ngIf="form.controls['email'].hasError('required')">Email obbligatoria</mat-error>
-                <mat-error *ngIf="form.controls['email'].hasError('email')">Formato email non valido</mat-error>
-            </mat-form-field>
+      <mat-form-field appearance="outline" class="full">
+        <mat-label>Password</mat-label>
+        <input
+          matInput
+          [type]="hidePassword() ? 'password' : 'text'"
+          formControlName="password"
+          placeholder="Minimo 8 caratteri"
+          autocomplete="current-password"
+        />
+        <ion-button
+          matSuffix
+          type="button"
+          (click)="hidePassword.set(!hidePassword())"
+          [attr.aria-label]="
+            hidePassword() ? 'Mostra password' : 'Nascondi password'
+          "
+        >
+          <ion-icon
+            [name]="hidePassword() ? 'visibility' : 'visibility_off'"
+          ></ion-icon>
+        </ion-button>
+        <mat-error *ngIf="form.controls['password'].hasError('required')"
+          >Password obbligatoria</mat-error
+        >
+        <mat-error *ngIf="form.controls['password'].hasError('minlength')"
+          >Almeno 8 caratteri</mat-error
+        >
+      </mat-form-field>
 
+      <!-- <div class="row between">
+        <mat-checkbox formControlName="remember">Ricordami</mat-checkbox>
+        <a class="link" href="/forgot">Password dimenticata?</a>
+      </div> -->
 
-            <mat-form-field appearance="outline" class="full">
-                <mat-label>Password</mat-label>
-                <input matInput [type]="hidePassword() ? 'password' : 'text'" formControlName="password"
-                    placeholder="Minimo 8 caratteri" autocomplete="current-password" />
-                <ion-button matSuffix type="button" (click)="hidePassword.set(!hidePassword())"
-                    [attr.aria-label]="hidePassword() ? 'Mostra password' : 'Nascondi password'">
-                    <ion-icon [name]="hidePassword() ? 'visibility' : 'visibility_off'"></ion-icon>
-                </ion-button>
-                <mat-error *ngIf="form.controls['password'].hasError('required')">Password obbligatoria</mat-error>
-                <mat-error *ngIf="form.controls['password'].hasError('minlength')">Almeno 8 caratteri</mat-error>
-            </mat-form-field>
+      <ion-button
+        color="primary"
+        class="full"
+        type="submit"
+        [disabled]="form.invalid || loading()"
+      >
+        <ng-container *ngIf="!loading(); else loadingTpl">Accedi</ng-container>
+      </ion-button>
+      <ng-template #loadingTpl>
+        <span class="loading">
+          <mat-progress-spinner
+            diameter="20"
+            mode="indeterminate"
+          ></mat-progress-spinner>
+          <span>Accesso in corso...</span>
+        </span>
+      </ng-template>
+    </form>
 
-
-            <div class="row between">
-                <mat-checkbox formControlName="remember">Ricordami</mat-checkbox>
-                <!-- <a class="link" href="/forgot">Password dimenticata?</a> -->
-            </div>
-
-
-            <ion-button color="primary" class="full submit" [disabled]="form.invalid || loading()">
-                <ng-container *ngIf="!loading(); else loadingTpl">Accedi</ng-container>
-            </ion-button>
-            <ng-template #loadingTpl>
-                <span class="loading">
-                    <mat-progress-spinner diameter="20" mode="indeterminate"></mat-progress-spinner>
-                    <span>Accesso in corso...</span>
-                </span>
-            </ng-template>
-        </form>
-
-
-        <!-- <p class="hint">Utente demo: <code>demo.prova.com</code> / <code>password123</code></p> -->
-    </div>
+    <!-- <p class="hint">Utente demo: <code>demo.prova.com</code> / <code>password123</code></p> -->
+  </div>
 </div>
