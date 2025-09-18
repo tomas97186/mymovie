@@ -21,17 +21,17 @@
     </div>
     } } @if(userLists$ | async; as userLists){ @if(userLists.length > 0) {
     <app-user-list [userList]="userLists"></app-user-list>
-    <ion-fab slot="fixed" horizontal="end" vertical="bottom">
+    <ion-fab slot="fixed" horizontal="end" vertical="bottom" >
       <ion-fab-button>
         <ion-icon name="add"></ion-icon>
       </ion-fab-button>
       <ion-fab-list side="top">
-        <ion-button>
-          <ion-icon name="person-add"></ion-icon>
+        <ion-button (click)="openJoinDialog()">
+          <ion-icon name="people-outline" slot="start"></ion-icon>
           Unisciti ad una lista
         </ion-button>
-        <ion-button>
-          <ion-icon name="add"></ion-icon>
+        <ion-button (click)="openCreateDialog()">
+          <ion-icon name="add" slot="start"></ion-icon>
           Crea una lista
         </ion-button>
       </ion-fab-list>

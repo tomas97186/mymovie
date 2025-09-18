@@ -1,54 +1,12 @@
-::ng-deep .mat-mdc-dialog-surface.mdc-dialog__surface {
-  background: #211F26 !important;
-}
-
-mat-dialog-content {
-  padding: 1rem !important;
-}
-
-.list-container {
+ion-list {
   display: flex;
   flex-direction: column;
   gap: .6rem;
+  background: transparent;
 }
 
-.list-item {
-  width: 100%;
-  background: #464151;
-  border-radius: 10px;
-  margin-bottom: .2rem;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: .6rem 1rem;
-
-  & h5 {
-    margin-bottom: 0px;
-  }
-
-  & p.list-meta {
-    color: gray;
-    font-size: .8rem;
-    margin-bottom: 0px;
-  }
-}
-
-div[matListItemMeta] {
-  justify-content: center !important;
-  display: flex !important;
-  align-items: center !important;
-  height: 100% !important;
-}
-
-button[mat-dialog-close] {
-  position: absolute;
-  top: 12px;
-  right: 20px;
-  z-index: 1000;
-}
-
-[mat-dialog-title] {
-  width: 90%;
+ion-item {
+  --border-radius: 10px;
 }
 
 .loading-placeholder {

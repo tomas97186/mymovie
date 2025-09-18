@@ -51,3 +51,8 @@
 mat-toolbar {
   background: var(--card-background-color) !important;
 }
+
+
+ion-segment-view {
+  height: calc(100vh - 56px - 56px - 56px) !important;
+}

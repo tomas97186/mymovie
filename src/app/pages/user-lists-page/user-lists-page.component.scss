@@ -22,8 +22,11 @@
   color: gray;
 }
 
-.section-description {
-  color: gray;
-  text-align: center;
-  margin-top: 1rem;
+ion-fab[horizontal="end"] ion-fab-list {
+  justify-self: end;
+  align-items: end;
+
+  & ion-button {
+    width: max-content;
+  }
 }

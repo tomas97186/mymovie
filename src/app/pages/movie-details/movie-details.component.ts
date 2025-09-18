@@ -5,7 +5,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { ToastService } from 'src/app/services/toast.service';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import {
@@ -55,7 +55,7 @@ export class MovieDetailsComponent {
   private route = inject(ActivatedRoute);
   private destroyRef = inject(DestroyRef);
   private _sanitizer = inject(DomSanitizer);
-  private _snackBar = inject(MatSnackBar);
+  private _snackBar = inject(ToastService);
   public location = inject(Location);
   private movieService = inject(MovieListService);
   private dialog = inject(ModalController);
@@ -152,14 +152,14 @@ export class MovieDetailsComponent {
     this.movieService
       .removeMovie(movie.id)
       .then(() => {
-        this._snackBar.open('Film rimosso dalla lista.', 'Chiudi', {
+        this._snackBar.open('Film rimosso dalla lista.', {
           duration: 3000,
         });
       })
       .catch((error) => {
         this._snackBar.open(
           'Errore nel rimuover il film alla lista',
-          'Chiudi',
+         
           {
             duration: 3000,
           }
@@ -172,14 +172,14 @@ export class MovieDetailsComponent {
     this.movieService
       .setMovieAsWatched(movie.id)
       .then(() => {
-        this._snackBar.open('Film segnato come visto.', 'Chiudi', {
+        this._snackBar.open('Film segnato come visto.', {
           duration: 3000,
         });
       })
       .catch((error) => {
         this._snackBar.open(
           'Errore! Impossibile segnare il film come visto.',
-          'Chiudi',
+         
           {
             duration: 3000,
           }
@@ -192,7 +192,8 @@ export class MovieDetailsComponent {
     const dialogRef = await this.dialog.create({
       component: MovieListsDialogComponent,
       componentProps: { movie: this.movie.value() },
-      initialBreakpoint: .5
+      initialBreakpoint: .5,
+      breakpoints: [0,.25,.5],
     });
     dialogRef.present();
   }

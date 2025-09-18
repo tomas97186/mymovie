@@ -7,11 +7,11 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { IonButton, IonButtons, IonCheckbox, IonContent, IonHeader, IonInput, IonItem, IonModal, IonTitle, IonToolbar, ModalController, IonList } from "@ionic/angular/standalone";
+import { IonButton, IonButtons, IonCheckbox, IonContent, IonHeader, IonInput, IonItem, IonList, IonModal, IonTitle, IonToolbar, ModalController, IonIcon } from "@ionic/angular/standalone";
 
 @Component({
   selector: 'app-new-list-dialog',
-  imports: [IonList, IonInput, IonCheckbox, IonItem, IonContent, IonButton, IonButtons, IonTitle, IonToolbar, IonModal, IonHeader,
+  imports: [IonIcon, IonList, IonInput, IonCheckbox, IonItem, IonContent, IonButton, IonButtons, IonTitle, IonToolbar, IonModal, IonHeader,
     CommonModule,
     ReactiveFormsModule,
     FormsModule,
@@ -28,7 +28,7 @@ export class NewListDialogComponent {
   constructor(private fb: FormBuilder) {
     this.form = this.fb.group({
       name: [
-        '',
+        null,
         [
           Validators.required,
           Validators.minLength(5),
@@ -39,6 +39,6 @@ export class NewListDialogComponent {
   }
 
   close(): void {
-    this.dialogRef.dismiss(this.form.get('name')?.value);
+    this.dialogRef.dismiss(this.form.value);
   }
 }

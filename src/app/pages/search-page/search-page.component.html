@@ -3,19 +3,14 @@
 <div class="search-page-container">
   <div class="header">
     @if(this.searchQuery()) {
-    <ion-button ion-icon-button class="back-button" @showBackButton (click)="location.back()">
-      <ion-icon name="chevron_left"></ion-icon>
+    <ion-button @showBackButton (click)="location.back()" class="back-button" shape="round">
+      <ion-icon slot="icon-only" name="chevron-back"></ion-icon>
     </ion-button>
     }
     <form (ngSubmit)="search()" [formGroup]="queryForm" class="search-form">
-      <mat-form-field appearance="fill" class="search-field" floatLabel="auto">
-        <input matInput placeholder="Cerca..." formControlName="query" />
-        @if(!!queryForm.get('query')?.value) {
-        <ion-icon matSuffix (click)="this.queryForm.reset()" name="cancel"></ion-icon>
-        } @else {
-        <ion-icon matSuffix name="search"></ion-icon>
-        }
-      </mat-form-field>
+      <ion-input class="search-field" placeholder="Cerca..." formControlName="query" [clearInput]="true">
+        <ion-icon slot="end" name="search"></ion-icon>
+      </ion-input>
     </form>
   </div>
 
@@ -31,7 +26,7 @@
   <div class="no-search">
     <div class="row genre-list">
       @for(genre of genres | async; track genre[0]) {
-      <ion-button  (click)="navigateToGenre({ id: genre[0], name: genre[1] })" class="col-6 col-sm-4 mx-0 mt-2"
+      <ion-button (click)="navigateToGenre({ id: genre[0], name: genre[1] })" class="col-6 col-sm-4 mx-0 mt-2"
         style="color: white" color="light">
         {{ genre[1] }}
       </ion-button>

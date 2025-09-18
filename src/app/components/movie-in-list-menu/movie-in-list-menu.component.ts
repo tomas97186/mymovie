@@ -7,7 +7,7 @@ import { MovieListService } from '../../services/movie-list.service';
 import { MatDialog } from '@angular/material/dialog';
 import { MAT_BOTTOM_SHEET_DATA, MatBottomSheet } from '@angular/material/bottom-sheet';
 import { MovieModel } from '../../models/movie.model';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { ToastService } from 'src/app/services/toast.service';
 
 @Component({
   selector: 'app-movie-in-list-menu',
@@ -32,12 +32,12 @@ export class MovieInListMenuComponent {
 
   removeMovieFromList(): void {
     this.movieService.removeMovie(this.data.movie.id, this.data.listId).then(() => {
-      this._snackBar.open('Film rimosso dalla lista.', 'Chiudi', {
+      this._snackBar.open('Film rimosso dalla lista.', {
         duration: 3000,
       });
       this.bottomSheet.dismiss();
     }).catch(error => {
-      this._snackBar.open('Errore nel rimuover il film alla lista', 'Chiudi', {
+      this._snackBar.open('Errore nel rimuover il film alla lista', {
         duration: 3000,
       });
       console.error('Errore nel rimuovere il film alla lista:', error);
@@ -46,12 +46,12 @@ export class MovieInListMenuComponent {
 
   setAsWatched(): void {
     this.movieService.setMovieAsWatched(this.data.movie.id, this.data.listId).then(() => {
-      this._snackBar.open('Film impostato come visto.', 'Chiudi', {
+      this._snackBar.open('Film impostato come visto.', {
         duration: 3000,
       });
       this.bottomSheet.dismiss();
     }).catch(error => {
-      this._snackBar.open('Errore! Impossibile impostare il film come visto.', 'Chiudi', {
+      this._snackBar.open('Errore! Impossibile impostare il film come visto.', {
         duration: 3000,
       });
       console.error('Errore nel segnare il film come visto', error);

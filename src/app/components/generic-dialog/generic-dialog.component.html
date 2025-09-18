@@ -1,8 +1,6 @@
 <ion-header>
   <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-button (click)="dialogRef.dismiss()" size="small">Annulla</ion-button>
-    </ion-buttons>
+
     <ion-title>{{ data.title }}</ion-title>
     <ion-buttons slot="end">
       <ion-button (click)="close()" color="success" [disabled]="!form.valid">Conferma</ion-button>
@@ -15,7 +13,7 @@
   }
   <form [formGroup]="form">
     <ion-item>
-      <ion-input label="{{data.field}}" labelPlacement="stacked" type="text" [formControlName]="'name'"></ion-input>
+      <ion-input label="{{data.field}}"  type="text" [formControlName]="'name'"></ion-input>
     </ion-item>
   </form>
 </div>

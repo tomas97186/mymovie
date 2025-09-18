@@ -62,24 +62,6 @@ body {
   background: #141218;
 }
 
-.search-field {
-  @include mat.form-field-overrides((filled-container-color: var(--card-background-color),
-      filled-input-text-color: #dcdada,
-      filled-input-text-placeholder-color: #b3b3b3,
-      trailing-icon-color: #b3b3b3,
-      filled-container-shape: 20px,
-      filled-focus-active-indicator-height: 0px,
-    ));
-}
-
-.search-field .mdc-text-field--filled {
-  border-radius: 20px;
-}
-
-.search-field mat-mdc-form-field-subscript-wrapper {
-  display: none;
-}
-
 .header {
   display: flex;
   position: sticky;
@@ -186,10 +168,11 @@ button.action-button {
   }
 }
 
-ion-fab-button.back-button {
+.back-button {
   // backdrop-filter: blur(5.1px);
   -webkit-backdrop-filter: blur(5.1px);
   --background: rgba(74, 74, 74, 0.9);
+  --border-radius: 50% !important;
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
 }
 
@@ -234,7 +217,7 @@ ion-button {
 
 ion-tab-bar {
   border: none;
-  background: transparent;
+  --background: #141218;
 
   & ion-tab-button {
     background: transparent;
@@ -250,4 +233,10 @@ ion-header.glass-effect {
     backdrop-filter: blur(5.1px);
     -webkit-backdrop-filter: blur(5.1px);
   }
+}
+
+.section-description {
+  color: gray;
+  text-align: center;
+  margin-top: 1rem;
 }

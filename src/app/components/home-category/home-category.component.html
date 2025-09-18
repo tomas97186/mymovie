@@ -1,11 +1,11 @@
 @if(settings(); as settings) {
 <div class="section-header">
     <h4>{{settings.title}}</h4>
-    <ion-button (click)="navigateToAll()" fill="clear">Vedi Altri<ion-icon
-            name="chevron-forward" slot="end"></ion-icon></ion-button>
+    <ion-button (click)="navigateToAll()" fill="clear">Vedi Altri<ion-icon name="chevron-forward"
+            slot="end"></ion-icon></ion-button>
 </div>
 @if(settings.data$ | async; as data) {
-<app-movie-list [movies]="data.results" [isHorizontal]="true"></app-movie-list>
+<app-movie-list [movies]="data.results" [isHorizontal]="true" [total]="data.results.length"></app-movie-list>
 } @else {
 <div class="placeholder-container">
     @for(n of [].constructor(10); track $index)

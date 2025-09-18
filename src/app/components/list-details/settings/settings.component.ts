@@ -4,15 +4,14 @@ import { Component, inject, input, output } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { IonButton, IonIcon, IonItem, IonLabel, IonList, IonNote, ModalController } from "@ionic/angular/standalone";
-import { first, Observable } from 'rxjs';
+import { Observable } from 'rxjs';
+import { ToastService } from 'src/app/services/toast.service';
 import { InfoListModel } from '../../../models/movie-list.model';
 import { UserModel } from '../../../models/user.model';
 import { AuthService } from '../../../services/auth.service';
 import { MovieListService } from '../../../services/movie-list.service';
-import { ConfirmDialogComponent } from '../../confirm-dialog/confirm-dialog.component';
 import { InviteUserDialogComponent } from '../../invite-user-dialog/invite-user-dialog.component';
 
 @Component({
@@ -29,7 +28,7 @@ import { InviteUserDialogComponent } from '../../invite-user-dialog/invite-user-
 })
 export class SettingsComponent {
   authService = inject(AuthService);
-  snackBar = inject(MatSnackBar);
+  snackBar = inject(ToastService);
   private dialog = inject(ModalController)
   router = inject(Router);
   listService = inject(MovieListService);
@@ -40,7 +39,7 @@ export class SettingsComponent {
   updateListNameFn = output<void>();
 
   copyToClipboardNotification() {
-    this.snackBar.open('Codice della lista copiato negli appunti!', 'Chiudi', {
+    this.snackBar.open('Codice della lista copiato negli appunti!', {
       duration: 3000,
     });
   }
@@ -54,18 +53,18 @@ export class SettingsComponent {
         .inviteToList(this.details().id!, data)
         .then((res) => {
           if (!res) {
-            this.snackBar.open(`L'utente ${data} non  esiste oppure è già in lista.`, 'Chiudi', {
+            this.snackBar.open(`L'utente ${data} non  esiste oppure è già in lista.`, {
               duration: 3000,
             })
           } else {
-            this.snackBar.open('Invito inviato con successo.', 'Chiudi', {
+            this.snackBar.open('Invito inviato con successo.', {
               duration: 3000,
             });
           }
         })
         .catch((error) => {
           console.error('Error invite:', error);
-          this.snackBar.open("Errore nell'invio dell'invito.", 'Chiudi', {
+          this.snackBar.open("Errore nell'invio dell'invito.", {
             duration: 3000,
           });
         });
@@ -88,7 +87,7 @@ export class SettingsComponent {
     //       this.listService
     //         .deleteList(this.details().id)
     //         .then(() => {
-    //           this.snackBar.open(' Lista eliminata con successo.', 'Chiudi', {
+    //           this.snackBar.open(' Lista eliminata con successo.', {
     //             duration: 3000,
     //           });
     //           this.router.navigate(['/lists']);
@@ -97,7 +96,7 @@ export class SettingsComponent {
     //           console.error('Error delete list:', error);
     //           this.snackBar.open(
     //             "Errore nell'eliminazione della lista.",
-    //             'Chiudi',
+    //            
     //             {
     //               duration: 3000,
     //             }

@@ -1,7 +1,0 @@
-<div class="movies-container">
-    @if(currentList.length > 0) {
-    <app-movie-list [movies]="currentList" (loadData)="loadMoreMovies()" class="w-100"
-        [isLoading]="result.isLoading()"></app-movie-list>
-    }
-
-</div>

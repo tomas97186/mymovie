@@ -15,13 +15,14 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { AuthService } from '../../services/auth.service';
 import { Subscription } from 'rxjs';
 import { IonButton, IonIcon } from "@ionic/angular/standalone";
+import { ToastService } from 'src/app/services/toast.service';
 
 @Component({
   selector: 'app-login',
   standalone: true,
   templateUrl: './login-page.component.html',
   styleUrls: ['./login-page.component.scss'],
-  imports: [IonIcon, IonButton, 
+  imports: [IonIcon, IonButton,
     CommonModule,
     ReactiveFormsModule,
     // Material
@@ -46,7 +47,7 @@ export class LoginPage {
     private fb: FormBuilder,
     private auth: AuthService,
     private router: Router,
-    private snack: MatSnackBar
+    private snack: ToastService
   ) {
     this.form = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
@@ -72,10 +73,10 @@ export class LoginPage {
 
     try {
       await this.auth.login(String(email), String(password));
-      this.snack.open('Accesso eseguito!', 'OK', { duration: 2500 });
+      this.snack.open('Accesso eseguito!', { duration: 2500 });
       // Reindirizza dove preferisci
     } catch (err: any) {
-      this.snack.open(err?.message || 'Accesso fallito', 'CHIUDI', { duration: 3500 });
+      this.snack.open(err?.message || 'Accesso fallito', { duration: 3500 });
     } finally {
       this.loading.set(false);
     }

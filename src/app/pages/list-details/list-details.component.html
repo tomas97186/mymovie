@@ -32,30 +32,35 @@ this.listDetails.isLoading(); @let members = this.members.value()!;
       </ion-segment>
     </ion-toolbar>
   </ion-header>
-    <ion-segment-view>
-      <ion-segment-content id="da_vedere">
+  <ion-segment-view>
+    <ion-segment-content id="da_vedere">
+      <ion-content >
         @if(moviesToWatch && moviesToWatch.length > 0) {
-        <app-movie-list [movies]="moviesToWatch"></app-movie-list>
+        <app-movie-list [movies]="moviesToWatch" [total]="moviesToWatch.length"></app-movie-list>
         } @else {
         <div class="no-movies-banner">
           <ion-icon name="sentiment_dissatisfied"></ion-icon><span>Nessun film da vedere.</span><span
             style="font-size: 0.9rem">Cerca un film da aggiungere alla lista.</span>
         </div>
         }
-      </ion-segment-content>
-      <ion-segment-content id="visti">
+      </ion-content>
+    </ion-segment-content>
+    <ion-segment-content id="visti">
+      <ion-content>
         @if(watchedMovies && watchedMovies.length > 0) {
-        <app-movie-list [movies]="watchedMovies"></app-movie-list>
+        <app-movie-list [movies]="watchedMovies" [total]="watchedMovies.length"></app-movie-list>
         } @else {
         <div class="no-movies-banner">
           <ion-icon name="sentiment_dissatisfied"></ion-icon><span>Nessun film ancora visto.</span>
         </div>
         }
-      </ion-segment-content>
-      <ion-segment-content id="settings">
-        <app-list-page-settings [details]="details" [members]="members" (exitListFn)="exitList()"
-          (updateListNameFn)="openUpdateDialog()"></app-list-page-settings></ion-segment-content>
-    </ion-segment-view>
+      </ion-content>
+    </ion-segment-content>
+    <ion-segment-content id="settings">
+      <app-list-page-settings [details]="details" [members]="members" (exitListFn)="exitList()"
+        (updateListNameFn)="openUpdateDialog()"></app-list-page-settings></ion-segment-content>
+  </ion-segment-view>
+
   } @else {
   <div class="list-error">
     <ion-icon name="sentiment_dissatisfied"></ion-icon>

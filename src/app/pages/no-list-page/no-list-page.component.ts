@@ -8,7 +8,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { ToastService } from 'src/app/services/toast.service';
 import { MovieListService } from '../../services/movie-list.service';
 import { IonButton, IonIcon } from "@ionic/angular/standalone";
 
@@ -27,7 +27,7 @@ import { IonButton, IonIcon } from "@ionic/angular/standalone";
 })
 export class NoListPageComponent {
   private listService = inject(MovieListService);
-  private snackBar = inject(MatSnackBar);
+  private snackBar = inject(ToastService);
   readonly dialog = inject(MatDialog);
   joinList = output<void>(); 
   createList = output<void>(); 

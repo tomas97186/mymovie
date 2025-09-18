@@ -1,8 +1,6 @@
 <ion-header>
   <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-button (click)="dialogRef.dismiss()" size="small">Annulla</ion-button>
-    </ion-buttons>
+
     <ion-title>Invita Utente</ion-title>
     <ion-buttons slot="end">
       <ion-button (click)="close()" color="success" [disabled]="!usernameControl.valid">Conferma</ion-button>
@@ -11,7 +9,7 @@
 </ion-header>
 <div class="p-3 h-100">
   <ion-item>
-    <ion-input label="Username" labelPlacement="stacked" type="text" placeholder="Username utente"
+    <ion-input label="Username"  type="text" placeholder="Username utente"
       [formControl]="usernameControl"></ion-input>
   </ion-item>
 </div>

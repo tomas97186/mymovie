@@ -2,30 +2,34 @@ import { CommonModule } from '@angular/common';
 import { Component, DestroyRef, inject, input } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import {
-  MAT_DIALOG_DATA,
-  MatDialogModule,
-  MatDialogRef,
+  MatDialogModule
 } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { map, shareReplay, tap } from 'rxjs';
+import { RouterModule } from '@angular/router';
+import {
+  IonButton,
+  IonButtons,
+  IonContent,
+  IonHeader,
+  IonIcon,
+  IonItem, IonLabel,
+  IonList,
+  IonListHeader,
+  IonTitle,
+  IonToolbar,
+  ModalController
+} from '@ionic/angular/standalone';
+import { map, shareReplay } from 'rxjs';
+import { SearchItemModel } from 'src/app/models/search-item.model';
+import { ToastService } from 'src/app/services/toast.service';
+import { MovieStatusEnum } from '../../enum/movie-status.enum';
 import { MovieModel } from '../../models/movie.model';
 import { MovieListService } from '../../services/movie-list.service';
-import { MovieStatusEnum } from '../../enum/movie-status.enum';
-import { RouterModule } from '@angular/router';
-import { SearchItemModel } from 'src/app/models/search-item.model';
-import {
-  ModalController,
-  IonIcon,
-  IonButton,
-  IonToolbar,
-  IonHeader,
-  IonTitle, IonContent, IonList, IonItem, IonLabel } from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-movie-lists-dialog',
-  imports: [IonLabel, IonItem, IonList, IonContent, 
+  imports: [IonListHeader, IonButtons, IonLabel, IonItem, IonList, IonContent, 
     IonTitle,
     IonHeader,
     IonToolbar,
@@ -47,7 +51,7 @@ export class MovieListsDialogComponent {
   movie = input.required<MovieModel>();
   lists = input<Set<string>>();
 
-  private _snackBar = inject(MatSnackBar);
+  private _snackBar = inject(ToastService);
   private listService = inject(MovieListService);
   private destroyRef = inject(DestroyRef);
 
@@ -71,14 +75,15 @@ export class MovieListsDialogComponent {
     this.listService
       .addMovie((<unknown>movie) as SearchItemModel, listId)
       .then(() => {
-        this._snackBar.open('Film aggiunto alla lista con successo', 'Chiudi', {
+        this._snackBar.open('Film aggiunto alla lista con successo', {
           duration: 3000,
+          icon: 'checkmark'
         });
       })
       .catch((error) => {
         this._snackBar.open(
           "Errore nell'aggiungere il film alla lista",
-          'Chiudi',
+         
           {
             duration: 3000,
           }
@@ -91,14 +96,14 @@ export class MovieListsDialogComponent {
     this.listService
       .removeMovie(movie.id, listId)
       .then(() => {
-        this._snackBar.open('Film rimosso dalla lista.', 'Chiudi', {
+        this._snackBar.open('Film rimosso dalla lista.', {
           duration: 3000,
         });
       })
       .catch((error) => {
         this._snackBar.open(
           'Errore nel rimuover il film alla lista',
-          'Chiudi',
+         
           {
             duration: 3000,
           }
@@ -111,14 +116,14 @@ export class MovieListsDialogComponent {
     this.listService
       .setMovieAsWatched(movie.id, listId)
       .then(() => {
-        this._snackBar.open('Film segnato come visto.', 'Chiudi', {
+        this._snackBar.open('Film segnato come visto.', {
           duration: 3000,
         });
       })
       .catch((error) => {
         this._snackBar.open(
           'Errore! Impossibile segnare il film come visto.',
-          'Chiudi',
+         
           {
             duration: 3000,
           }

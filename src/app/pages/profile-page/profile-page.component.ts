@@ -14,7 +14,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDialog } from '@angular/material/dialog';
 import { GenericDialogComponent } from '../../components/generic-dialog/generic-dialog.component';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { ToastService } from 'src/app/services/toast.service';
 import { PasswordDialogComponent } from '../../components/password-dialog/password-dialog.component';
 import { Router } from '@angular/router';
 import { MovieListService } from '../../services/movie-list.service';
@@ -32,7 +32,7 @@ import { IonButton, IonIcon, ModalController } from "@ionic/angular/standalone";
 export class ProfilePageComponent {
   readonly dialog = inject(ModalController);
   readonly router = inject(Router);
-  private readonly snackBar = inject(MatSnackBar);
+  private readonly snackBar = inject(ToastService);
   authService = inject(AuthService);
   movieListService = inject(MovieListService);
   userInfo$ = this.movieListService.getUserInfo();
@@ -65,7 +65,7 @@ export class ProfilePageComponent {
           tap(() =>
             this.snackBar.open(
               'Password aggiornata con successo',
-              'Chiudi',
+             
               { duration: 3000 }
             )
           ),
@@ -73,7 +73,7 @@ export class ProfilePageComponent {
             console.error('Error updating password:', err);
             this.snackBar.open(
               "Errore nell'aggiornamento della password",
-              'Chiudi',
+             
               { duration: 3000 }
             );
             throw err;
@@ -100,11 +100,11 @@ export class ProfilePageComponent {
             first(),
             tap((user) => updateProfile(user, { displayName: data.trim() }))
           );
-          this.snackBar.open('Username modificato.', 'Chiudi');
+          this.snackBar.open('Username modificato.');
         })
         .catch((e) => {
           console.log(e);
-          this.snackBar.open('Username già esistente.', 'Chiudi', {
+          this.snackBar.open('Username già esistente.', {
             duration: 3000,
           });
         });

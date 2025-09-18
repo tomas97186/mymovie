@@ -4,4 +4,16 @@
 :root {
   --ion-color-primary: darkred;
   --ion-toolbar-background: rgb(0, 0, 0, .4) !important;
+  --ion-background-color: #141218 !important;
+}
+
+ion-input.search-field {
+  --border-width: 0 !important;
+  --border-color: transparent !important;
+  --highlight-color-invalid: transparent !important;
+  --highlight-color-valid: transparent !important;
+  --highlight-height: 0 !important;
+  --border-radius: 10px !important;
+  --background: #211f26  !important;
+  --padding-end: 10px;
 }

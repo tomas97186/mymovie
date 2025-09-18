@@ -1,17 +1,16 @@
-<h2 mat-dialog-title>Unisciti ad una Lista</h2>
-<mat-dialog-content>
+<ion-header>
+    <ion-toolbar>
+        <ion-title>Unisciti ad una Lista</ion-title>
+        <ion-buttons slot="end">
+            <ion-button (click)="close()" color="success" [disabled]="!form.valid">Conferma</ion-button>
+        </ion-buttons>
+    </ion-toolbar>
+</ion-header>
+<div class="p-3 h-100">
     <p class="description">Inserisci il codice della lista</p>
     <form [formGroup]="form">
-        <mat-form-field class="w-100">
-            <mat-label>Codice lista</mat-label>
-            <input matInput formControlName="code" />
-        </mat-form-field>
+        <ion-item>
+            <ion-input label="Codice Lista" type="text" formControlName="code"></ion-input>
+        </ion-item>
     </form>
-    <!-- <mat-checkbox [(ngModel)]="private" labelPosition="before">Privata</mat-checkbox> -->
-
-</mat-dialog-content>
-<mat-dialog-actions>
-    <ion-button class="action-button" [mat-dialog-close]="form.value.code"
-        [disabled]="!form.valid" cdkFocusInitial>Conferma</ion-button>
-    <ion-button class="w-100 mt-2" (click)="close()">Annulla</ion-button>
-</mat-dialog-actions>
+</div>

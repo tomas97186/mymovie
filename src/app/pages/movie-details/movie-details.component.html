@@ -29,7 +29,7 @@
         </div>
         }
       </div>
-      
+
       @if(!!movie.overview && movie.overview.length > 0) {
       <div class="movie-overview mt-3">
         <p>
@@ -59,7 +59,8 @@
       } @if(recommendations && recommendations.results.length > 0) {
       <div class="related-movies mt-4 p-2">
         <h3>Film Raccomandati</h3>
-        <app-movie-list [movies]="recommendations!.results" [isHorizontal]="true"></app-movie-list>
+        <app-movie-list [movies]="recommendations!.results" [total]="recommendations.results.length"
+          [isHorizontal]="true"></app-movie-list>
       </div>
       } @if(cast(); as cast) {
       <div class="cast-container mt-2 p-2">

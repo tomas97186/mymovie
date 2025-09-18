@@ -5,7 +5,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { MatMenuModule } from '@angular/material/menu';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { ToastService } from 'src/app/services/toast.service';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { Router, RouterModule } from '@angular/router';
 import { first, map } from 'rxjs';
@@ -14,8 +14,9 @@ import { NewListDialogComponent } from '../../components/new-list-dialog/new-lis
 import { UserListItemComponent } from "../../components/user-list-item/user-list-item.component";
 import { MovieListService } from '../../services/movie-list.service';
 import { NoListPageComponent } from '../no-list-page/no-list-page.component';
-import { IonFab, IonFabButton, IonIcon, IonFabList, IonButton, IonTitle, IonHeader, IonToolbar, IonContent, IonList } from "@ionic/angular/standalone";
+import { ModalController, IonFab, IonFabButton, IonIcon, IonFabList, IonButton, IonTitle, IonHeader, IonToolbar, IonContent, IonList } from "@ionic/angular/standalone";
 import { UserListComponent } from "src/app/components/user-list/user-list.component";
+import { MatInputModule } from "@angular/material/input";
 
 @Component({
   selector: 'app-user-lists-page',
@@ -28,14 +29,14 @@ import { UserListComponent } from "src/app/components/user-list/user-list.compon
     MatMenuModule,
     MatButtonModule,
     NoListPageComponent,
-    UserListItemComponent, IonList, UserListComponent],
+    UserListItemComponent, IonList, UserListComponent, MatInputModule],
   templateUrl: './user-lists-page.component.html',
   styleUrl: './user-lists-page.component.scss',
 })
 export class UserListsPageComponent {
   private listService = inject(MovieListService);
-  private dialog = inject(MatDialog);
-  private snackBar = inject(MatSnackBar);
+  private dialog = inject(ModalController);
+  private snackBar = inject(ToastService);
   private router = inject(Router);
   userLists$ = this.listService
     .getUserLists()
@@ -54,13 +55,13 @@ export class UserListsPageComponent {
         .joinList(listId)
         .then((res) => {
           if (res) {
-            this.snackBar.open('Sei stato aggiunto alla lista.', 'Chiudi', {
+            this.snackBar.open('Sei stato aggiunto alla lista.', {
               duration: 3000,
             });
           } else {
             this.snackBar.open(
               'La lista non esiste o non puoi unirti.',
-              'Chiudi',
+
               {
                 duration: 3000,
               }
@@ -68,7 +69,7 @@ export class UserListsPageComponent {
           }
         })
         .catch((error) => {
-          this.snackBar.open("Errore nell'unirti alla lista.", 'Chiudi', {
+          this.snackBar.open("Errore nell'unirti alla lista.", {
             duration: 3000,
           });
         });
@@ -76,44 +77,39 @@ export class UserListsPageComponent {
       console.warn('No list ID provided to join');
     }
   }
-  openJoinDialog(): void {
-    const dialogRef = this.dialog.open(JoinListDialogComponent);
+  async openJoinDialog() {
+    const dialogRef = await this.dialog.create({ component: JoinListDialogComponent, initialBreakpoint: .25 });
+    dialogRef.present();
+    const { data } = await dialogRef.onWillDismiss();
 
-    dialogRef
-      .afterClosed()
-      .pipe(first())
-      .subscribe((result) => {
-        if (result !== undefined) {
-          this.joinList(result);
-        }
-      });
+    if (data && data.username) {
+      this.joinList(data.username);
+    }
   }
-  openCreateDialog(): void {
-    const dialogRef = this.dialog.open(NewListDialogComponent, {});
 
-    dialogRef
-      .afterClosed()
-      .pipe(first())
-      .subscribe((result) => {
-        if (result !== undefined) {
-          this.listService
-            .createList(result.name, result.private)
-            .then(() => {
-              this.snackBar.open('Lista creata con successo.', 'Chiudi', {
-                duration: 3000,
-              });
-            })
-            .catch((error) => {
-              console.error('Error creating the list:', error);
-              this.snackBar.open(
-                'Errore nella creazione della lista.',
-                'Chiudi',
-                {
-                  duration: 3000,
-                }
-              );
-            });
-        }
-      });
+  async openCreateDialog() {
+    const dialogRef = await this.dialog.create({ component: NewListDialogComponent, initialBreakpoint: .25 });
+    dialogRef.present();
+    const { data } = await dialogRef.onWillDismiss();
+
+    if (data) {
+      this.listService
+        .createList(data.name, true)
+        .then(() => {
+          this.snackBar.open('Lista creata con successo.', {
+            duration: 3000,
+          });
+        })
+        .catch((error) => {
+          console.error('Error creating the list:', error);
+          this.snackBar.open(
+            'Errore nella creazione della lista.',
+
+            {
+              duration: 3000,
+            }
+          );
+        });
+    }
   }
 }

@@ -5,14 +5,13 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { ToastService } from 'src/app/services/toast.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ActionSheetController, IonActionSheet, IonButton, IonIcon } from "@ionic/angular/standalone";
+import { ActionSheetController, IonActionSheet, IonButton, IonIcon, ModalController } from "@ionic/angular/standalone";
 import { SearchItemModel } from '../../models/search-item.model';
 import { MovieListService } from '../../services/movie-list.service';
 import { TMDBService } from '../../services/tmdb.service';
 import { MovieListsDialogComponent } from '../movie-lists-dialog/movie-lists-dialog.component';
-import { MovieMenuComponent } from '../movie-menu/movie-menu.component';
 
 
 @Component({
@@ -24,13 +23,12 @@ import { MovieMenuComponent } from '../movie-menu/movie-menu.component';
 export class MovieCardComponent {
   movie = model<SearchItemModel>();
   isImgLoaded: boolean = false;
-  private bottomSheet = inject(MatBottomSheet);
   private actionSheetCtrl = inject(ActionSheetController);
   private movieService = inject(MovieListService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
-  private dialog = inject(MatDialog);
-  private _snackBar = inject(MatSnackBar);
+  private dialog = inject(ModalController);
+  private _snackBar = inject(ToastService);
 
   tmdbService = inject(TMDBService);
   movieListService = inject(MovieListService);
@@ -39,50 +37,27 @@ export class MovieCardComponent {
   ngOnInit() {
   }
 
-  openMovieMenu(movie: SearchItemModel) {
-    this.bottomSheet.open(MovieMenuComponent, {
-      data: { movie },
-    });
-  }
-
   navigateToMovieDetails(): void {
-    this.bottomSheet.dismiss(true);
     this.router.navigate(['movies', this.movie()!.id]);
   }
 
-  openListDialog(): void {
-    const dialogRef = this.dialog.open(MovieListsDialogComponent, {
-      width: "90%",
-      maxWidth: "400px",
-      data: {
-        movie: this.movie()!,
-      },
+  async openListDialog() {
+    const dialogRef = await this.dialog.create({
+      component: MovieListsDialogComponent,
+      componentProps: { movie: this.movie() },
+      initialBreakpoint: .5,
+      breakpoints: [0, .25, .5],
     });
-    this.bottomSheet.dismiss(true);
+    dialogRef.present();
   }
-
-  addMovieToList(listId: string): void {
-    this.movieService.addMovie(this.movie()!, listId).then(() => {
-      this._snackBar.open('Film aggiunto alla lista con successo', 'Chiudi', {
-        duration: 3000,
-      });
-      this.bottomSheet.dismiss();
-    }).catch(error => {
-      this._snackBar.open('Errore nell\'aggiungere il film alla lista', 'Chiudi', {
-        duration: 3000,
-      });
-      console.error('Errore nell\'aggiungere il film alla lista:', error);
-    });
-  }
-
+  
   removeMovieFromList(listId: string): void {
     this.movieService.removeMovie(this.movie()!.id, listId).then(() => {
-      this._snackBar.open('Film rimosso dalla lista.', 'Chiudi', {
+      this._snackBar.open('Film rimosso dalla lista.', {
         duration: 3000,
       });
-      this.bottomSheet.dismiss();
     }).catch(error => {
-      this._snackBar.open('Errore nel rimuover il film alla lista', 'Chiudi', {
+      this._snackBar.open('Errore nel rimuover il film alla lista', {
         duration: 3000,
       });
       console.error('Errore nel rimuovere il film alla lista:', error);
@@ -91,12 +66,11 @@ export class MovieCardComponent {
 
   setAsWatched(listId: string): void {
     this.movieService.setMovieAsWatched(this.movie()!.id, listId).then(() => {
-      this._snackBar.open('Film segnato come visto.', 'Chiudi', {
+      this._snackBar.open('Film segnato come visto.', {
         duration: 3000,
       });
-      this.bottomSheet.dismiss();
     }).catch(error => {
-      this._snackBar.open('Errore! Impossibile segnare il film come visto.', 'Chiudi', {
+      this._snackBar.open('Errore! Impossibile segnare il film come visto.', {
         duration: 3000,
       });
       console.error('Errore nel segnare il film come visto', error);

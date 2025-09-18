@@ -6,7 +6,7 @@ import { RouterModule } from '@angular/router';
 import { InfoListModel } from '../../models/movie-list.model';
 import { MatButtonModule } from '@angular/material/button';
 import { MovieListService } from '../../services/movie-list.service';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { ToastService } from 'src/app/services/toast.service';
 import { IonIcon, IonButton, IonLabel, IonNote } from "@ionic/angular/standalone";
 
 @Component({
@@ -22,7 +22,7 @@ import { IonIcon, IonButton, IonLabel, IonNote } from "@ionic/angular/standalone
 })
 export class UserListItemComponent {
   private listService = inject(MovieListService);
-  private snackbar = inject(MatSnackBar);
+  private snackbar = inject(ToastService);
 
   list = input.required<InfoListModel>();
   invitation = input<boolean>(false);
@@ -31,14 +31,14 @@ export class UserListItemComponent {
     this.listService
       .acceptListInvitation(this.list().id)
       .then((res) => {
-        this.snackbar.open('Invio alla lista accettato.', 'Chiudi', {
+        this.snackbar.open('Invio alla lista accettato.', {
           duration: 3000,
         });
       })
       .catch((err) => {
         this.snackbar.open(
           "Errore! Impossibile accettare l'invito.",
-          'Chiudi',
+         
           { duration: 3000 }
         );
       });
@@ -48,14 +48,14 @@ export class UserListItemComponent {
     this.listService
       .declineListInvitation(this.list().id)
       .then((res) => {
-        this.snackbar.open('Invito alla lista declinato.', 'Chiudi', {
+        this.snackbar.open('Invito alla lista declinato.', {
           duration: 3000,
         });
       })
       .catch((err) => {
         this.snackbar.open(
           "Errore! Impossibile declinare l'invito.",
-          'Chiudi',
+         
           { duration: 3000 }
         );
       });

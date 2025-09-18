@@ -48,7 +48,7 @@ export class MovieListDynamicComponent {
   );
 
   scrollToTop() {
-    const element = document.querySelector('#movieList');
+    const element = document.querySelector('ion-content');
     element?.scroll({ top: 0, behavior: 'smooth' });
   }
   loadMoreMovies() {
@@ -56,7 +56,6 @@ export class MovieListDynamicComponent {
       this.searchResult() &&
       this.currentPage() < this.searchResult()!.total_pages
     ) {
-      console.log('LOAD MORE MOVEIS');
       this.currentPage.update((page) => page + 1);
       this.changedPage = true;
     }
@@ -65,14 +64,12 @@ export class MovieListDynamicComponent {
     this.updateCurrentListEff.destroy();
   }
   private resetPage() {
-    console.log('RESET LIST 1');
     this.currentList = [];
     this.currentIds = new Set<number>();
     this.scrollToTop();
   }
   private updateCurrentList(results: SearchResultsModel) {
     if (this.changedPage) {
-      console.log('CAMBIO PAGINA');
       this.currentList = [
         ...this.currentList,
         ...this.searchResult()!.results.filter((res) => {

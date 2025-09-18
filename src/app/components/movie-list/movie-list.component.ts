@@ -18,13 +18,14 @@ export class MovieListComponent {
   movies = model<SearchItemModel[]>();
   isLoading = model<boolean>(false);
   loadData = output();
+  total = input.required<number>();
   isHorizontal = model<boolean>(false);
   paddingTop = input<number>();
   private stopLoading = effect(() => (!this.isLoading()) ? this.infiniteScroll?.complete() : undefined);
 
   loadMore(event: InfiniteScrollCustomEvent) {
     this.loadData.emit();
-    this.infiniteScroll ??= event.target;
+    this.infiniteScroll= event.target;
   }
 
   scroll = (event: any): void => {

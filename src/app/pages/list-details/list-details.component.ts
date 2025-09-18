@@ -3,14 +3,13 @@ import { CommonModule, Location } from '@angular/common';
 import { Component, DestroyRef, inject, signal } from '@angular/core';
 import { rxResource, takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTabsModule } from '@angular/material/tabs';
 import { ActivatedRoute, Router } from '@angular/router';
-import { IonBackButton, IonButton, IonButtons, IonHeader, IonIcon, IonTitle, IonToolbar, ModalController, IonProgressBar, IonSegment, IonSegmentButton, IonLabel, IonSegmentView, IonSegmentContent, IonContent } from "@ionic/angular/standalone";
+import { IonBackButton, IonButton, IonButtons, IonContent, IonHeader, IonIcon, IonLabel, IonProgressBar, IonSegment, IonSegmentButton, IonSegmentContent, IonSegmentView, IonTitle, IonToolbar, ModalController } from "@ionic/angular/standalone";
 import { map, of, Subscription, tap } from 'rxjs';
+import { ToastService } from 'src/app/services/toast.service';
 import { SettingsComponent } from '../../components/list-details/settings/settings.component';
 import { MovieListComponent } from '../../components/movie-list/movie-list.component';
-import { MoviesInListComponent } from '../../components/movies-in-list/movies-in-list.component';
 import { NewListDialogComponent } from '../../components/new-list-dialog/new-list-dialog.component';
 import { SearchItemModel } from '../../models/search-item.model';
 import { AuthService } from '../../services/auth.service';
@@ -27,7 +26,7 @@ import { MovieListService } from '../../services/movie-list.service';
     FormsModule,
     SettingsComponent,
     MatTabsModule,
-    MoviesInListComponent, IonToolbar, IonTitle, IonSegmentView, IonSegmentContent],
+    IonToolbar, IonTitle, IonSegmentView, IonSegmentContent],
   templateUrl: './list-details.component.html',
   styleUrl: './list-details.component.scss',
 })
@@ -37,7 +36,7 @@ export class ListDetailsComponent {
   private router = inject(Router);
   private listService = inject(MovieListService);
   public authService = inject(AuthService);
-  private snackBar = inject(MatSnackBar);
+  private snackBar = inject(ToastService);
   private listId = signal<string | undefined>(undefined);
   private userListsSub!: Subscription;
   private dialog = inject(ModalController)
@@ -88,13 +87,13 @@ export class ListDetailsComponent {
       this.listService
         .changeListName(data, this.listId()!)
         .then(() => {
-          this.snackBar.open('Nome modificato con successo.', 'Chiudi', {
+          this.snackBar.open('Nome modificato con successo.', {
             duration: 3000,
           });
         })
         .catch((error) => {
           console.error('Error update name:', error);
-          this.snackBar.open('Errore nella modifica del nome.', 'Chiudi', {
+          this.snackBar.open('Errore nella modifica del nome.', {
             duration: 3000,
           });
         });
@@ -142,7 +141,7 @@ export class ListDetailsComponent {
     //         this.listService.exitList(listId).then(
     //           () => {
     //             this.router.navigate(['/lists']);
-    //             this.snackBar.open('Non fai più parte della lista.', 'Chiudi', {
+    //             this.snackBar.open('Non fai più parte della lista.', {
     //               duration: 3000,
     //             });
     //           }

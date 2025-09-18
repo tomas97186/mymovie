@@ -11,7 +11,8 @@
 <ion-content>
   @if(currentList.length > 0) {
   <app-movie-list [paddingTop]="!!title() ? 70 : paddingTop()" [movies]="currentList" (loadData)="loadMoreMovies()"
-    class="w-100" [isLoading]="isLoading()"></app-movie-list>
+    class="w-100" [isLoading]="isLoading()"
+    [total]="searchResult()?.total_results?? currentList.length"></app-movie-list>
   <ion-fab slot="fixed" vertical="bottom" horizontal="end">
     <ion-fab-button (click)="scrollToTop()">
       <ion-icon name="arrow-up-outline"></ion-icon>
