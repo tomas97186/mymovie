@@ -6,24 +6,30 @@ mat-dialog-content {
   padding: 1rem !important;
 }
 
-mat-list-item {
+.list-container {
+  display: flex;
+  flex-direction: column;
+  gap: .6rem;
+}
+
+.list-item {
   width: 100%;
-  background: #141218;
+  background: #464151;
   border-radius: 10px;
   margin-bottom: .2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: .6rem 1rem;
 
-  & p[matListItemLine] {
-    color: gray;
+  & h5 {
+    margin-bottom: 0px;
   }
 
-  & button[mat-icon-button] {
-    background: #2E2C31;
-    color: #8D8D8D;
-
-    &.success {
-      background: #38B13C;
-      color: whitesmoke;
-    }
+  & p.list-meta {
+    color: gray;
+    font-size: .8rem;
+    margin-bottom: 0px;
   }
 }
 

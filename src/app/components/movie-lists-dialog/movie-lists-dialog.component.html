@@ -1,40 +1,124 @@
-@if(userLists$ | async; as userLists) {
-<ion-button mat-dialog-close><ion-icon>close</ion-icon></ion-button>
-<h3 mat-dialog-title>{{this.data.movie.title}}</h3>
-<mat-dialog-content>
-  <p class="description">Aggiungi o rimuovi il film dalle liste, oppure imposta il film come visto.</p>
-  <mat-list class="list-container">
-    @for(list$ of userLists; track $index) { @if(list$.listInfo| async; as list) {
-    @if(list$.movieStatus | async; as movieStatus) {
-    <mat-list-item>
-      <!-- <ion-icon matListItemIcon matIconSuffix>folder</ion-icon> -->
-      <h3 matListItemTitle>{{ list.name }}</h3>
-      <p matListItemLine>
-        <span>{{ movieStatus != movieStatusEnum.NOT_IN_LIST ? ("In Lista" + ((movieStatus === movieStatusEnum.WATCHED)?
-          ' · Visto' : '')) : "Non In Lista"
-          }}</span>
-      </p>
-      <div matListItemMeta>
-        @if(movieStatus != movieStatusEnum.NOT_IN_LIST) { @if(movieStatus === movieStatusEnum.TO_WATCH) {
-        <ion-button class="me-2" (click)="setAsWatched(this.data.movie, '-' + list.id)">
-          <ion-icon name="visibility"></ion-icon>
-        </ion-button>
-        }
-        <ion-button class="success" ion-icon-button (click)="removeMovieFromList(this.data.movie, '-' + list.id)">
-          <ion-icon name="check"></ion-icon>
-        </ion-button>
-        } @else {
-        <ion-button (click)="addMovieToList(this.data.movie, '-' + list.id)">
-          <ion-icon name="add"></ion-icon>
-        </ion-button>
-        }
+<ion-header>
+  <ion-toolbar>
+    <ion-title>{{ this.movie().title }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content class
+  >@if(userLists$ | async; as userLists) { @let movie = this.movie();
+  <div class="container">
+    <p class="description">
+      Aggiungi o rimuovi il film dalle liste, oppure imposta il film come visto.
+    </p>
+    <div class="list-container">
+      @for(list$ of userLists; track $index) { @if(list$.listInfo| async; as
+      list) { @if(list$.movieStatus | async; as movieStatus) {
+      <div class="list-item">
+        <!-- <ion-icon matListItemIcon matIconSuffix>folder</ion-icon> -->
+        <div>
+          <ion-label
+            ><h6>{{ list.name }}</h6>
+            <p>
+              {{
+                movieStatus != movieStatusEnum.NOT_IN_LIST
+                  ? "In Lista" +
+                    (movieStatus === movieStatusEnum.WATCHED ? " · Visto" : "")
+                  : "Non In Lista"
+              }}
+            </p></ion-label
+          >
+        </div>
+        <div>
+          @if(movieStatus != movieStatusEnum.NOT_IN_LIST) { @if(movieStatus ===
+          movieStatusEnum.TO_WATCH) {
+          <ion-button
+            shape=""
+            color="medium"
+            size="small"
+            class="me-2"
+            shape="round"
+            (click)="setAsWatched(movie, '-' + list.id)"
+          >
+            <ion-icon slot="icon-only" name="visibility"></ion-icon>
+          </ion-button>
+          }
+          <ion-button
+            size="small"
+            class="success"
+            shape="round"
+            (click)="removeMovieFromList(movie, '-' + list.id)"
+          >
+            <ion-icon slot="icon-only" name="checkmark"></ion-icon>
+          </ion-button>
+          } @else {
+          <ion-button
+            shape="round"
+            color="medium"
+            size="small"
+            (click)="addMovieToList(movie, '-' + list.id)"
+          >
+            <ion-icon slot="icon-only" name="add"></ion-icon>
+          </ion-button>
+          }
+        </div>
       </div>
-    </mat-list-item>
-    }
-    @else {
-    <mat-list-item class="loading-placeholder"></mat-list-item>
-    }
-    } }
-  </mat-list>
-</mat-dialog-content>
-}
+      } @else {
+      <mat-list-item class="loading-placeholder"></mat-list-item>
+      } } }
+    </div>
+    <ion-list>
+      @for(list$ of userLists; track $index) { @if(list$.listInfo| async; as
+      list) { @if(list$.movieStatus | async; as movieStatus) {
+      <ion-item>
+        <!-- <ion-icon matListItemIcon matIconSuffix>folder</ion-icon> -->
+        <div>
+          <h5>{{ list.name }}</h5>
+          <p class="list-meta">
+            <span>{{
+              movieStatus != movieStatusEnum.NOT_IN_LIST
+                ? "In Lista" +
+                  (movieStatus === movieStatusEnum.WATCHED ? " · Visto" : "")
+                : "Non In Lista"
+            }}</span>
+          </p>
+        </div>
+        <div>
+          @if(movieStatus != movieStatusEnum.NOT_IN_LIST) { @if(movieStatus ===
+          movieStatusEnum.TO_WATCH) {
+          <ion-button
+            shape=""
+            color="medium"
+            size="small"
+            class="me-2"
+            shape="round"
+            (click)="setAsWatched(movie, '-' + list.id)"
+          >
+            <ion-icon slot="icon-only" name="visibility"></ion-icon>
+          </ion-button>
+          }
+          <ion-button
+            size="small"
+            class="success"
+            shape="round"
+            (click)="removeMovieFromList(movie, '-' + list.id)"
+          >
+            <ion-icon slot="icon-only" name="checkmark"></ion-icon>
+          </ion-button>
+          } @else {
+          <ion-button
+            shape="round"
+            color="medium"
+            size="small"
+            (click)="addMovieToList(movie, '-' + list.id)"
+          >
+            <ion-icon slot="icon-only" name="add"></ion-icon>
+          </ion-button>
+          }
+        </div>
+      </ion-item>
+      } @else {
+      <mat-list-item class="loading-placeholder"></mat-list-item>
+      } } }
+    </ion-list>
+  </div>
+  }
+</ion-content>

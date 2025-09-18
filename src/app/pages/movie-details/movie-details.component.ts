@@ -1,15 +1,6 @@
 import { CommonModule, Location } from '@angular/common';
-import {
-  Component,
-  computed,
-  DestroyRef,
-  inject,
-  model
-} from '@angular/core';
-import {
-  rxResource,
-  takeUntilDestroyed
-} from '@angular/core/rxjs-interop';
+import { Component, computed, DestroyRef, inject, model } from '@angular/core';
+import { rxResource, takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
@@ -17,10 +8,19 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, RouterModule } from '@angular/router';
-import { IonContent, IonFab, IonFabButton, IonIcon, IonBackButton, IonButton, IonSpinner } from "@ionic/angular/standalone";
+import {
+  ModalController,
+  IonContent,
+  IonFab,
+  IonFabButton,
+  IonIcon,
+  IonBackButton,
+  IonButton,
+  IonSpinner,
+} from '@ionic/angular/standalone';
 import { map, of, tap } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { MovieHeroComponent } from "../../components/movie-hero/movie-hero.component";
+import { MovieHeroComponent } from '../../components/movie-hero/movie-hero.component';
 import { MovieListComponent } from '../../components/movie-list/movie-list.component';
 import { MovieListsDialogComponent } from '../../components/movie-lists-dialog/movie-lists-dialog.component';
 import { MovieModel } from '../../models/movie.model';
@@ -30,7 +30,13 @@ import { TMDBService } from '../../services/tmdb.service';
 
 @Component({
   selector: 'app-movie-details',
-  imports: [IonSpinner, IonButton, IonBackButton, IonFab, IonIcon, IonFabButton,
+  imports: [
+    IonSpinner,
+    IonButton,
+    IonBackButton,
+    IonFab,
+    IonIcon,
+    IonFabButton,
     CommonModule,
     RouterModule,
     TimePipe,
@@ -39,7 +45,9 @@ import { TMDBService } from '../../services/tmdb.service';
     MatButtonModule,
     MovieHeroComponent,
     MatProgressSpinnerModule,
-    IonContent, IonBackButton],
+    IonContent,
+    IonBackButton,
+  ],
   templateUrl: './movie-details.component.html',
   styleUrl: './movie-details.component.scss',
 })
@@ -50,7 +58,7 @@ export class MovieDetailsComponent {
   private _snackBar = inject(MatSnackBar);
   public location = inject(Location);
   private movieService = inject(MovieListService);
-  private dialog = inject(MatDialog);
+  private dialog = inject(ModalController);
   isImgLoaded = false;
   isOverviewExpanded = false;
   isCastExpanded = false;
@@ -86,8 +94,8 @@ export class MovieDetailsComponent {
             );
             return trailer
               ? this._sanitizer.bypassSecurityTrustResourceUrl(
-                `https://www.youtube.com/embed/${trailer.key}?rel=0&modestbranding=1&showinfo=0`
-              )
+                  `https://www.youtube.com/embed/${trailer.key}?rel=0&modestbranding=1&showinfo=0`
+                )
               : undefined;
           })
         );
@@ -115,7 +123,10 @@ export class MovieDetailsComponent {
     if (this.images.hasValue()) {
       const images = this.images.value();
       if (images.backdrops.length > 0) {
-        return { ...images.backdrops[0], file_path: environment.posterUrl + images.backdrops[0].file_path };
+        return {
+          ...images.backdrops[0],
+          file_path: environment.posterUrl + images.backdrops[0].file_path,
+        };
       }
     }
     return undefined;
@@ -136,7 +147,6 @@ export class MovieDetailsComponent {
         this.movieId.set(id ? +id : undefined);
       });
   }
-
 
   removeMovieFromList(movie: MovieModel): void {
     this.movieService
@@ -178,13 +188,12 @@ export class MovieDetailsComponent {
       });
   }
 
-  openListDialog(): void {
-    const dialogRef = this.dialog.open(MovieListsDialogComponent, {
-      width: "90%",
-      maxWidth: "400px",
-      data: {
-        movie: this.movie.value(),
-      },
+  async openListDialog() {
+    const dialogRef = await this.dialog.create({
+      component: MovieListsDialogComponent,
+      componentProps: { movie: this.movie.value() },
+      initialBreakpoint: .5
     });
+    dialogRef.present();
   }
 }

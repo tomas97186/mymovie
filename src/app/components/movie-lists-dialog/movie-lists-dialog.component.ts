@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, DestroyRef, inject } from '@angular/core';
+import { Component, DestroyRef, inject, input } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import {
   MAT_DIALOG_DATA,
@@ -15,11 +15,22 @@ import { MovieListService } from '../../services/movie-list.service';
 import { MovieStatusEnum } from '../../enum/movie-status.enum';
 import { RouterModule } from '@angular/router';
 import { SearchItemModel } from 'src/app/models/search-item.model';
-import { IonIcon, IonButton } from "@ionic/angular/standalone";
+import {
+  ModalController,
+  IonIcon,
+  IonButton,
+  IonToolbar,
+  IonHeader,
+  IonTitle, IonContent, IonList, IonItem, IonLabel } from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-movie-lists-dialog',
-  imports: [IonButton, IonIcon, 
+  imports: [IonLabel, IonItem, IonList, IonContent, 
+    IonTitle,
+    IonHeader,
+    IonToolbar,
+    IonButton,
+    IonIcon,
     CommonModule,
     RouterModule,
     MatDialogModule,
@@ -31,11 +42,10 @@ import { IonIcon, IonButton } from "@ionic/angular/standalone";
   styleUrl: './movie-lists-dialog.component.scss',
 })
 export class MovieListsDialogComponent {
-  readonly dialogRef = inject(MatDialogRef<MovieListsDialogComponent>);
-  readonly data = inject<{
-    movie: MovieModel;
-    lists: Set<string>;
-  }>(MAT_DIALOG_DATA);
+  readonly dialogRef = inject(ModalController);
+
+  movie = input.required<MovieModel>();
+  lists = input<Set<string>>();
 
   private _snackBar = inject(MatSnackBar);
   private listService = inject(MovieListService);
@@ -47,20 +57,19 @@ export class MovieListsDialogComponent {
     map((listId) =>
       listId.map((id) => ({
         listInfo: this.listService.getListInfo(id),
-        movieStatus: this.listService
-          .movieStatus(this.data.movie.id, id)
+        movieStatus: this.listService.movieStatus(this.movie().id, id),
       }))
     )
   );
 
   close(): void {
-    this.dialogRef.close();
+    this.dialogRef.dismiss();
   }
 
   addMovieToList(movie: MovieModel, listId: string): void {
     movie.genre_ids = movie.genre_ids || movie.genres?.map((g) => g.id) || [];
     this.listService
-      .addMovie(<unknown>movie as SearchItemModel, listId)
+      .addMovie((<unknown>movie) as SearchItemModel, listId)
       .then(() => {
         this._snackBar.open('Film aggiunto alla lista con successo', 'Chiudi', {
           duration: 3000,
@@ -119,6 +128,9 @@ export class MovieListsDialogComponent {
   }
 
   movieIsWatched(movieId: number, listId: string) {
-    return this.listService.movieStatus(movieId, listId).pipe(map(res => res === MovieStatusEnum.WATCHED), shareReplay());
+    return this.listService.movieStatus(movieId, listId).pipe(
+      map((res) => res === MovieStatusEnum.WATCHED),
+      shareReplay()
+    );
   }
 }
