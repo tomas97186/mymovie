@@ -199,7 +199,7 @@ export class MovieListService {
       return false; // La lista non esiste
     }
     const alreadyInlist = await get(ref(database, `lists/${listId}/members/${this.currentUser.uid}`));
-    if (res.exists()) {
+    if (alreadyInlist.exists()) {
       return false;
     }
     const updates: { [key: string]: unknown } = {};
