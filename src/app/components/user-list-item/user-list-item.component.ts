@@ -7,16 +7,28 @@ import { InfoListModel } from '../../models/movie-list.model';
 import { MatButtonModule } from '@angular/material/button';
 import { MovieListService } from '../../services/movie-list.service';
 import { ToastService } from 'src/app/services/toast.service';
-import { IonIcon, IonButton, IonLabel, IonNote } from "@ionic/angular/standalone";
+import { ClipboardModule } from '@angular/cdk/clipboard';
+import {
+  IonIcon,
+  IonButton,
+  IonLabel,
+  IonNote,
+} from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-user-list-item',
-  imports: [IonNote, IonButton, IonIcon,
+  imports: [
+    IonNote,
+    IonButton,
+    IonIcon,
     CommonModule,
     RouterModule,
     MatButtonModule,
     MatListModule,
-    MatIconModule, IonLabel],
+    MatIconModule,
+    IonLabel,
+    ClipboardModule,
+  ],
   templateUrl: './user-list-item.component.html',
   styleUrl: './user-list-item.component.scss',
 })
@@ -38,7 +50,7 @@ export class UserListItemComponent {
       .catch((err) => {
         this.snackbar.open(
           "Errore! Impossibile accettare l'invito.",
-         
+
           { duration: 3000 }
         );
       });
@@ -55,9 +67,31 @@ export class UserListItemComponent {
       .catch((err) => {
         this.snackbar.open(
           "Errore! Impossibile declinare l'invito.",
-         
+
           { duration: 3000 }
         );
       });
+  }
+
+  copyToClipboardNotification(event: Event) {
+    this.snackbar.open('Codice della lista copiato negli appunti!', {
+      duration: 3000,
+    });
+    event.stopPropagation();
+  }
+
+  shareListCode(event: Event) {
+    if (navigator.share) {
+      navigator
+        .share({
+          title: 'Condividi',
+          text: this.list().id,
+        })
+        .then(() => console.log('✅ Condiviso con successo'))
+        .catch((err) => console.error('❌ Errore condivisione', err));
+    } else {
+      console.warn('Web Share API non supportata');
+    }
+    event?.stopPropagation();
   }
 }

@@ -4,7 +4,7 @@
   <div class="header">
     @if(this.searchQuery()) {
     <ion-button @showBackButton (click)="location.back()" class="back-button" shape="round">
-      <ion-icon slot="icon-only" name="chevron-back"></ion-icon>
+      <ion-icon slot="icon-only" size="large" name="chevron-back"></ion-icon>
     </ion-button>
     }
     <form (ngSubmit)="search()" [formGroup]="queryForm" class="search-form">

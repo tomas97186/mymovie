@@ -1,4 +1,13 @@
-import { Component, effect, inject, input, model, signal } from '@angular/core';
+import {
+  Component,
+  effect,
+  ElementRef,
+  inject,
+  input,
+  model,
+  signal,
+  ViewChild,
+} from '@angular/core';
 import { MovieListComponent } from '../movie-list/movie-list.component';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
@@ -6,17 +15,39 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { SearchItemModel } from '../../models/search-item.model';
 import { SearchResultsModel } from '../../models/search-results.model';
 import { CommonModule, Location } from '@angular/common';
-import { IonHeader, IonToolbar, IonTitle, IonBackButton, IonButtons, IonContent, IonButton, IonIcon, IonFabButton, IonFab } from "@ionic/angular/standalone";
+import {
+  IonHeader,
+  IonToolbar,
+  IonTitle,
+  IonBackButton,
+  IonButtons,
+  IonContent,
+  IonButton,
+  IonIcon,
+  IonFabButton,
+  IonFab,
+} from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-movie-list-dynamic',
-  imports: [IonIcon, IonButton, IonButtons, IonBackButton, IonTitle, IonToolbar, IonHeader,
+  imports: [
+    IonIcon,
+    IonButton,
+    IonButtons,
+    IonBackButton,
+    IonTitle,
+    IonToolbar,
+    IonHeader,
     CommonModule,
     MovieListComponent,
     MatIconModule,
     MatButtonModule,
     MatToolbarModule,
-    IonHeader, IonContent, IonFabButton, IonFab],
+    IonHeader,
+    IonContent,
+    IonFabButton,
+    IonFab,
+  ],
   templateUrl: './movie-list-dynamic.component.html',
   styleUrl: './movie-list-dynamic.component.scss',
 })
@@ -47,8 +78,13 @@ export class MovieListDynamicComponent {
     this.isLoading() && !this.changedPage ? this.resetPage() : null
   );
 
+  onScroll(event: Event) {
+    const el = event.target as HTMLElement;
+    console.log('Div che scorre:', el);
+  }
+
   scrollToTop() {
-    const element = document.querySelector('ion-content');
+    const element = document.querySelector('app-movie-list');
     element?.scroll({ top: 0, behavior: 'smooth' });
   }
   loadMoreMovies() {

@@ -45,13 +45,13 @@
 html {
   scroll-behavior: smooth;
   color-scheme: light dark;
-  @include mat.theme((color: mat.$red-palette,
+  @include mat.theme(
+    (
+      color: mat.$red-palette,
       typography: Roboto,
       density: 0,
-    ));
-  --card-background-color: #211f26;
-  --container-background-color: #211f26;
-  --card-primary-color: #ffc9c9;
+    )
+  );
   scroll-padding-top: 60px;
 }
 
@@ -59,28 +59,16 @@ body {
   margin: 0;
   font-family: Roboto, "Helvetica Neue", sans-serif;
   color: white;
-  background: #141218;
-}
-
-.header {
-  display: flex;
-  position: sticky;
-  top: 10px + env(safe-area-inset-top);
-  z-index: 100;
-  text-align: center;
-  margin-right: auto;
-  margin-left: auto;
-  width: 100%;
-  justify-content: space-between;
-  align-items: center;
-  padding-right: 1.2rem;
-  padding-left: 1.2rem;
+  background: #0d0d0d;
 }
 
 :root {
-  @include mat.button-overrides((filled-container-color: orange,
+  @include mat.button-overrides(
+    (
+      filled-container-color: orange,
       filled-label-text-color: red,
-    ));
+    )
+  );
 }
 
 .card-background {
@@ -171,26 +159,37 @@ button.action-button {
 .back-button {
   // backdrop-filter: blur(5.1px);
   -webkit-backdrop-filter: blur(5.1px);
-  --background: rgba(74, 74, 74, 0.9);
+  --background: #211f26e4;
+  height: 44px;
+  width: 44px;
   --border-radius: 50% !important;
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
 }
 
+ion-button.back-button {
+  --padding-start: 0.6rem !important;
+  --padding-end: 0.6rem !important;
+}
+
 ion-fab-button {
-  --color: whitesmoke
+  --color: whitesmoke;
 }
 
 ion-button {
-  --color: whitesmoke;
+  --color: whitesmoke !important;
   --padding-top: 1rem;
   --padding-bottom: 1rem;
 
   &[size="small"] {
-    --padding-top: .6rem;
-    --padding-bottom: .6rem;
+    --padding-top: 0.6rem;
+    --padding-bottom: 0.6rem;
   }
 
   --border-radius: 10px !important;
+}
+
+.ion-color-danger {
+  --ion-color-contrast: whitesmoke !important;
 }
 
 .image-placeholder {
@@ -215,15 +214,6 @@ ion-button {
   animation: shimmer 3s infinite;
 }
 
-ion-tab-bar {
-  border: none;
-  --background: #141218;
-
-  & ion-tab-button {
-    background: transparent;
-  }
-}
-
 ion-header.glass-effect {
   position: fixed;
   /* From https://css.glass */
@@ -239,4 +229,16 @@ ion-header.glass-effect {
   color: gray;
   text-align: center;
   margin-top: 1rem;
+}
+
+ion-title.with-icon {
+  margin-left: -24px !important;
+}
+
+.alert-message {
+  white-space: break-spaces;
+}
+
+.alert-button.secondary {
+  color: gray;
 }

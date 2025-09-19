@@ -1,7 +1,12 @@
 @let userInvitations = userInvitations$ | async;
 <ion-header>
-  <ion-toolbar>
-    <ion-title>Liste Utente</ion-title>
+  <ion-toolbar class="transparent">
+    <ion-buttons slot="start">
+      <ion-button>
+        <ion-icon slot="icon-only" name="film-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title class="text-center with-icon">Liste Utente</ion-title>
   </ion-toolbar>
 </ion-header>
 <ion-content>
@@ -9,8 +14,8 @@
     <div class="section-description">
       Gestisci le liste di cui fai parte oppure aggiungine di nuove!
     </div>
-    @if(userInvitations) { @if(userInvitations.length
-    > 0) {
+    <hr />
+    @if(userInvitations) { @if(userInvitations.length > 0) {
     <div class="invitations-container">
       <h3>Inviti</h3>
       <p class="subtitle">
@@ -21,7 +26,7 @@
     </div>
     } } @if(userLists$ | async; as userLists){ @if(userLists.length > 0) {
     <app-user-list [userList]="userLists"></app-user-list>
-    <ion-fab slot="fixed" horizontal="end" vertical="bottom" >
+    <ion-fab slot="fixed" horizontal="end" vertical="bottom">
       <ion-fab-button>
         <ion-icon name="add"></ion-icon>
       </ion-fab-button>
@@ -37,7 +42,10 @@
       </ion-fab-list>
     </ion-fab>
     }　@else {
-    <app-no-list-page (joinList)="openJoinDialog()" (createList)="openCreateDialog()"></app-no-list-page>
+    <app-no-list-page
+      (joinList)="openJoinDialog()"
+      (createList)="openCreateDialog()"
+    ></app-no-list-page>
     } }
   </div>
 </ion-content>

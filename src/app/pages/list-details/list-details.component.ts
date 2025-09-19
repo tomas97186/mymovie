@@ -5,7 +5,24 @@ import { rxResource, takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatTabsModule } from '@angular/material/tabs';
 import { ActivatedRoute, Router } from '@angular/router';
-import { IonBackButton, IonButton, IonButtons, IonContent, IonHeader, IonIcon, IonLabel, IonProgressBar, IonSegment, IonSegmentButton, IonSegmentContent, IonSegmentView, IonTitle, IonToolbar, ModalController } from "@ionic/angular/standalone";
+import {
+  IonBackButton,
+  IonButton,
+  IonButtons,
+  IonContent,
+  IonHeader,
+  IonIcon,
+  IonLabel,
+  IonProgressBar,
+  IonSegment,
+  IonSegmentButton,
+  IonSegmentContent,
+  IonSegmentView,
+  IonTitle,
+  IonToolbar,
+  ModalController,
+  AlertController,
+} from '@ionic/angular/standalone';
 import { map, of, Subscription, tap } from 'rxjs';
 import { ToastService } from 'src/app/services/toast.service';
 import { SettingsComponent } from '../../components/list-details/settings/settings.component';
@@ -17,7 +34,17 @@ import { MovieListService } from '../../services/movie-list.service';
 
 @Component({
   selector: 'app-list-details',
-  imports: [IonContent, IonLabel, IonSegmentButton, IonSegment, IonProgressBar, IonButtons, IonHeader, IonBackButton, IonButton, IonIcon,
+  imports: [
+    IonContent,
+    IonLabel,
+    IonSegmentButton,
+    IonSegment,
+    IonProgressBar,
+    IonButtons,
+    IonHeader,
+    IonBackButton,
+    IonButton,
+    IonIcon,
     CommonModule,
     ClipboardModule,
     FormsModule,
@@ -26,7 +53,11 @@ import { MovieListService } from '../../services/movie-list.service';
     FormsModule,
     SettingsComponent,
     MatTabsModule,
-    IonToolbar, IonTitle, IonSegmentView, IonSegmentContent],
+    IonToolbar,
+    IonTitle,
+    IonSegmentView,
+    IonSegmentContent,
+  ],
   templateUrl: './list-details.component.html',
   styleUrl: './list-details.component.scss',
 })
@@ -39,7 +70,8 @@ export class ListDetailsComponent {
   private snackBar = inject(ToastService);
   private listId = signal<string | undefined>(undefined);
   private userListsSub!: Subscription;
-  private dialog = inject(ModalController)
+  private dialog = inject(ModalController);
+  private alertController = inject(AlertController);
   location = inject(Location);
   listDetails = rxResource({
     request: this.listId,
@@ -67,18 +99,57 @@ export class ListDetailsComponent {
     request: this.listId,
     loader: ({ request }) => {
       if (!request) return of(undefined);
-      return this.listService
-        .getListMembers(request)
-        .pipe(
-          map((memberList) =>
-            memberList.map((m) => this.listService.getUserInfo(m))
-          )
-        );
+      return this.listService.getListMembers(request);
     },
   });
 
   async openUpdateDialog() {
-    const dialogRef = await this.dialog.create({ component: NewListDialogComponent, initialBreakpoint: .20, expandToScroll: false });
+    const alert = await this.alertController.create({
+      header: 'Nuova Lista',
+      inputs: [
+        {
+          id: 'name',
+          label: 'Nome',
+          placeholder: 'Nome',
+          name: 'name',
+          attributes: {
+            maxLength: 25,
+          },
+        },
+      ],
+      buttons: [
+        {
+          text: 'Annulla',
+          role: 'cancel',
+          cssClass: 'secondary',
+        },
+        {
+          text: 'Conferma',
+          role: 'confirm',
+          handler: (data) => {
+            if (data.name.length < 3) {
+              this.snackBar.open(
+                'Il nome della lista deve essere di almeno 3 caratteri.',
+                { color: 'danger', duration: 3000 }
+              );
+              return false;
+            } else {
+              return this.__updateName(data);
+            }
+          },
+        },
+      ],
+    });
+
+    await alert.present();
+  }
+
+  async OLDopenUpdateDialog() {
+    const dialogRef = await this.dialog.create({
+      component: NewListDialogComponent,
+      initialBreakpoint: 0.2,
+      expandToScroll: false,
+    });
     dialogRef.present();
 
     const { data } = await dialogRef.onWillDismiss();
@@ -86,6 +157,25 @@ export class ListDetailsComponent {
       console.log(data);
       this.listService
         .changeListName(data, this.listId()!)
+        .then(() => {
+          this.snackBar.open('Nome modificato con successo.', {
+            duration: 3000,
+          });
+        })
+        .catch((error) => {
+          console.error('Error update name:', error);
+          this.snackBar.open('Errore nella modifica del nome.', {
+            duration: 3000,
+          });
+        });
+    }
+  }
+
+  private __updateName(data: { name: string }) {
+    if (data && data.name) {
+      console.log(data);
+      this.listService
+        .changeListName(data.name, this.listId()!)
         .then(() => {
           this.snackBar.open('Nome modificato con successo.', {
             duration: 3000,
@@ -130,7 +220,6 @@ export class ListDetailsComponent {
     //     body: 'Sei sicuro di voler abbandonare la lista?',
     //   },
     // });
-
     // dialogRef
     //   .afterClosed()
     //   .pipe(first())

@@ -1,27 +1,51 @@
 @let userInfo = this.userInfo$ | async;
 
-<div class="container">
-  <h3 class="text-center mt-4">Profilo</h3>
-  <div class="profile-info card-background">
-    <div class="profile-item">
-      Username <span class="colored-text">{{ userInfo?.username }}</span>
-    </div>
-    <div class="profile-item">
-      Email <span class="colored-text">{{ userInfo?.email }}</span>
-    </div>
-    <div class="profile-item">
-      Liste di cui sei membro<span class="colored-text">{{ userListsCount$ | async }}</span>
+<ion-header>
+  <ion-toolbar class="transparent">
+    <ion-buttons slot="start">
+      <ion-button>
+        <ion-icon slot="icon-only" name="person"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title class="text-center with-icon">Profilo</ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <div class="container" >
+    <ion-list class="card-background" lines="none">
+      <ion-item class="profile-item">
+        <ion-label>Username</ion-label>
+        <span class="colored-text">{{ userInfo?.username }}</span>
+      </ion-item>
+      <ion-item class="profile-item">
+        <ion-label>Email</ion-label>
+        <span class="colored-text">{{ userInfo?.email }}</span>
+      </ion-item>
+      <ion-item class="profile-item">
+        <ion-label>Liste di cui sei membro</ion-label>
+        <span class="colored-text">{{ userListsCount$ | async }}</span>
+      </ion-item>
+    </ion-list>
+    <div class="actions text-center">
+      <ion-button
+        class="w-100"
+        (click)="changeName(userInfo!.username)"
+        color="light"
+      >
+        <ion-icon name="pencil" slot="start" class="me-2"></ion-icon>Modifica
+        Username
+      </ion-button>
+      <ion-button class="w-100" (click)="changePassword()" color="light">
+        <ion-icon
+          name="ellipsis-horizontal-outline"
+          slot="start"
+          class="me-2"
+        ></ion-icon
+        >Modifica Password
+      </ion-button>
+      <ion-button class="w-100" (click)="signout()" color="danger">
+        <ion-icon name="log-out" slot="start" class="me-2"></ion-icon>Logout
+      </ion-button>
     </div>
   </div>
-  <div class="actions text-center">
-    <ion-button (click)="changeName(userInfo!.username)" color="light">
-      <ion-icon name="pencil" slot="start" class="me-2"></ion-icon>Modifica Username
-    </ion-button>
-    <ion-button (click)="changePassword()" color="light">
-      <ion-icon name="ellipsis-horizontal-outline" slot="start" class="me-2"></ion-icon>Modifica Password
-    </ion-button>
-    <ion-button (click)="signout()" fill="clear" color="danger">
-      <ion-icon name="log-out" slot="start" class="me-2"></ion-icon>Logout
-    </ion-button>
-  </div>
-</div>
+</ion-content>

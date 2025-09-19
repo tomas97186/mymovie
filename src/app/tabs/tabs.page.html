@@ -1,3 +1,5 @@
+@let currentUser = currentUser$ | async; @if(currentUser && currentUser != null)
+{
 <ion-tabs>
   <ion-tab-bar slot="bottom">
     <ion-tab-button tab="tab1" href="/home">
@@ -21,3 +23,4 @@
     </ion-tab-button>
   </ion-tab-bar>
 </ion-tabs>
+}

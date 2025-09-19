@@ -10,22 +10,13 @@ import {
   ref,
   remove,
   set,
-  update
+  update,
 } from '@angular/fire/database';
-import {
-  first,
-  from,
-  map,
-  Observable,
-  of,
-  switchMap,
-  tap
-} from 'rxjs';
+import { first, from, map, Observable, of, switchMap, tap } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { MovieStatusEnum } from '../enum/movie-status.enum';
 import { database } from '../firebase';
 import { InfoListModel } from '../models/movie-list.model';
-import { MovieModel } from '../models/movie.model';
 import { SearchItemModel } from '../models/search-item.model';
 import { UserModel } from '../models/user.model';
 import { AuthService } from './auth.service';
@@ -112,7 +103,7 @@ export class MovieListService {
    */
   async deleteList(listId: string) {
     if (!this.currentUser) throw new Error('Utente non autenticato');
-    listId = '-' + listId;
+    listId = listId.startsWith('-')? listId : ('-' + listId);
 
     const updates: { [key: string]: unknown } = {};
     updates[`lists/${listId}`] = null;
@@ -179,13 +170,16 @@ export class MovieListService {
   /**
    * Legge i membri di una lista (solo se l'utente è membro)
    */
-  getListMembers(listId: string): Observable<string[]> {
+  getListMembers(listId: string): Observable<{ [key: string]: boolean }> {
     if (!this.currentUser) throw new Error('Utente non autenticato');
     const db = ref(database, `lists/${listId}/members`);
-    return list(db)
-      .pipe(
-        map(actions => actions.map(a => a.snapshot.key as string))
-      );
+    return list(db).pipe(
+      map((actions) =>
+        Object.fromEntries(
+          actions.map((a) => [a.snapshot.key, a.snapshot.val()])
+        )
+      )
+    );
   }
 
   /**
@@ -198,7 +192,9 @@ export class MovieListService {
     if (!res.exists()) {
       return false; // La lista non esiste
     }
-    const alreadyInlist = await get(ref(database, `lists/${listId}/members/${this.currentUser.uid}`));
+    const alreadyInlist = await get(
+      ref(database, `lists/${listId}/members/${this.currentUser.uid}`)
+    );
     if (alreadyInlist.exists()) {
       return false;
     }
@@ -211,6 +207,32 @@ export class MovieListService {
     return true;
   }
 
+  async removeUser(listId: string, userUid: string) {
+    console.log('Removing user ' + userUid + ' dalla lista ' + listId);
+
+    listId = listId.startsWith('-') ? listId : '-' + listId;
+    const res = await get(ref(database, `lists/${listId}/info/createdBy`));
+    if (!res.exists) {
+      throw new Error('Lista non esistente');
+    } else if (res.val() != this.currentUser?.uid) {
+      throw new Error("L`'utente non è amministratore della lista.");
+    }
+    const userStatus = await get(
+      ref(database, `lists/${listId}/members/${userUid}`)
+    );
+    if (!userStatus.exists) {
+      throw new Error('Utente non esistente');
+    }
+    const updates: { [key: string]: unknown } = {};
+    updates[`lists/${listId}/members/${userUid}`] = null;
+    if (userStatus.val()) {
+      updates[`lists/${listId}/info/membersCount`] = increment(-1);
+    } else {
+      updates[`invitations/${userUid}/${listId}`] = null;
+    }
+    await update(ref(database), updates);
+  }
+
   /**
    * Aggiunge l'utente autenticato come membro a una lista esistente
    */
@@ -221,11 +243,17 @@ export class MovieListService {
       return false; // La lista non esiste.
     }
     const uid = res.val();
-    const isInList = await get(ref(database, `lists/-${listId}/members/${uid}`));
+    const isInList = await get(
+      ref(database, `lists/-${listId}/members/${uid}`)
+    );
     if (isInList.exists()) {
       return false; // L'utente è già in lista.
     }
-    await set(ref(database, `invitations/${uid}/-${listId}`), true);
+    const updates: { [key: string]: unknown } = {};
+    updates[`invitations/${uid}/-${listId}`] = true;
+    updates[`lists/-${listId}/members/${uid}`] = false;
+    await update(ref(database), updates);
+
     return true;
   }
 
@@ -233,10 +261,10 @@ export class MovieListService {
     if (!this.currentUser) throw new Error('Utente non autenticato');
     const db = ref(database, `invitations/${this.currentUser.uid}`);
 
-    return list(db)
-      .pipe(
-        map(actions => actions.map(a => a.snapshot.key as string))
-      );
+    return list(db).pipe(
+      map((actions) => actions.map((a) => a.snapshot.key as string)),
+      tap(console.log)
+    );
   }
 
   async acceptListInvitation(listId: string): Promise<boolean> {
@@ -364,10 +392,9 @@ export class MovieListService {
   getMovieLists(id: number): Observable<string[]> {
     if (!this.currentUser) throw new Error('Utente non autenticato');
     const db = ref(database, `movies/${id}`);
-    return list(db)
-      .pipe(
-        map(actions => actions.map(a => a.snapshot.key as string))
-      );
+    return list(db).pipe(
+      map((actions) => actions.map((a) => a.snapshot.key as string))
+    );
   }
 
   getUserInfo(uid?: string): Observable<UserModel | undefined> {
@@ -380,7 +407,7 @@ export class MovieListService {
   async setUserInfo() {
     if (!this.currentUser) throw new Error('Utente non autenticato');
 
-    const username = 'User' + Math.floor(Math.random() * 99999)
+    const username = 'User' + Math.floor(Math.random() * 99999);
     const updates: { [key: string]: unknown } = {};
     updates[`usernames/username`] = this.currentUser.uid;
     updates[`users/${this.currentUser.uid}/info`] = {

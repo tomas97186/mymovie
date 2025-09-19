@@ -8,22 +8,30 @@
   </ion-toolbar>
 </ion-header>
 }
-<ion-content>
+<ion-content (scroll)="onScroll($event)">
   @if(currentList.length > 0) {
-  <app-movie-list [paddingTop]="!!title() ? 70 : paddingTop()" [movies]="currentList" (loadData)="loadMoreMovies()"
-    class="w-100" [isLoading]="isLoading()"
-    [total]="searchResult()?.total_results?? currentList.length"></app-movie-list>
+  <app-movie-list
+    #movieList
+    [paddingTop]="!!title() ? 70 : paddingTop()"
+    [movies]="currentList"
+    (loadData)="loadMoreMovies()"
+    class="w-100"
+    [isLoading]="isLoading()"
+    [total]="searchResult()?.total_results ?? currentList.length"
+  ></app-movie-list>
   <ion-fab slot="fixed" vertical="bottom" horizontal="end">
     <ion-fab-button (click)="scrollToTop()">
       <ion-icon name="arrow-up-outline"></ion-icon>
     </ion-fab-button>
   </ion-fab>
   } @else if(this.isLoading()) {
-  <div class="placeholder-container" [style.padding-top]="(paddingTop()?? 70) + 'px'">
+  <div
+    class="placeholder-container"
+    [style.padding-top]="(paddingTop() ?? 70) + 'px'"
+  >
     @for(n of [].constructor(20); track $index) {
     <div class="image-placeholder mb-2"></div>
     }
   </div>
   }
-
 </ion-content>

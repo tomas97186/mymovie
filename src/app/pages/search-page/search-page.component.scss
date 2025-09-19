@@ -1,21 +1,21 @@
 .header {
     display: flex;
     position: fixed;
-    justify-content: center;
     align-items: center;
     top: 10px;
     display: flex;
     z-index: 100;
     gap: 1rem;
     text-align: center;
-    margin-right: auto;
-    margin-left: auto;
     width: 100%;
     justify-content: center;
     align-items: center;
-    padding-right: 1.2rem;
-    padding-left: 1.2rem;
-    padding-top: 1.2rem;
+    padding-right: 1rem;
+    padding-left: 1rem;
+
+    & form.search-form {
+        width: 100%;
+    }
 }
 
 
@@ -34,11 +34,14 @@
 
 
 .genre-list {
-    margin-top: 1.2rem;
     align-items: center;
     justify-content: center;
     margin-right: 1rem;
     margin-left: 1rem;
+
+    & ion-button {
+        font-size: .7rem;
+    }
 }
 
 #movieList {
@@ -69,5 +72,5 @@
 }
 
 .no-search {
-    margin-top: 100px;
+    margin-top: 70px;
 }

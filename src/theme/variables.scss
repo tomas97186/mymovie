@@ -3,8 +3,15 @@
 
 :root {
   --ion-color-primary: darkred;
-  --ion-toolbar-background: rgb(0, 0, 0, .4) !important;
-  --ion-background-color: #141218 !important;
+  --ion-toolbar-background: rgb(0, 0, 0, 0.4) !important;
+  --ion-background-color: #0d0d0d !important;
+  --ion-item-background: #1c1c1e !important;
+  --card-background-color: #1c1c1e;
+  --container-background-color: #0d0d0d;
+  --card-primary-color: #ffc9c9;
+  --background-color: #0d0d0d;
+  --ion-tab-bar-background: #0d0d0d !important;
+  --ion-tab-bar-border-color: none !important;
 }
 
 ion-input.search-field {
@@ -14,6 +21,13 @@ ion-input.search-field {
   --highlight-color-valid: transparent !important;
   --highlight-height: 0 !important;
   --border-radius: 10px !important;
-  --background: #211f26  !important;
-  --padding-end: 10px;
+  --background: #211f26e4 !important;
+  --padding-end: 1rem;
+  --padding-start: 1rem;
+  text-align: start !important;
+}
+
+.transparent {
+  --background: transparent !important;
+  background: transparent !important;
 }

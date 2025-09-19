@@ -7,7 +7,7 @@
 }
 
 .movie-info-container {
-  padding: 0rem .6rem;
+  padding: 0rem 0.6rem;
 }
 
 .movie-details-container {
@@ -25,7 +25,6 @@ button.floating-button {
   display: flex;
   justify-content: center;
 }
-
 
 .backdrop-img {
   z-index: 1;
@@ -70,8 +69,7 @@ button.floating-button {
 }
 
 .genre-tag {
-  background-color: rgba(70,70,70,.1);
-  border: 1px solid gray;
+  background: var(--card-background-color);
   color: white;
   padding: 0.3rem 0.6rem;
   text-align: center;
@@ -85,12 +83,12 @@ button.floating-button {
 }
 
 .director-container {
-  padding-left: .8rem;
+  padding-left: 0.8rem;
   margin-top: 1rem;
 
   & span {
     color: #d1d1d1;
-    margin-right: .6rem;
+    margin-right: 0.6rem;
   }
 
   & a {

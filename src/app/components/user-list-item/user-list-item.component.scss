@@ -7,34 +7,32 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: .6rem 1rem;
+  padding: 0.6rem 1rem;
 }
-
 
 .list-meta {
   color: gray;
   font-size: 0.8rem;
   display: flex;
-  align-items: center;
+  align-items: start;
 }
-
 
 ::ng-deep div[matlistitemmeta] {
   align-self: center !important;
 }
 
-.listInfo {
+.list-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.list-meta-item {
   display: flex;
   align-items: center;
   margin-right: 1rem;
-  gap: 0.2rem;
-  font-size: 1.1rem;
+  gap: 0.3rem;
   font-weight: 500;
   color: gray;
-
-  & mat-icon {
-    scale: 0.8;
-  }
 }
 
 .section-description {
@@ -54,5 +52,12 @@ button[mat-icon-button] {
 
   &.danger {
     color: #8b2828;
+  }
+}
+
+.actions {
+  ion-button {
+    --padding-end: .5rem !important;
+    --padding-start: .5rem !important;
   }
 }

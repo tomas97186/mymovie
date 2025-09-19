@@ -1,4 +1,5 @@
 <ion-app>
+  @let user = currentUser$ | async; @if(user) {
   <ion-tabs>
     <ion-tab-bar slot="bottom">
       <ion-tab-button tab="home">
@@ -22,4 +23,7 @@
       </ion-tab-button>
     </ion-tab-bar>
   </ion-tabs>
+  } @else {
+  <ion-router-outlet></ion-router-outlet>
+  }
 </ion-app>

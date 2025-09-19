@@ -5,61 +5,83 @@ this.details()!; @let members = this.members();
   <div class="text-description">Codice Lista</div>
   <div class="code-list-container">
     {{ details.id }}
-    <ion-icon class="ms-2" (click)="copyToClipboardNotification()" [cdkCopyToClipboard]="details.id!"
-      [cdkCopyToClipboardAttempts]="2" name="clipboard-outline" size="medium"></ion-icon>
+    <ion-icon
+      class="ms-2"
+      (click)="copyToClipboardNotification()"
+      [cdkCopyToClipboard]="details.id!"
+      [cdkCopyToClipboardAttempts]="2"
+      name="clipboard-outline"
+      size="medium"
+    ></ion-icon>
   </div>
   <div class="code-description">
     Condividi questo codice con i tuoi amici per unirsi alla lista.
   </div>
-  <div class="text-description">Dettagli Lista</div>
+  <div class="text-description">Film in lista</div>
   <div class="statistics card-background">
-    <ion-list [inset]="true">
-      <ion-item>
-        <ion-label>
-          Film nella lista:
-        </ion-label>
-        <span class="colored-text fw-bold">{{ details.moviesCount }}</span>
-      </ion-item>
-      <ion-item>
-        <ion-label>
-          Film da vedere:
-        </ion-label>
-        <span class="colored-text fw-bold">{{
-          details.moviesCount - details.watchedMovies
-          }}</span>
-      </ion-item>
-      <ion-item>
-        <ion-label>
-          Film visti:
-        </ion-label>
-        <span class="colored-text fw-bold">{{ details.watchedMovies }}</span>
-      </ion-item>
-    </ion-list>
+    <div class="statistic-item">
+      <span class="statistic-label">Totale</span>
+      <span class="statistic-value">{{ details.moviesCount }}</span>
+    </div>
+    <div class="statistic-item">
+      <span class="statistic-label">Da vedere</span>
+      <span class="statistic-value" style="color: var(--ion-color-danger)">{{
+        details.moviesCount - details.watchedMovies
+      }}</span>
+    </div>
+    <div class="statistic-item">
+      <span class="statistic-label">Visti</span>
+      <span class="statistic-value" style="color: var(--ion-color-success)">{{
+        details.watchedMovies
+      }}</span>
+    </div>
   </div>
   <div class="text-description">Membri della lista</div>
-  <div class="card-background">
-    <ion-list [inset]="true">
-      @for(member$ of members; track $index) { @if(member$ | async; as member ){
-      <ion-item>
-        <ion-label>{{ member.username || "Sconosciuto" }} @if(member.uid ===
-          currentUser?.uid) { (Tu) }</ion-label>
-        @if(member.uid === details.createdBy) {
-        <ion-icon slot="end" name="star-outline"></ion-icon>
+  <ion-list lines="none">
+    @for(member$ of members; let i = $index; track $index) { @if(member$ |
+    async; as member ){
+    <ion-item>
+      <div class="avatar" [ngClass]="`avatar-${i+1}`">
+        {{ member.username | slice : 0 : 1 | uppercase }}
+      </div>
+      <ion-label
+        >{{ member.username || "Sconosciuto" }} @if(member.uid ===
+        currentUser?.uid) { (Tu) } @if(member.uid === details.createdBy) {
+        <p>Proprietario</p>
+        }@else if(member.invited) {
+        <p>Invitato</p>
         }
-      </ion-item>
-      }}
-    </ion-list>
-  </div>
+      </ion-label>
+      @if(currentUser?.uid === details.createdBy && member.uid !=
+      currentUser?.uid) {
+      <ion-button
+        slot="end"
+        fill="clear"
+        color="trash"
+        size="medium"
+        color="danger"
+        (click)="removeUser(member.uid!, member.username?? 'Sconosciuto')"
+      >
+        <ion-icon slot="icon-only" name="trash"></ion-icon>
+      </ion-button>
+      }
+    </ion-item>
+    }}
+  </ion-list>
   <div class="actions">
-    <ion-button (click)="this.openInviteUserDialog()" color="light">
+    <ion-button
+      class="w-100"
+      (click)="this.openInviteUserDialog()"
+      color="light"
+    >
       <ion-icon name="person-add-outline" slot="start"></ion-icon> Invita utente
     </ion-button>
     @if(currentUser?.uid === details.createdBy) {
-    <ion-button (click)="deleteList()" fill="clear" color="danger">
+    <ion-button class="w-100" (click)="deleteList()" color="danger">
       <ion-icon name="trash" slot="start"></ion-icon>Elimina lista
     </ion-button>
     } @else {
-    <ion-button (click)="exitListFn.emit()" fill="clear" color="danger">
+    <ion-button class="w-100" (click)="exitListFn.emit()" color="danger">
       <ion-icon name="log-out" slot="start"></ion-icon>Abbandona
     </ion-button>
     }

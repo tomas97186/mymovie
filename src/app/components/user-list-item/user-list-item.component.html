@@ -1,21 +1,26 @@
 @let list = this.list();
 
 <div class="list-item" [routerLink]="invitation() ? undefined : '-' + list.id">
-  <div>
-    <h4>{{ list.name }}</h4>
+  <div class="list-info">
+    <h6>{{ list.name }}</h6>
     <div class="list-meta">
-      <div class="listInfo">
-        {{ list.moviesCount }} <ion-icon style="color: brown" name="film-outline"></ion-icon>
+      <div class="list-meta-item">
+        <ion-icon size="small" name="film-outline"></ion-icon
+        ><span>{{ list.moviesCount }} film</span>
       </div>
-      <div class="listInfo">
-        {{ list.membersCount }}
-        <ion-icon style="color: aquamarine" name="person"></ion-icon>
+      <div class="list-meta-item">
+        <ion-icon size="small" name="people-outline"></ion-icon>
+        {{ list.membersCount }} membri
       </div>
     </div>
   </div>
   <div>
     @if(invitation()) {
-    <ion-button class="danger me-2" ion-icon-button (click)="declineInvitation()">
+    <ion-button
+      class="danger me-2"
+      ion-icon-button
+      (click)="declineInvitation()"
+    >
       <ion-icon name="close"></ion-icon>
     </ion-button>
     <ion-button class="success" ion-icon-button (click)="acceptInvitation()">
@@ -23,7 +28,14 @@
     </ion-button>
 
     } @else {
-    <ion-icon name="chevron-forward"></ion-icon>
+    <div class="actions">
+      <ion-button fill="clear" (click)="shareListCode($event)">
+        <ion-icon name="share-social-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+      <ion-button fill="clear">
+        <ion-icon name="chevron-forward"></ion-icon>
+      </ion-button>
+    </div>
     }
   </div>
 </div>

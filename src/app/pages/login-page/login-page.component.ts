@@ -1,28 +1,41 @@
-import { Component, signal } from '@angular/core';
-import { FormBuilder, Validators, ReactiveFormsModule, FormGroup } from '@angular/forms';
-import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
-
+import { Component, signal } from '@angular/core';
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
+import { Router } from '@angular/router';
 
 // Angular Material
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { AuthService } from '../../services/auth.service';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import {
+  IonButton,
+  IonIcon,
+  IonItem,
+  IonInput,
+  IonInputPasswordToggle, IonSpinner } from '@ionic/angular/standalone';
 import { Subscription } from 'rxjs';
-import { IonButton, IonIcon } from "@ionic/angular/standalone";
 import { ToastService } from 'src/app/services/toast.service';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-login',
   standalone: true,
   templateUrl: './login-page.component.html',
   styleUrls: ['./login-page.component.scss'],
-  imports: [IonIcon, IonButton,
+  imports: [IonSpinner, 
+    IonItem,
+    IonIcon,
+    IonInput,
+    IonButton,
     CommonModule,
     ReactiveFormsModule,
     // Material
@@ -33,6 +46,7 @@ import { ToastService } from 'src/app/services/toast.service';
     MatSnackBarModule,
     MatCheckboxModule,
     MatProgressSpinnerModule,
+    IonInputPasswordToggle,
   ],
 })
 export class LoginPage {
@@ -41,7 +55,6 @@ export class LoginPage {
   authSub: Subscription;
 
   form: FormGroup;
-
 
   constructor(
     private fb: FormBuilder,
@@ -52,9 +65,9 @@ export class LoginPage {
     this.form = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(8)]],
-      remember: [true]
+      remember: [true],
     });
-    this.authSub = this.auth.currentUser$.subscribe(user => {
+    this.authSub = this.auth.currentUser$.subscribe((user) => {
       if (user) {
         this.router.navigateByUrl('/');
       }
@@ -69,7 +82,6 @@ export class LoginPage {
     if (this.form.invalid || this.loading()) return;
     this.loading.set(true);
     const { email, password } = this.form.getRawValue();
-
 
     try {
       await this.auth.login(String(email), String(password));

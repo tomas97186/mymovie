@@ -1,42 +1,97 @@
 .actions {
-    width: 100%;
-    text-align: center;
-    justify-content: center;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-top: 1rem;
+  width: 100%;
+  text-align: center;
+  justify-content: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 1rem;
 }
 
-
 .text-description {
-    font-size: 1.2rem;
-    margin-top: 1.2rem;
-    margin-bottom: 1.2rem;
+  font-size: 1.1rem;
+  margin-top: 1.2rem;
+  margin-bottom: 1.2rem;
 }
 
 .colored-text {
-    color: var(--card-primary-color);
+  color: var(--card-primary-color);
 }
 
 .code-list-container {
-    margin-top: 1.2rem;
-    font-size: large;
-    text-align: center;
-    font-weight: 500;
-    align-items: center;
-    justify-content: center;
-    padding: 1rem 1.2rem;
-    border-radius: 10px;
-    border: 3px dashed rgb(182, 171, 171);
-    color: var(--card-primary-color);
-    display: flex;
-    align-items: center;
-    background: var(--ion-background-color);
+  text-align: center;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.2rem;
+  border-radius: 10px;
+  background-color: var(--card-background-color);
+  display: flex;
+}
+.code-description {
+  margin-top: 1.2rem;
+  color: #a7a7a7;
+  font-size: small;
 }
 
-.code-description {
-    margin-top: 1.2rem;
-    color: #a7a7a7;
-    font-size: medium;
+.statistics {
+  display: flex;
+  justify-content: space-evenly;
+
+  & div {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem;
+
+    & .statistic-label {
+      font-size: 0.8rem;
+      color: gray;
+    }
+
+    & .statistic-value {
+      font-size: 1.2rem;
+      font-weight: 500;
+    }
+  }
+}
+$avatar-colors: #e53935,
+  // rosso
+  #fb8c00,
+  // arancione
+  #fdd835,
+  // giallo
+  #43a047,
+  // verde
+  #1e88e5,
+  // blu
+  #8e24aa,
+  // viola
+  #00acc1,
+  // teal
+  #6d4c41,
+  // marrone
+  #ec407a,
+  // rosa
+  #c0ca33; // lime
+
+.avatar {
+  text-align: center;
+  display: flex;
+  border-radius: 50%;
+  width: 35px;
+  height: 35px;
+  align-items: center;
+  justify-content: center;
+  margin-right: 1rem;
+}
+
+@for $i from 1 through length($avatar-colors) {
+  .avatar-#{$i} {
+    background: nth($avatar-colors, $i);
+  }
+}
+
+ion-list { 
+    border-radius: 10px !important; 
 }
