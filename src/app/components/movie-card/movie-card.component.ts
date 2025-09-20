@@ -34,11 +34,15 @@ export class MovieCardComponent {
   movieListService = inject(MovieListService);
 
 
-  ngOnInit() {
-  }
-
-  navigateToMovieDetails(): void {
-    this.router.navigate(['movies', this.movie()!.id]);
+ navigateToMovieDetails(): void {
+    //    const dialogRef = await this.dialog.create({
+    //   component: MovieDetailsComponent,
+    //   componentProps: { movieId: this.movie().id },
+    //   initialBreakpoint: .5,
+    //   breakpoints: [0, .25, .5, 1],
+    // });
+    // dialogRef.present();
+    // this.router.navigate(['movies', this.movie()!.id]);
   }
 
   async openListDialog() {

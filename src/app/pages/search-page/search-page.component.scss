@@ -2,19 +2,20 @@
     display: flex;
     position: fixed;
     align-items: center;
-    top: 10px;
+    top: calc(env(safe-area-inset-top) + 10px);
     display: flex;
     z-index: 100;
     gap: 1rem;
     text-align: center;
     width: 100%;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
     padding-right: 1rem;
     padding-left: 1rem;
 
     & form.search-form {
         width: 100%;
+        max-width: 500px;
     }
 }
 
@@ -63,7 +64,7 @@
     color: #6c757d;
     text-align: center;
     padding: 2rem;
-    margin-top: 100px;
+    margin-top: 6.5rem;
 
     & mat-icon {
         scale: 2;
@@ -72,5 +73,5 @@
 }
 
 .no-search {
-    margin-top: 70px;
+    margin-top: 6.5rem;
 }

@@ -34,13 +34,13 @@ this.listDetails.isLoading(); @let members = this.members.value()!;
   </ion-header>
   <ion-segment-view>
     <ion-segment-content id="da_vedere">
-      <ion-content >
+      <ion-content>
         @if(moviesToWatch && moviesToWatch.length > 0) {
         <app-movie-list [movies]="moviesToWatch" [total]="moviesToWatch.length"></app-movie-list>
         } @else {
         <div class="no-movies-banner">
-          <ion-icon name="sentiment_dissatisfied"></ion-icon><span>Nessun film da vedere.</span><span
-            style="font-size: 0.9rem">Cerca un film da aggiungere alla lista.</span>
+          <ion-icon name="sentiment_dissatisfied"></ion-icon><span>Nessun film da vedere.</span>
+          <span style="font-size: 0.9rem">Inizia cercando un film da aggiungere alla lista!</span>
         </div>
         }
       </ion-content>
@@ -52,6 +52,7 @@ this.listDetails.isLoading(); @let members = this.members.value()!;
         } @else {
         <div class="no-movies-banner">
           <ion-icon name="sentiment_dissatisfied"></ion-icon><span>Nessun film ancora visto.</span>
+          <span style="font-size: 0.9rem">Inizia cercando un film da aggiungere alla lista!</span>
         </div>
         }
       </ion-content>

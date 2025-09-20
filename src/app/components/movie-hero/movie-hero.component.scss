@@ -55,7 +55,7 @@ img.movie-poster {
     left: 0;
     right: 0;
     height: 70%;
-    background: linear-gradient(to top, #141218, transparent);
+    background: linear-gradient(to top, var(--background-color), transparent);
 }
 
 .movie-info {

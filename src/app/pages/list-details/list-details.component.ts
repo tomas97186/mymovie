@@ -105,7 +105,7 @@ export class ListDetailsComponent {
 
   async openUpdateDialog() {
     const alert = await this.alertController.create({
-      header: 'Nuova Lista',
+      header: 'Modifica Nome Lista',
       inputs: [
         {
           id: 'name',

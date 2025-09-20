@@ -8,6 +8,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MovieListService } from '../../services/movie-list.service';
 import { ToastService } from 'src/app/services/toast.service';
 import { ClipboardModule } from '@angular/cdk/clipboard';
+import { Share } from '@capacitor/share';
 import {
   IonIcon,
   IonButton,
@@ -80,18 +81,17 @@ export class UserListItemComponent {
     event.stopPropagation();
   }
 
-  shareListCode(event: Event) {
-    if (navigator.share) {
-      navigator
-        .share({
-          title: 'Condividi',
-          text: this.list().id,
-        })
-        .then(() => console.log('✅ Condiviso con successo'))
-        .catch((err) => console.error('❌ Errore condivisione', err));
-    } else {
-      console.warn('Web Share API non supportata');
-    }
+  async shareListCode(event: Event) {
     event?.stopPropagation();
+
+    if ((await Share.canShare()).value) {
+      // Share text only
+      await Share.share({
+        text: 'Codice lista: ' + this.list().id + '\nAccedi a MoviesMates e incolla il codice nella sezione "Unisciti ad una lista" per accedere!',
+      });
+    } else {
+      this.snackbar.open('Impossibile condividere il codice lista.\nAccedere alle impostazioni della lista per copiare il codice.');
+    }
+
   }
 }

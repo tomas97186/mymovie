@@ -115,7 +115,7 @@ export class ProfilePageComponent {
     const alert = await this.alertController.create({
       header: 'Modifica password',
       message:
-        'La password deve contenere almeno:\nUna lettera minuscola.\nUna lettera maiuscola\nUn numero\nUn simbolo (es. ! &#64; # $ % ^ & *)',
+        'La password deve contenere almeno:\n • Una lettera minuscola.\n  • Una lettera maiuscola\n • Un numero\n • Un simbolo (es. ! # $ % ^ & *)',
       inputs: [
         {
           id: 'oldPassword',

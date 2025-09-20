@@ -29,7 +29,12 @@
         </div>
         }
       </div>
-
+      @if(director(); as director) {
+      <div class="director-container">
+        <span>Diretto Da:</span>
+        <a [routerLink]="'/discovery/movie'" [queryParams]="{with_crew: director.id, title: 'Film di ' + director.name}">{{director.name}}</a>
+      </div>
+      }
       @if(!!movie.overview && movie.overview.length > 0) {
       <div class="movie-overview mt-3">
         <p>

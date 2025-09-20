@@ -144,7 +144,9 @@ export class MovieDetailsComponent {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((params) => {
         const id = params.get('id');
-        this.movieId.set(id ? +id : undefined);
+        if(id) {
+          this.movieId.set(+id);
+        }
       });
   }
 

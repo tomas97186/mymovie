@@ -10,6 +10,7 @@
   padding: 0rem 0.6rem;
 }
 
+
 .movie-details-container {
   overflow-y: auto;
 }
@@ -93,7 +94,9 @@ button.floating-button {
 
   & a {
     font-weight: 500;
+    color: var(--ion-color-primary);
     font-size: 1rem;
+    text-decoration: none;
   }
 }
 
