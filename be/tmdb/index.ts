@@ -13,7 +13,7 @@ const JWT_SECRET = Bun.env.JWT_SECRET || 'super-secret';
 // Middleware: rate limiting per IP
 app.use('/*', async (c, next) => {
   const ip = c.req.header('x-forwarded-for') || 'unknown';
-  const limit = 60; // max richieste
+  const limit = +(Bun.env.MAX_REQUESTS_PER_MINUTE ?? 60); // max richieste
   const windowMs = 60 * 1000; // 1 minuto
 
   const now = Date.now();
