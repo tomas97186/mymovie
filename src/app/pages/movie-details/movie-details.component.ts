@@ -1,5 +1,12 @@
 import { CommonModule, Location } from '@angular/common';
-import { Component, computed, DestroyRef, inject, model } from '@angular/core';
+import {
+  Component,
+  computed,
+  DestroyRef,
+  inject,
+  input,
+  model,
+} from '@angular/core';
 import { rxResource, takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
@@ -66,6 +73,7 @@ export class MovieDetailsComponent {
   posterUrl = environment.posterUrl;
 
   movieId = model<number | undefined>(undefined);
+  isInModal = input<boolean>(false);
   movie = rxResource({
     request: () => ({ id: this.movieId() }),
     loader: ({ request: { id } }) => {
@@ -144,7 +152,7 @@ export class MovieDetailsComponent {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((params) => {
         const id = params.get('id');
-        if(id) {
+        if (id) {
           this.movieId.set(+id);
         }
       });
@@ -161,7 +169,7 @@ export class MovieDetailsComponent {
       .catch((error) => {
         this._snackBar.open(
           'Errore nel rimuover il film alla lista',
-         
+
           {
             duration: 3000,
           }
@@ -181,7 +189,7 @@ export class MovieDetailsComponent {
       .catch((error) => {
         this._snackBar.open(
           'Errore! Impossibile segnare il film come visto.',
-         
+
           {
             duration: 3000,
           }
@@ -190,12 +198,20 @@ export class MovieDetailsComponent {
       });
   }
 
+  closePage() {
+    if (this.isInModal()) {
+      this.dialog.dismiss();
+    } else {
+      this.location.back();
+    }
+  }
+
   async openListDialog() {
     const dialogRef = await this.dialog.create({
       component: MovieListsDialogComponent,
       componentProps: { movie: this.movie.value() },
-      initialBreakpoint: .5,
-      breakpoints: [0,.25,.5],
+      initialBreakpoint: 0.5,
+      breakpoints: [0, 0.25, 0.5],
     });
     dialogRef.present();
   }
