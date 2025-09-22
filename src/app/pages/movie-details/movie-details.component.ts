@@ -14,7 +14,12 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ToastService } from 'src/app/services/toast.service';
 import { DomSanitizer } from '@angular/platform-browser';
-import { ActivatedRoute, RouterModule } from '@angular/router';
+import {
+  ActivatedRoute,
+  EventType,
+  Router,
+  RouterModule,
+} from '@angular/router';
 import {
   ModalController,
   IonContent,
@@ -25,7 +30,7 @@ import {
   IonButton,
   IonSpinner,
 } from '@ionic/angular/standalone';
-import { map, of, tap } from 'rxjs';
+import { map, of, Subscription, tap } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { MovieHeroComponent } from '../../components/movie-hero/movie-hero.component';
 import { MovieListComponent } from '../../components/movie-list/movie-list.component';
@@ -34,10 +39,13 @@ import { MovieModel } from '../../models/movie.model';
 import { TimePipe } from '../../pipes/time.pipe';
 import { MovieListService } from '../../services/movie-list.service';
 import { TMDBService } from '../../services/tmdb.service';
+import { ProviderModel } from 'src/app/models/provider.model';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-movie-details',
   imports: [
+    TranslateModule,
     IonSpinner,
     IonButton,
     IonBackButton,
@@ -60,12 +68,14 @@ import { TMDBService } from '../../services/tmdb.service';
 })
 export class MovieDetailsComponent {
   private route = inject(ActivatedRoute);
+  private router = inject(Router);
   private destroyRef = inject(DestroyRef);
   private _sanitizer = inject(DomSanitizer);
   private _snackBar = inject(ToastService);
   public location = inject(Location);
   private movieService = inject(MovieListService);
   private dialog = inject(ModalController);
+  private eventSub?: Subscription;
   isImgLoaded = false;
   isOverviewExpanded = false;
   isCastExpanded = false;
@@ -74,80 +84,60 @@ export class MovieDetailsComponent {
 
   movieId = model<number | undefined>(undefined);
   isInModal = input<boolean>(false);
-  movie = rxResource({
+  movie = rxResource<MovieModel, { id: number | undefined }>({
     request: () => ({ id: this.movieId() }),
     loader: ({ request: { id } }) => {
       if (!id) return of(undefined);
-      return this.tmdbService.getMovieDetails(id!).pipe(tap(console.log));
+      return this.tmdbService.getMovieDetails(id!, true).pipe(tap(console.log));
     },
   });
-  recommendations = rxResource({
-    request: () => ({ id: this.movieId() }),
-    loader: ({ request: { id } }) => {
-      if (!id) return of(undefined);
-      return this.tmdbService.recommendedMovies(id!);
-    },
+  recommendations = computed(() => this.movie.value()?.recommendations);
+  trailer = computed(() => {
+    const trailer = this.movie
+      .value()
+      ?.videos?.results.find(
+        (video) => video.type === 'Trailer' && video.site === 'YouTube'
+      );
+    return trailer
+      ? this._sanitizer.bypassSecurityTrustResourceUrl(
+          `https://www.youtube.com/embed/${trailer.key}?rel=0&modestbranding=1&showinfo=0`
+        )
+      : undefined;
   });
-  trailer = rxResource({
-    request: () => ({ id: this.movieId() }),
-    loader: ({ request: { id } }) => {
-      if (!id) return of(undefined);
-      return this.tmdbService
-        .getVideoOfMovie(id!)
-        .pipe()
-        .pipe(
-          map((res) => {
-            const trailer = res.results.find(
-              (video) => video.type === 'Trailer' && video.site === 'YouTube'
-            );
-            return trailer
-              ? this._sanitizer.bypassSecurityTrustResourceUrl(
-                  `https://www.youtube.com/embed/${trailer.key}?rel=0&modestbranding=1&showinfo=0`
-                )
-              : undefined;
-          })
-        );
-    },
-  });
-  credits = rxResource({
-    request: () => ({ id: this.movieId() }),
-    loader: ({ request: { id } }) => {
-      if (!id) return of(undefined);
-      return this.tmdbService.getMovieCredits(id!);
-    },
-  });
-  cast = computed(() => this.credits.value()?.cast);
+  cast = computed(() => this.movie.value()?.credits?.cast);
   director = computed(() =>
-    this.credits.value()?.crew.find((m) => m.job === 'Director')
+    this.movie.value()?.credits?.crew.find((m) => m.job === 'Director')
   );
-  images = rxResource({
-    request: () => ({ id: this.movieId() }),
-    loader: ({ request: { id } }) => {
-      if (!id) return of(undefined);
-      return this.tmdbService.getMovieImages(id!);
-    },
-  });
-  backgroundImg = computed(() => {
-    if (this.images.hasValue()) {
-      const images = this.images.value();
-      if (images.backdrops.length > 0) {
-        return {
-          ...images.backdrops[0],
-          file_path: environment.posterUrl + images.backdrops[0].file_path,
-        };
-      }
+  providers = computed(() => {
+    const providers = this.movie.value()?.providers['IT'];
+    const res: { [key: string]: ProviderModel } = {};
+    for (const p of providers?.flatrate ?? []) {
+      res[p.provider_id] = { ...p, type: ['flatrate'] };
     }
-    return undefined;
-  });
-  reviews = rxResource({
-    request: () => ({ id: this.movieId() }),
-    loader: ({ request: { id } }) => {
-      if (!id) return of(undefined);
-      return this.tmdbService.getMovieReviews(id!);
-    },
+    for (const p of providers?.buy ?? []) {
+      if (!(p.provider_id in res)) {
+        res[p.provider_id] = { ...p, type: [] };
+      }
+      res[p.provider_id].type.push('buy');
+    }
+    for (const p of providers?.rent ?? []) {
+      if (!(p.provider_id in res)) {
+        res[p.provider_id] = { ...p, type: [] };
+      }
+      res[p.provider_id].type.push('rent');
+    }
+
+    return Object.values(res).sort(p => p.display_priority);
   });
 
   ngOnInit() {
+    this.eventSub = this.router.events.subscribe({
+      next: (e) => {
+        if (e.type === EventType.NavigationStart && this.isInModal()) {
+          this.dialog.dismiss();
+        }
+      },
+    });
     this.route.paramMap
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((params) => {
@@ -158,44 +148,14 @@ export class MovieDetailsComponent {
       });
   }
 
-  removeMovieFromList(movie: MovieModel): void {
-    this.movieService
-      .removeMovie(movie.id)
-      .then(() => {
-        this._snackBar.open('Film rimosso dalla lista.', {
-          duration: 3000,
-        });
-      })
-      .catch((error) => {
-        this._snackBar.open(
-          'Errore nel rimuover il film alla lista',
-
-          {
-            duration: 3000,
-          }
-        );
-        console.error('Errore nel rimuovere il film alla lista:', error);
-      });
+  ngOnDestroy() {
+    this.eventSub?.unsubscribe();
   }
 
-  setAsWatched(movie: MovieModel): void {
-    this.movieService
-      .setMovieAsWatched(movie.id)
-      .then(() => {
-        this._snackBar.open('Film segnato come visto.', {
-          duration: 3000,
-        });
-      })
-      .catch((error) => {
-        this._snackBar.open(
-          'Errore! Impossibile segnare il film come visto.',
-
-          {
-            duration: 3000,
-          }
-        );
-        console.error('Errore nel segnare il film come visto', error);
-      });
+  dismissIfInModal() {
+    if (this.isInModal()) {
+      this.dialog.dismiss();
+    }
   }
 
   closePage() {

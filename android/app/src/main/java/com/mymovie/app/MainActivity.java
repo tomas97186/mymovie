@@ -1,4 +1,4 @@
-package com.mymovie.app;
+package com.moviemates.app;
 
 import com.getcapacitor.BridgeActivity;
 

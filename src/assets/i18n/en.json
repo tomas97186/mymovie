@@ -1,0 +1,377 @@
+{
+  "lingue": {
+    "it": "Italiano",
+    "en": "English"
+  },
+  "shared": {
+    "labels": {
+      "returnToLogin": "Return to login",
+      "oppure": "or"
+    },
+    "buttons": {
+      "dettagli": "Details",
+      "conferma": "Confirm",
+      "annulla": "Cancel"
+    },
+    "inputs": {
+      "username": "Username",
+      "nome": "Name",
+      "codice": "List Code"
+    }
+  },
+  "dialogs": {
+    "movieMenu": {
+      "labels": {
+        "gestisciListe": "Manage Lists",
+        "inLista": "In List",
+        "nonInLista": "Not In List",
+        "visto": "Watched",
+        "daVedere": "To Watch",
+        "descrizione": "Add the movie to a list or mark it as watched."
+      },
+      "buttons": {
+        "visto": "Mark as Watched",
+        "rimuovi": "Remove from List",
+        "aggiungi": "Add to a List",
+        "dettagli": "View Details"
+      },
+      "messages": {
+        "aggiungi": {
+          "successo": "Movie successfully added to the list",
+          "errore": "Error adding movie to the list"
+        },
+        "rimosso": {
+          "successo": "Movie removed from the list",
+          "errore": "Error removing movie from the list"
+        },
+        "visto": {
+          "successo": "Movie marked as watched.",
+          "errore": "Error! Unable to mark the movie as watched."
+        }
+      }
+    }
+  },
+  "components": {
+    "movieCard": {
+      "messages": {
+        "rimosso": {
+          "successo": "Movie removed from the list",
+          "errore": "Error removing movie from the list"
+        },
+        "visto": {
+          "successo": "Movie marked as watched.",
+          "errore": "Error! Unable to mark the movie as watched."
+        }
+      }
+    }
+  },
+  "pages": {
+    "home": {
+      "labels": {
+        "diTendenza": "Trending",
+        "ultimeUscite": "Latest Releases",
+        "popolari": "Popular",
+        "piuVotati": "Top Rated",
+        "vediAltri": "See More"
+      }
+    },
+    "movieDetails": {
+      "labels": {
+        "direttoDa": "Directed by",
+        "direttoDaSubject": "Directed by {{subject}}",
+        "trailer": "trailer",
+        "doveGuardarlo": "where to watch",
+        "filmRaccomandati": "recommended movies",
+        "cast": "cast",
+        "filmCon": "Movies with {{subject}}",
+        "providerType": {
+          "flatrate": "subscription",
+          "rent": "rent",
+          "buy": "buy"
+        }
+      },
+      "buttons": {
+        "mostraTutti": "show more",
+        "mostraMeno": "show less",
+        "mostraTutto": "show more"
+      }
+    },
+    "discover": {
+      "buttons": {
+        "popolari": "most popular",
+        "recenti": "most recent",
+        "votati": "top rated"
+      }
+    },
+    "emailVerification": {
+      "labels": {
+        "verificaEmail": "Verify your email",
+        "descrizione1": "We sent you a verification email at",
+        "descrizione2": "Check your inbox and click the link to activate your account!",
+        "nonRicevuta": "If you don’t receive the email within a few minutes, check your Spam folder or",
+        "reinvia": "Click here to resend"
+      },
+      "messages": {
+        "email": {
+          "successo": "Verification email sent.",
+          "errore": "An error occurred while sending the email."
+        }
+      }
+    },
+    "listDetails": {
+      "dialogs": {
+        "modificaNome": {
+          "header": "Edit List Name"
+        }
+      },
+      "settings": {
+        "dialogs": {
+          "lasciaLista": {
+            "header": "Leave the List?",
+            "message": "Are you sure you want to leave the list?"
+          },
+          "invita": {
+            "header": "Invite user"
+          },
+          "rimuovi": {
+            "header": "Remove {{username}}",
+            "message": "Do you confirm you want to remove {{username}} from the list?\nThe user will no longer be able to view or edit the movie list."
+          },
+          "elimina": {
+            "header": "Confirm Deletion",
+            "message": "Are you sure you want to delete the list?\nNo member will be able to access it afterwards."
+          }
+        },
+        "labels": {
+          "codice": "List Code",
+          "descrizioneCodice": "Share this code with your friends to join the list.",
+          "film": "Movies in list",
+          "totale": "Total",
+          "visti": "Watched",
+          "daVedere": "To Watch",
+          "membri": "Members",
+          "sconosciuto": "Unknown",
+          "proprietario": "Owner",
+          "tu": "You",
+          "invitato": "Invited"
+        },
+        "messages": {
+          "copiaCodice": "List code copied to clipboard!",
+          "condividi": {
+            "messaggio": "List code:\n{{listId}}\nOpen MoviesMates and paste the code in the \"Join a list\" section to access!",
+            "errore": "Unable to share list code."
+          },
+          "exitList": "You are no longer part of the list.",
+          "invito": {
+            "nonEsiste": "The user {{username}} does not exist or is already in the list.",
+            "successo": "Invitation sent successfully.",
+            "errore": "Error sending the invitation."
+          },
+          "rimuoviUtente": {
+            "successo": "User {{username}} removed from the list.",
+            "errore": "Error! Could not remove user {{username}}."
+          },
+          "eliminaLista": {
+            "successo": "List deleted successfully.",
+            "errore": "Error deleting the list."
+          }
+        },
+        "buttons": {
+          "invita": "Invite User",
+          "elimina": "Delete List",
+          "abbandona": "Leave List"
+        }
+      },
+      "labels": {
+        "daVedere": "to watch",
+        "visti": "watched",
+        "impostazioni": "settings",
+        "noFilm": "No movies to watch.",
+        "start": "Start by searching for a movie to add to the list!",
+        "noFilmVisti": "No movies watched yet.",
+        "error": "Error! List not found."
+      },
+      "messages": {
+        "modificaNome": {
+          "successo": "Name successfully updated.",
+          "errore": {
+            "generico": "Error updating the name.",
+            "minLength": "The list name must be at least 3 characters long."
+          }
+        }
+      }
+    },
+    "login": {
+      "labels": {
+        "accedi": "Login",
+        "inserisciCredenziali": "Enter your credentials to continue",
+        "noAccount": "Don’t have an account?",
+        "creaAccount": "Create an account",
+        "passwordDimenticata": "Forgot password"
+      },
+      "buttons": {
+        "google": "continue with google",
+        "accedi": "Login",
+        "accessoInCorso": "Logging in..."
+      },
+      "messages": {
+        "login": {
+          "success": "Login successful!",
+          "errore": "Login failed"
+        }
+      }
+    },
+    "signup": {
+      "labels": {
+        "registrati": "Sign up",
+        "descrizione": "Create your account to start sharing movies to watch with friends!"
+      },
+      "buttons": {
+        "registrati": "Sign up",
+        "registrazioneInCorso": "Registering..."
+      }
+    },
+    "passwordReset": {
+      "labels": {
+        "passwordDimenticata": "Forgot Password?",
+        "noProblem": "No problem!",
+        "descrizione": "Enter your email below and you’ll receive a link to set a new password in a few seconds."
+      },
+      "buttons": {
+        "reset": "Reset Password"
+      },
+      "messages": {
+        "reset": {
+          "successo": "We sent you an email with instructions to reset your password.\nCheck your inbox and follow the link to choose a new one.",
+          "errore": "Unable to reset the password."
+        }
+      }
+    },
+    "noLists": {
+      "labels": {
+        "nonFaiParte": "You are not part of any list."
+      },
+      "buttons": {
+        "unisciti": "Join a list",
+        "crea": "Create a new list"
+      }
+    },
+    "profile": {
+      "labels": {
+        "profilo": "Profile",
+        "username": "Username",
+        "email": "Email",
+        "liste": "Lists"
+      },
+      "buttons": {
+        "username": "Edit Username",
+        "password": "Edit Password",
+        "logout": "Logout"
+      },
+      "dialogs": {
+        "username": {
+          "header": "Edit Username"
+        },
+        "password": {
+          "header": "Change Password",
+          "message": "The password must contain at least: one uppercase letter, one lowercase letter, one number.",
+          "inputs": {
+            "passwordAttuale": "Current Password",
+            "nuovaPassword": "New Password",
+            "ripetiPassword": "Repeat Password"
+          }
+        }
+      },
+      "messages": {
+        "password": {
+          "successo": "Password successfully updated",
+          "errore": {
+            "generico": "Error updating the password",
+            "minLength": "The username must be at least {{minLength}} characters long.",
+            "simbolo": "The username can only contain the symbol _"
+          }
+        },
+        "username": {
+          "successo": "Username updated.",
+          "errore": {
+            "generico": "Username already exists.",
+            "nonCoincide": "The entered passwords do not match.",
+            "minLength": "The password must be at least {{minLength}} characters long.",
+            "criteriSicurezza": "The new password does not meet the security criteria."
+          }
+        }
+      }
+    },
+    "search": {
+      "labels": {
+        "nonTrovato": "No results found."
+      }
+    },
+    "settings": {
+      "labels": {
+        "comportamentoClick": "Comportamento click su scheda film",
+        "impostazioni": "Settings",
+        "preferenze": "Preferences",
+        "lingua": "Language",
+        "apriFilm": "Open movie details",
+        "apriListe": "Open list menu",
+        "licenzaDati": "Data License",
+        "tmdb": "This application uses the TMDB database and TMDB API but is not endorsed or certified by TMDB.",
+        "about": "About",
+        "creatoDa": "Created by",
+        "versione": "Version"
+      }
+    },
+    "userLists": {
+      "dialogs": {
+        "unisciti": {
+          "header": "Join a list",
+          "message": "Enter the list code to join!"
+        },
+        "crea": {
+          "header": "New List"
+        }
+      },
+      "labels": {
+        "liste": "Movie Lists",
+        "descrizione": "Manage the lists you belong to or add new ones!",
+        "inviti": "Invitations",
+        "descrizioneInviti": "You have pending invitations, choose whether to accept or decline them."
+      },
+      "buttons": {
+        "joinLista": "Join a list",
+        "creaLista": "Create a list"
+      },
+      "messages": {
+        "unisciti": {
+          "successo": "You have been added to the list.",
+          "errore": {
+            "generico": "The list does not exist or you cannot join.",
+            "obbligatorio": "Enter the list code."
+          }
+        },
+        "crea": {
+          "successo": "List created successfully!",
+          "errore": {
+            "generico": "An error occurred while creating the list.",
+            "minLength": "The list name must be at least {{minLength}} characters long."
+          }
+        },
+        "invito": {
+          "accetta": {
+            "successo": "Invitation to the list accepted.",
+            "errore": "Error! Unable to accept the invitation."
+          },
+          "rifiuta": {
+            "successo": "Invitation to the list declined.",
+            "errore": "Error! Unable to decline the invitation."
+          }
+        },
+        "condividi": {
+          "messaggio": "List code:\n{{listId}}\nOpen MoviesMates and paste the code in the \"Join a list\" section to access!",
+          "errore": "Unable to share list code."
+        }
+      }
+    }
+  }
+}

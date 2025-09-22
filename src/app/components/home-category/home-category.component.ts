@@ -7,10 +7,11 @@ import { MovieListComponent } from '../movie-list/movie-list.component';
 import { DiscoverMovieRequestModel } from '../../models/discover-movie-request.model';
 import { MatButtonModule } from '@angular/material/button';
 import { IonButton, IonIcon } from "@ionic/angular/standalone";
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-home-category',
-  imports: [IonIcon, IonButton, CommonModule, RouterModule, MovieListComponent, MatButtonModule],
+  imports: [TranslateModule, IonIcon, IonButton, CommonModule, RouterModule, MovieListComponent, MatButtonModule],
   templateUrl: './home-category.component.html',
   styleUrl: './home-category.component.scss'
 })

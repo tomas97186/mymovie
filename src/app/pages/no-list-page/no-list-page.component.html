@@ -1,16 +1,25 @@
 <div class="container no-list-container">
   <div class="text-description">
     <div style="color: rgb(135, 135, 135)">
-      <ion-icon style="scale: 2" class="mb-2" name="sentiment_dissatisfied"></ion-icon>
-      <h4>Non fai parte di nessuna lista.</h4>
+      <ion-icon
+        style="scale: 2"
+        class="mb-2"
+        name="sentiment_dissatisfied"
+      ></ion-icon>
+      <h4>{{ "pages.noLists.labels.nonFaiParte" | translate }}</h4>
     </div>
-    <!-- <span> Per accedere a una lista esistente, inserisci il codice </span> -->
   </div>
   <div class="actions">
-    <ion-button class="action-button mt-3" color="primary" (click)="joinList.emit()">
-      <ion-icon name="check"></ion-icon> Unisciti ad una lista
+    <ion-button class="mt-3" (click)="joinList.emit()">
+      <ion-icon name="person-add-outline" slot="start"></ion-icon>
+      {{ "pages.noLists.buttons.unisciti" | translate }}
     </ion-button>
-    <div class="text-description mt-3 mb-2">Oppure</div>
-    <ion-button class="action-button" (click)="createList.emit()"><ion-icon name="add"></ion-icon> Crea una nuova lista</ion-button>
+    <div class="text-description mt-3 mb-2">
+      {{ "shared.labels.oppure" | translate | titlecase }}
+    </div>
+    <ion-button class="action-button" (click)="createList.emit()"
+      ><ion-icon name="add" slot="start"></ion-icon>
+      {{ "pages.noLists.buttons.crea" | translate }}</ion-button
+    >
   </div>
 </div>

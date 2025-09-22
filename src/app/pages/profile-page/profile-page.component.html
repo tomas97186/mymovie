@@ -2,27 +2,27 @@
 
 <ion-header>
   <ion-toolbar class="transparent">
-    <ion-buttons slot="start">
-      <ion-button>
-        <ion-icon slot="icon-only" name="person"></ion-icon>
+    <ion-title>{{ "pages.profile.labels.profilo" | translate }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button routerLink="/settings">
+        <ion-icon slot="icon-only" name="settings-outline"></ion-icon>
       </ion-button>
     </ion-buttons>
-    <ion-title class="text-center with-icon">Profilo</ion-title>
   </ion-toolbar>
 </ion-header>
 <ion-content>
-  <div class="container" >
+  <div class="container">
     <ion-list class="card-background" lines="none">
       <ion-item class="profile-item">
-        <ion-label>Username</ion-label>
+        <ion-label>{{ "pages.profile.labels.username" | translate }}</ion-label>
         <span class="colored-text">{{ userInfo?.username }}</span>
       </ion-item>
       <ion-item class="profile-item">
-        <ion-label>Email</ion-label>
+        <ion-label>{{ "pages.profile.labels.email" | translate }}</ion-label>
         <span class="colored-text">{{ userInfo?.email }}</span>
       </ion-item>
       <ion-item class="profile-item">
-        <ion-label>Liste di cui sei membro</ion-label>
+        <ion-label>{{ "pages.profile.labels.liste" | translate }}</ion-label>
         <span class="colored-text">{{ userListsCount$ | async }}</span>
       </ion-item>
     </ion-list>
@@ -32,8 +32,8 @@
         (click)="changeName(userInfo!.username)"
         color="light"
       >
-        <ion-icon name="pencil" slot="start" class="me-2"></ion-icon>Modifica
-        Username
+        <ion-icon name="pencil" slot="start" class="me-2"></ion-icon
+        >{{ "pages.profile.buttons.username" | translate }}
       </ion-button>
       <ion-button class="w-100" (click)="changePassword()" color="light">
         <ion-icon
@@ -41,10 +41,11 @@
           slot="start"
           class="me-2"
         ></ion-icon
-        >Modifica Password
+        >{{ "pages.profile.buttons.password" | translate }}
       </ion-button>
       <ion-button class="w-100" (click)="signout()" color="danger">
-        <ion-icon name="log-out" slot="start" class="me-2"></ion-icon>Logout
+        <ion-icon name="log-out" slot="start" class="me-2"></ion-icon
+        >{{ "pages.profile.buttons.logout" | translate }}
       </ion-button>
     </div>
   </div>

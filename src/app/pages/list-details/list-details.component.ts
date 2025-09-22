@@ -3,9 +3,9 @@ import { CommonModule, Location } from '@angular/common';
 import { Component, DestroyRef, inject, signal } from '@angular/core';
 import { rxResource, takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatTabsModule } from '@angular/material/tabs';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
+  AlertController,
   IonBackButton,
   IonButton,
   IonButtons,
@@ -21,20 +21,21 @@ import {
   IonTitle,
   IonToolbar,
   ModalController,
-  AlertController,
 } from '@ionic/angular/standalone';
-import { map, of, Subscription, tap } from 'rxjs';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { of, Subscription, tap } from 'rxjs';
 import { ToastService } from 'src/app/services/toast.service';
 import { SettingsComponent } from '../../components/list-details/settings/settings.component';
 import { MovieListComponent } from '../../components/movie-list/movie-list.component';
-import { NewListDialogComponent } from '../../components/new-list-dialog/new-list-dialog.component';
 import { SearchItemModel } from '../../models/search-item.model';
 import { AuthService } from '../../services/auth.service';
 import { MovieListService } from '../../services/movie-list.service';
+import { BUTTONS, INPUTS } from 'src/app/variables';
 
 @Component({
   selector: 'app-list-details',
   imports: [
+    TranslateModule,
     IonContent,
     IonLabel,
     IonSegmentButton,
@@ -52,7 +53,6 @@ import { MovieListService } from '../../services/movie-list.service';
     MovieListComponent,
     FormsModule,
     SettingsComponent,
-    MatTabsModule,
     IonToolbar,
     IonTitle,
     IonSegmentView,
@@ -62,6 +62,10 @@ import { MovieListService } from '../../services/movie-list.service';
   styleUrl: './list-details.component.scss',
 })
 export class ListDetailsComponent {
+  private readonly MESSAGE_LABELS = 'pages.listDetails.messages.';
+  private readonly DIALOG_LABELS = 'pages.listDetails.dialogs.';
+
+  private translate = inject(TranslateService);
   private destroyRef = inject(DestroyRef);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
@@ -105,31 +109,35 @@ export class ListDetailsComponent {
 
   async openUpdateDialog() {
     const alert = await this.alertController.create({
-      header: 'Modifica Nome Lista',
+      header: this.translate.instant(
+        this.DIALOG_LABELS + 'modificaNome.header'
+      ),
       inputs: [
         {
           id: 'name',
-          label: 'Nome',
-          placeholder: 'Nome',
+          label: this.translate.instant(INPUTS.NOME),
+          placeholder: this.translate.instant(INPUTS.NOME),
           name: 'name',
           attributes: {
-            maxLength: 25,
+            maxLength: 45,
           },
         },
       ],
       buttons: [
         {
-          text: 'Annulla',
+          text: this.translate.instant(BUTTONS.ANNULLA),
           role: 'cancel',
           cssClass: 'secondary',
         },
         {
-          text: 'Conferma',
+          text: this.translate.instant(BUTTONS.CONFERMA),
           role: 'confirm',
           handler: (data) => {
             if (data.name.length < 3) {
               this.snackBar.open(
-                'Il nome della lista deve essere di almeno 3 caratteri.',
+                this.translate.instant(
+                  this.MESSAGE_LABELS + 'modificaNome.errore.minLength'
+                ),
                 { color: 'danger', duration: 3000 }
               );
               return false;
@@ -144,48 +152,31 @@ export class ListDetailsComponent {
     await alert.present();
   }
 
-  async OLDopenUpdateDialog() {
-    const dialogRef = await this.dialog.create({
-      component: NewListDialogComponent,
-      initialBreakpoint: 0.2,
-      expandToScroll: false,
-    });
-    dialogRef.present();
-
-    const { data } = await dialogRef.onWillDismiss();
-    if (data) {
-      console.log(data);
-      this.listService
-        .changeListName(data, this.listId()!)
-        .then(() => {
-          this.snackBar.open('Nome modificato con successo.', {
-            duration: 3000,
-          });
-        })
-        .catch((error) => {
-          console.error('Error update name:', error);
-          this.snackBar.open('Errore nella modifica del nome.', {
-            duration: 3000,
-          });
-        });
-    }
-  }
-
   private __updateName(data: { name: string }) {
     if (data && data.name) {
       console.log(data);
       this.listService
         .changeListName(data.name, this.listId()!)
         .then(() => {
-          this.snackBar.open('Nome modificato con successo.', {
-            duration: 3000,
-          });
+          this.snackBar.open(
+            this.translate.instant(
+              this.MESSAGE_LABELS + 'modificaNome.successo'
+            ),
+            {
+              duration: 3000,
+            }
+          );
         })
         .catch((error) => {
           console.error('Error update name:', error);
-          this.snackBar.open('Errore nella modifica del nome.', {
-            duration: 3000,
-          });
+          this.snackBar.open(
+            this.translate.instant(
+              this.MESSAGE_LABELS + 'modificaNome.errore.generico'
+            ),
+            {
+              duration: 3000,
+            }
+          );
         });
     }
   }
@@ -211,35 +202,5 @@ export class ListDetailsComponent {
 
   ngOnDestroy() {
     this.userListsSub?.unsubscribe();
-  }
-
-  exitList() {
-    // const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-    //   data: {
-    //     title: 'Conferma',
-    //     body: 'Sei sicuro di voler abbandonare la lista?',
-    //   },
-    // });
-    // dialogRef
-    //   .afterClosed()
-    //   .pipe(first())
-    //   .subscribe((result) => {
-    //     if (result) {
-    //       const listId = this.listDetails.value()?.id;
-    //       if (listId) {
-    //         this.listService.exitList(listId).then(
-    //           () => {
-    //             this.router.navigate(['/lists']);
-    //             this.snackBar.open('Non fai più parte della lista.', {
-    //               duration: 3000,
-    //             });
-    //           }
-    //           // Optionally, navigate back or show a success message
-    //         );
-    //       } else {
-    //         console.error('No list ID found in the route parameters');
-    //       }
-    //     }
-    //   });
   }
 }

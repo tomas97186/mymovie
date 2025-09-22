@@ -1,0 +1,30 @@
+<div class="login-wrap">
+  <div class="login-container">
+    <div class="brand">
+      <h1 class="mb-3">
+        {{ "pages.emailVerification.labels.verificaEmail" | translate }}
+      </h1>
+      <p>
+        {{ "pages.emailVerification.labels.descrizione1" | translate }}
+        <span style="text-decoration: underline">{{
+          (auth.currentUser$ | async)?.email
+        }}</span
+        >.<br />{{ "pages.emailVerification.labels.descrizione2" | translate }}
+      </p>
+      <hr />
+      <p class="subtitle">
+        {{ "pages.emailVerification.labels.nonRicevuta" | translate }}
+        <br />
+        <a href="#">{{
+          "pages.emailVerification.labels.reinvia" | translate
+        }}</a
+        >.
+      </p>
+    </div>
+  </div>
+  <div class="login-link">
+    <a (click)="returnToLogin()"
+      ><ion-icon name="return-up-back-outline" class="me-2">{{'shared.labels.returnToLogin' | translate}}</ion-icon></a
+    >
+  </div>
+</div>

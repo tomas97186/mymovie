@@ -242,3 +242,28 @@ ion-title.with-icon {
 .alert-button.secondary {
   color: gray;
 }
+
+.subtitle {
+  font-size: 0.9rem;
+  color: gray;
+}
+
+.error-text {
+  color: var(--ion-color-danger) !important;
+}
+
+.login-link {
+  & a {
+    color: gray !important;
+    font-size: 0.9rem;
+  }
+  text-align: center;
+}
+
+ion-fab[slot="fixed"][vertical="top"] {
+  padding-top: env(safe-area-inset-top) !important;
+}
+
+.login-wrap {
+  padding-top: calc(env(safe-area-inset-top) + 1.2rem) !important;
+}

@@ -1,0 +1,79 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button fill="clear" (click)="location.back()">
+        <ion-icon name="chevron-back"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>{{
+      "pages.settings.labels.impostazioni" | translate
+    }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="container">
+    <div class="card-background p-3">
+      <h5>{{ "pages.settings.labels.preferenze" | translate }}</h5>
+      <ion-list lines="none">
+        <ion-item>
+          <ion-select
+            label="{{ 'pages.settings.labels.lingua' | translate }}"
+            [value]="this.settings.language.value"
+            interface="popover"
+            (ionChange)="changeLanguage($event)"
+          >
+            @for(l of languages; track $index) {
+            <ion-select-option [value]="l">{{
+              "lingue." + l | translate
+            }}</ion-select-option>
+            }
+          </ion-select>
+        </ion-item>
+        <ion-item>
+          <ion-toggle
+            [checked]="settings.openFilmOnClick.value"
+            (ionChange)="
+              this.settings.openFilmOnClick.value =
+                !settings.openFilmOnClick.value
+            "
+            helperText="{{'pages.settings.labels.comportamentoClick' | translate}}"
+          >
+            {{
+              "pages.settings.labels." +
+                (settings.openFilmOnClick.value ? "apriFilm" : "apriListe")
+                | translate
+            }}
+          </ion-toggle>
+        </ion-item>
+      </ion-list>
+    </div>
+    <div class="card-background p-3">
+      <div class="d-flex align-items-center mb-3">
+        <img class="tmdb-logo" src="assets/tmdb-logo.svg" alt="tmdb-logo" />
+        <h5 class="ms-2 mb-0">
+          {{ "pages.settings.labels.licenzaDati" | translate }}
+        </h5>
+      </div>
+      <p class="tmdb-data">
+        {{ "pages.settings.labels.tmdb" | translate }}
+      </p>
+    </div>
+    <div class="card-background p-3">
+      <div class="d-flex align-items-center mb-3">
+        <ion-icon name="information-circle-outline" size="large"></ion-icon>
+        <h5 class="ms-2 mb-0">
+          {{ "pages.settings.labels.about" | translate }}
+        </h5>
+      </div>
+      <h5 class="text-center">MovieMates</h5>
+      <p class="text-center tmdb-data">
+        {{ "pages.settings.labels.creatoDa" | translate }}
+        <span style="color: var(--ion-color-primary)">tomas97186</span>
+        <br />
+        {{ "pages.settings.labels.versione" | translate }}
+        <span style="color: var(--ion-color-primary)">{{ version }}</span>
+      </p>
+    </div>
+  </div>
+</ion-content>

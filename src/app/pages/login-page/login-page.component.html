@@ -1,15 +1,15 @@
 <div class="login-wrap">
-  <!-- <div class="text-center">
-    <img src="assets/logo.png" class="logo" />
-  </div> -->
-  <div class="title mb-2">
-    <span class="title-1">M</span><span class="title-2">ovie</span>
-    <span class="title-1"> M</span><span class="title-2">ates</span>
-  </div>
   <div class="login-container">
     <div class="brand">
-      <h1>Accedi</h1>
-      <p class="subtitle">Inserisci le tue credenziali per continuare</p>
+      <h1>{{ "pages.login.labels.accedi" | translate | titlecase }}</h1>
+      <p class="subtitle">
+        {{ "pages.login.labels.inserisciCredenziali" | translate }}
+        <br />
+        {{ "pages.login.labels.noAccount" | translate }}
+        <a routerLink="/signup">{{
+          "pages.login.labels.creaAccount" | translate
+        }}</a>
+      </p>
     </div>
 
     <form [formGroup]="form" (ngSubmit)="submit()" class="form">
@@ -31,21 +31,40 @@
       ></ion-input>
 
       <ion-button
-        color="primary"
         class="w-100"
         type="submit"
         [disabled]="form.invalid || loading()"
       >
-        <ng-container *ngIf="!loading(); else loadingTpl">Accedi</ng-container>
+        @if(loading()) {
+        <ion-spinner></ion-spinner>
+        <span>{{ "pages.login.buttons.accessoInCorso" | translate }}</span>
+        } @else { {{ "pages.login.buttons.accedi" | translate }} }
       </ion-button>
-      <ng-template #loadingTpl>
-        <span class="loading">
-          <ion-spinner></ion-spinner>
-          <span>Accesso in corso...</span>
-        </span>
-      </ng-template>
+      <div class="pwd-reset-link">
+        <a routerLink="/password-reset">{{
+          "pages.login.labels.passwordDimenticata" | translate
+        }}</a>
+      </div>
+      <div class="separator">
+        <div class="separator-line"></div>
+        <div class="separator-content">
+          <mark
+            ><span class="separator-label false">{{
+              "shared.labels.oppure" | translate | titlecase
+            }}</span></mark
+          >
+        </div>
+      </div>
+      <ion-button
+        class="mt-2 google-button"
+        (click)="loginWithGoogle()"
+        color="medium"
+        fill="outline"
+      >
+        <img src="assets/google-logo.svg" slot="start" class="google-logo" />
+        {{ "pages.login.buttons.google" | translate }}
+      </ion-button>
     </form>
-
-    <!-- <p class="hint">Utente demo: <code>demo.prova.com</code> / <code>password123</code></p> -->
+    <div class="spacer"></div>
   </div>
 </div>

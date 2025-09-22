@@ -1,11 +1,5 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
-import { MatListModule } from '@angular/material/list';
-import { MatMenuModule } from '@angular/material/menu';
-import { MatToolbarModule } from '@angular/material/toolbar';
 import { Router, RouterModule } from '@angular/router';
 import {
   AlertController,
@@ -17,22 +11,23 @@ import {
   IonFabList,
   IonHeader,
   IonIcon,
-  IonList,
   IonTitle,
   IonToolbar,
   ModalController,
 } from '@ionic/angular/standalone';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { map } from 'rxjs';
 import { UserListComponent } from 'src/app/components/user-list/user-list.component';
 import { ToastService } from 'src/app/services/toast.service';
-import { NewListDialogComponent } from '../../components/new-list-dialog/new-list-dialog.component';
-import { UserListItemComponent } from '../../components/user-list-item/user-list-item.component';
+import { BUTTONS, INPUTS } from 'src/app/variables';
+import { fieldValidations } from 'src/environments/fields.validation';
 import { MovieListService } from '../../services/movie-list.service';
 import { NoListPageComponent } from '../no-list-page/no-list-page.component';
 
 @Component({
   selector: 'app-user-lists-page',
   imports: [
+    TranslateModule,
     IonButtons,
     IonContent,
     IonToolbar,
@@ -45,26 +40,20 @@ import { NoListPageComponent } from '../no-list-page/no-list-page.component';
     IonFab,
     CommonModule,
     RouterModule,
-    MatListModule,
-    MatToolbarModule,
-    MatIconModule,
-    MatMenuModule,
-    MatButtonModule,
     NoListPageComponent,
-    UserListItemComponent,
-    IonList,
     UserListComponent,
-    MatInputModule,
   ],
   templateUrl: './user-lists-page.component.html',
   styleUrl: './user-lists-page.component.scss',
 })
 export class UserListsPageComponent {
+  private readonly MESSAGE_LABELS = 'pages.userLists.messages.';
+  private readonly DIALOG_LABELS = 'pages.userLists.dialogs.';
+
+  private translate = inject(TranslateService);
   private listService = inject(MovieListService);
-  private dialog = inject(ModalController);
   private alertController = inject(AlertController);
   private snackBar = inject(ToastService);
-  private router = inject(Router);
   userLists$ = this.listService
     .getUserLists()
     .pipe(
@@ -82,13 +71,17 @@ export class UserListsPageComponent {
         .joinList(listId)
         .then((res) => {
           if (res) {
-            this.snackBar.open('Sei stato aggiunto alla lista.', {
-              duration: 3000,
-            });
+            this.snackBar.open(
+              this.translate.instant(this.MESSAGE_LABELS + 'unisciti.successo'),
+              {
+                duration: 3000,
+              }
+            );
           } else {
             this.snackBar.open(
-              'La lista non esiste o non puoi unirti.',
-
+              this.translate.instant(
+                this.MESSAGE_LABELS + 'unisciti.errore.generico'
+              ),
               {
                 duration: 3000,
               }
@@ -96,9 +89,14 @@ export class UserListsPageComponent {
           }
         })
         .catch((error) => {
-          this.snackBar.open("Errore nell'unirti alla lista.", {
-            duration: 3000,
-          });
+          this.snackBar.open(
+            this.translate.instant(
+              this.MESSAGE_LABELS + 'unisciti.errore.generico'
+            ),
+            {
+              duration: 3000,
+            }
+          );
         });
     } else {
       console.warn('No list ID provided to join');
@@ -106,31 +104,39 @@ export class UserListsPageComponent {
   }
   async openJoinDialog() {
     const alert = await this.alertController.create({
-      header: 'Unisciti ad una lista',
-      message: 'Inserisci il codice lista per accedere!',
+      header: this.translate.instant(this.DIALOG_LABELS + 'unisciti.header'),
+      message: this.translate.instant(this.DIALOG_LABELS + 'unisciti.message'),
       inputs: [
         {
           id: 'code',
-          label: 'Codice Lista',
-          placeholder: 'Codice Lista',
+          label: this.translate.instant(INPUTS.CODICE),
+          placeholder: this.translate.instant(INPUTS.CODICE),
           name: 'code',
+          attributes: {
+            maxLength: 30,
+          },
         },
       ],
       buttons: [
         {
-          text: 'Annulla',
+          text: this.translate.instant(BUTTONS.ANNULLA),
           role: 'cancel',
           cssClass: 'secondary',
         },
         {
-          text: 'Conferma',
+          text: this.translate.instant(BUTTONS.CONFERMA),
           role: 'confirm',
           handler: (data) => {
             if (!data.code) {
-              this.snackBar.open('Inserisci il codice della lista.', {
-                color: 'danger',
-                duration: 3000,
-              });
+              this.snackBar.open(
+                this.translate.instant(
+                  this.MESSAGE_LABELS + 'errore.obbligatorio'
+                ),
+                {
+                  color: 'danger',
+                  duration: 3000,
+                }
+              );
               return false;
             }
             return this.joinList(data.code);
@@ -144,12 +150,12 @@ export class UserListsPageComponent {
 
   async openCreateDialog() {
     const alert = await this.alertController.create({
-      header: 'Nuova Lista',
+      header: this.translate.instant(this.DIALOG_LABELS + 'crea.header'),
       inputs: [
         {
           id: 'name',
-          label: 'Nome',
-          placeholder: 'Nome',
+          label: this.translate.instant(INPUTS.NOME),
+          placeholder: this.translate.instant(INPUTS.NOME),
           name: 'name',
           attributes: {
             maxLength: 25,
@@ -158,17 +164,20 @@ export class UserListsPageComponent {
       ],
       buttons: [
         {
-          text: 'Annulla',
+          text: this.translate.instant(BUTTONS.ANNULLA),
           role: 'cancel',
           cssClass: 'secondary',
         },
         {
-          text: 'Conferma',
+          text: this.translate.instant(BUTTONS.CONFERMA),
           role: 'confirm',
           handler: (data) => {
             if (data.name.length < 3) {
               this.snackBar.open(
-                'Il nome della lista deve essere di almeno 3 caratteri.',
+                this.translate.instant(
+                  this.MESSAGE_LABELS + 'crea.errore.minLength',
+                  { minLength: fieldValidations.listName.minLength }
+                ),
                 { color: 'danger', duration: 3000 }
               );
               return false;
@@ -188,42 +197,19 @@ export class UserListsPageComponent {
       this.listService
         .createList(data.name, true)
         .then(() => {
-          this.snackBar.open('Lista creata con successo.', {
-            duration: 3000,
-          });
-        })
-        .catch((error) => {
-          console.error('Error creating the list:', error);
           this.snackBar.open(
-            'Errore nella creazione della lista.',
-
+            this.translate.instant(this.MESSAGE_LABELS + 'crea.successo'),
             {
               duration: 3000,
             }
           );
-        });
-    }
-  }
-  async OLDopenCreateDialog() {
-    const dialogRef = await this.dialog.create({
-      component: NewListDialogComponent,
-      initialBreakpoint: 0.25,
-    });
-    dialogRef.present();
-    const { data } = await dialogRef.onWillDismiss();
-
-    if (data) {
-      this.listService
-        .createList(data.name, true)
-        .then(() => {
-          this.snackBar.open('Lista creata con successo.', {
-            duration: 3000,
-          });
         })
         .catch((error) => {
           console.error('Error creating the list:', error);
           this.snackBar.open(
-            'Errore nella creazione della lista.',
+            this.translate.instant(
+              this.MESSAGE_LABELS + 'crea.errore.generico'
+            ),
 
             {
               duration: 3000,

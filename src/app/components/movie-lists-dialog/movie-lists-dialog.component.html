@@ -1,6 +1,12 @@
+@let movie = this.movie();
+
 <ion-header>
   <ion-toolbar>
-    <ion-title>Gestisci liste</ion-title>
+    <ion-title>{{
+      showName()
+        ? movie.title
+        : ("dialogs.movieMenu.labels.gestisciListe" | translate)
+    }}</ion-title>
     <ion-buttons slot="end">
       <ion-button (click)="dialogRef.dismiss()">
         <ion-icon name="close"></ion-icon>
@@ -8,50 +14,72 @@
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
-<ion-content class>@if(userLists$ | async; as userLists) { @let movie = this.movie();
+<ion-content class
+  >@if(userLists$ | async; as userLists) {
   <div class="container">
     <ion-list lines="none">
-      <ion-list-header>
-        <ion-label>Liste di cui sei membro</ion-label>
-      </ion-list-header>
       @for(list$ of userLists; track $index) { @if(list$.listInfo| async; as
       list) { @if(list$.movieStatus | async; as movieStatus) {
       <ion-item>
         <!-- <ion-icon matListItemIcon matIconSuffix>folder</ion-icon> -->
         <ion-label>
           <h5>{{ list.name }}</h5>
-          <p>{{
-            movieStatus != movieStatusEnum.NOT_IN_LIST
-            ? "In Lista • " +
-            (movieStatus === movieStatusEnum.WATCHED ? "Visto" : "Da Vedere")
-            : "Non In Lista"
+          <p>
+            {{
+              "dialogs.movieMenu.labels." +
+                (movieStatus != movieStatusEnum.NOT_IN_LIST
+                  ? "inLista"
+                  : "nonInLista") | translate
             }}
+
+            @if(movieStatus != movieStatusEnum.NOT_IN_LIST) { •
+            {{
+              "dialogs.movieMenu.labels." +
+                (movieStatus === movieStatusEnum.WATCHED ? "visto" : "daVedere")
+                | translate
+            }}
+            }
           </p>
         </ion-label>
         <div>
           @if(movieStatus != movieStatusEnum.NOT_IN_LIST) { @if(movieStatus ===
           movieStatusEnum.TO_WATCH) {
-          <ion-button shape="" color="medium" size="small" class="me-2" shape="round"
-            (click)="setAsWatched(movie, '-' + list.id)">
+          <ion-button
+            shape=""
+            color="medium"
+            size="small"
+            class="me-2"
+            shape="round"
+            (click)="setAsWatched(movie, '-' + list.id)"
+          >
             <ion-icon slot="icon-only" name="eye"></ion-icon>
           </ion-button>
           }
-          <ion-button size="small" class="success" shape="round" (click)="removeMovieFromList(movie, '-' + list.id)">
+          <ion-button
+            size="small"
+            color="success"
+            shape="round"
+            (click)="removeMovieFromList(movie, '-' + list.id)"
+          >
             <ion-icon slot="icon-only" name="checkmark"></ion-icon>
           </ion-button>
           } @else {
-          <ion-button shape="round" color="medium" size="small" (click)="addMovieToList(movie, '-' + list.id)">
+          <ion-button
+            shape="round"
+            color="medium"
+            size="small"
+            (click)="addMovieToList(movie, '-' + list.id)"
+          >
             <ion-icon slot="icon-only" name="add"></ion-icon>
           </ion-button>
           }
         </div>
       </ion-item>
-      } @else {
-      <mat-list-item class="loading-placeholder"></mat-list-item>
       } } }
     </ion-list>
-    <p class="section-description">Aggiungi il film ad una lista oppure impostalo come visto.</p>
-
+    <p class="section-description">
+      {{ "dialogs.movieMenu.labels.descrizione" | translate }}
+    </p>
   </div>
   }
 </ion-content>

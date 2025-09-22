@@ -12,6 +12,7 @@
   --background-color: #0d0d0d;
   --ion-tab-bar-background: #0d0d0d !important;
   --ion-tab-bar-border-color: none !important;
+  --highlight-color-invalid: darkred !important;
 }
 
 ion-input.search-field {
@@ -30,4 +31,8 @@ ion-input.search-field {
 .transparent {
   --background: transparent !important;
   background: transparent !important;
+}
+
+a {
+  color: darkred !important;
 }

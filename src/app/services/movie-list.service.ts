@@ -103,7 +103,7 @@ export class MovieListService {
    */
   async deleteList(listId: string) {
     if (!this.currentUser) throw new Error('Utente non autenticato');
-    listId = listId.startsWith('-')? listId : ('-' + listId);
+    listId = listId.startsWith('-') ? listId : '-' + listId;
 
     const updates: { [key: string]: unknown } = {};
     updates[`lists/${listId}`] = null;
@@ -187,15 +187,18 @@ export class MovieListService {
    */
   async joinList(listId: string): Promise<boolean> {
     listId = listId.startsWith('-') ? listId : '-' + listId;
+    console.log('Aggiungi alla lista: ', listId);
     if (!this.currentUser) throw new Error('Utente non autenticato');
     const res = await get(ref(database, `lists/${listId}/info/id`));
     if (!res.exists()) {
+      console.log('Errore! lista non esistente');
       return false; // La lista non esiste
     }
     const alreadyInlist = await get(
       ref(database, `lists/${listId}/members/${this.currentUser.uid}`)
     );
-    if (alreadyInlist.exists()) {
+    if (alreadyInlist.exists() && alreadyInlist.val()) {
+      console.log('Errore! Utente già in lista');
       return false;
     }
     const updates: { [key: string]: unknown } = {};
@@ -203,7 +206,7 @@ export class MovieListService {
     updates[`lists/${listId}/info/membersCount`] = increment(1);
     updates[`users/${this.currentUser.uid}/lists/${listId}`] = listId;
     await update(ref(database), updates);
-
+    console.log('Invito accettato');
     return true;
   }
 
@@ -238,20 +241,21 @@ export class MovieListService {
    */
   async inviteToList(listId: string, username: string): Promise<boolean> {
     if (!this.currentUser) throw new Error('Utente non autenticato');
+    listId = listId.startsWith('-') ? listId : '-' + listId;
     const res = await get(ref(database, `usernames/${username.toLowerCase()}`));
     if (!res.exists()) {
       return false; // La lista non esiste.
     }
     const uid = res.val();
     const isInList = await get(
-      ref(database, `lists/-${listId}/members/${uid}`)
+      ref(database, `lists/${listId}/members/${uid}`)
     );
     if (isInList.exists()) {
       return false; // L'utente è già in lista.
     }
     const updates: { [key: string]: unknown } = {};
-    updates[`invitations/${uid}/-${listId}`] = true;
-    updates[`lists/-${listId}/members/${uid}`] = false;
+    updates[`invitations/${uid}/${listId}`] = true;
+    updates[`lists/${listId}/members/${uid}`] = false;
     await update(ref(database), updates);
 
     return true;
@@ -269,11 +273,12 @@ export class MovieListService {
 
   async acceptListInvitation(listId: string): Promise<boolean> {
     if (!this.currentUser) throw new Error('Utente non autenticato');
+    listId = listId.startsWith('-') ? listId : '-' + listId;
 
     const res = await this.joinList(listId);
     if (res) {
       await remove(
-        ref(database, `invitations/${this.currentUser.uid}/-${listId}`)
+        ref(database, `invitations/${this.currentUser.uid}/${listId}`)
       );
     }
 
@@ -282,10 +287,13 @@ export class MovieListService {
 
   async declineListInvitation(listId: string): Promise<void> {
     if (!this.currentUser) throw new Error('Utente non autenticato');
+    listId = listId.startsWith('-') ? listId : '-' + listId;
 
-    return remove(
-      ref(database, `invitations/${this.currentUser.uid}/-${listId}`)
-    );
+    const updates: { [key: string]: unknown } = {};
+    updates[`lists/${listId}/members/${this.currentUser.uid}`] = null;
+    updates[`invitations/${this.currentUser.uid}/${listId}`] = null;
+
+    await update(ref(database), updates);
   }
 
   /**
@@ -302,11 +310,12 @@ export class MovieListService {
   async exitList(listId: string): Promise<void> {
     if (!this.currentUser) throw new Error('Utente non autenticato');
     console.log('Exiting from list', listId);
+    listId = listId.startsWith('-') ? listId : '-' + listId;
 
     const updates: { [key: string]: unknown } = {};
-    updates[`users/${this.currentUser.uid}/lists/-${listId}`] = null;
-    updates[`lists/-${listId}/info/membersCount`] = increment(-1);
-    updates[`lists/-${listId}/members/${this.currentUser.uid}`] = null;
+    updates[`users/${this.currentUser.uid}/lists/${listId}`] = null;
+    updates[`lists/${listId}/info/membersCount`] = increment(-1);
+    updates[`lists/${listId}/members/${this.currentUser.uid}`] = null;
 
     return update(ref(database), updates);
   }
@@ -407,9 +416,9 @@ export class MovieListService {
   async setUserInfo() {
     if (!this.currentUser) throw new Error('Utente non autenticato');
 
-    const username = 'User' + Math.floor(Math.random() * 99999);
+    const username = 'User' + Math.floor(Math.random() * 999999);
     const updates: { [key: string]: unknown } = {};
-    updates[`usernames/username`] = this.currentUser.uid;
+    updates[`usernames/${username.toLowerCase()}`] = this.currentUser.uid;
     updates[`users/${this.currentUser.uid}/info`] = {
       username: username,
       email: this.currentUser.email,

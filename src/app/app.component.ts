@@ -1,3 +1,4 @@
+import { CommonModule, Location } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { EdgeToEdge } from '@capawesome/capacitor-android-edge-to-edge-support';
 import {
@@ -8,38 +9,46 @@ import {
   IonTabBar,
   IonTabButton,
   IonTabs,
+  NavController
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
-  addCircle,
   add,
-  eye,
-  home,
-  list,
-  person,
-  search,
-  trash,
-  chevronBack,
-  pencil,
-  logOut,
-  ellipsisHorizontalOutline,
-  chevronForward,
-  personAddOutline,
-  starOutline,
-  clipboardOutline,
-  filmOutline,
-  image,
-  filterOutline,
+  addCircle,
   arrowUpOutline,
-  star,
   checkmark,
+  chevronBack,
+  chevronForward,
+  clipboardOutline,
   close,
+  ellipsisHorizontalOutline,
+  eye,
+  filmOutline,
+  filterOutline,
+  homeOutline,
+  image,
+  informationCircleOutline,
+  list,
+  logoGoogle,
+  logOut,
+  pencil,
   peopleOutline,
-  shareOutline,
+  person,
+  personAddOutline,
+  returnUpBackOutline,
+  search,
+  settings,
+  settingsOutline,
   shareSocialOutline,
+  star,
+  starOutline,
+  trash,
 } from 'ionicons/icons';
 import { AuthService } from './services/auth.service';
-import { CommonModule } from '@angular/common';
+import { TranslateService } from '@ngx-translate/core';
+import { SettingsService } from './services/settings.service';
+import { Preferences } from '@capacitor/preferences';
+import { Platform } from '@ionic/angular';
 
 @Component({
   selector: 'app-root',
@@ -57,18 +66,38 @@ import { CommonModule } from '@angular/common';
 })
 export class AppComponent {
   currentUser$ = inject(AuthService).currentUser$;
+  private translate = inject(TranslateService);
+  private settings = inject(SettingsService);
+  private platform = inject(Platform);
+  private location = inject(NavController);
   title = 'MoviesMates';
 
+  ngOnInit() {
+    console.log('Using language: ', this.settings.language.value);
+    this.translate.use(this.settings.language.value);
+  }
+
   constructor() {
+    this.platform.backButton.subscribeWithPriority(999, () => {
+      // var currentUrl = window.location.href;
+      this.location.back();
+      // var toLoginPages = ['reset-password/step-1', 'forgot-username'];
+
+      // if (toLoginPages.some((x) => currentUrl.indexOf(x) > -1)) {
+      //   this.nav.navigateRoot('/login');
+      // }
+    });
     EdgeToEdge.disable();
-    // StatusBar.setStyle({ style: Style.Dark }); // o Dark
-    // StatusBar.setOverlaysWebView({ overlay: false });
     addIcons({
       add,
+      settingsOutline,
       shareSocialOutline,
       chevronBack,
       checkmark,
+      informationCircleOutline,
       close,
+      logoGoogle,
+      returnUpBackOutline,
       personAddOutline,
       peopleOutline,
       image,
@@ -79,7 +108,7 @@ export class AppComponent {
       starOutline,
       clipboardOutline,
       chevronForward,
-      home,
+      homeOutline,
       search,
       list,
       person,

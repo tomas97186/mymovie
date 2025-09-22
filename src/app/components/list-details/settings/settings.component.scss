@@ -22,10 +22,13 @@
   text-align: center;
   align-items: center;
   justify-content: space-between;
-  padding: 1rem 1.2rem;
+  padding-right: 0rem;
+  padding-left: .6rem;
   border-radius: 10px;
   background-color: var(--card-background-color);
   display: flex;
+
+  
 }
 .code-description {
   margin-top: 1.2rem;
@@ -92,6 +95,6 @@ $avatar-colors: #e53935,
   }
 }
 
-ion-list { 
-    border-radius: 10px !important; 
+ion-list {
+  border-radius: 10px !important;
 }

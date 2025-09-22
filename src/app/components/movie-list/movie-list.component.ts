@@ -1,15 +1,5 @@
 import { CommonModule } from '@angular/common';
-import {
-  Component,
-  effect,
-  ElementRef,
-  input,
-  model,
-  output,
-  ViewChild,
-} from '@angular/core';
-import { MatGridListModule } from '@angular/material/grid-list';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { Component, effect, input, model, output } from '@angular/core';
 import {
   InfiniteScrollCustomEvent,
   IonInfiniteScroll,
@@ -24,9 +14,7 @@ import { MovieCardComponent } from '../movie-card/movie-card.component';
     IonInfiniteScrollContent,
     IonInfiniteScroll,
     CommonModule,
-    MatGridListModule,
     MovieCardComponent,
-    MatProgressSpinnerModule,
   ],
   templateUrl: './movie-list.component.html',
   styleUrl: './movie-list.component.scss',
@@ -48,18 +36,4 @@ export class MovieListComponent {
     this.loadData.emit();
     this.infiniteScroll = event.target;
   }
-
-  scroll = (event: any): void => {
-    // Here scroll is a variable holding the anonymous function
-    // this allows scroll to be assigned to the event during onInit
-    // and removed onDestroy
-    // To see what changed:
-    if (
-      !this.isHorizontal() &&
-      window.innerHeight + event.srcElement.scrollTop >=
-        event.srcElement.scrollHeight
-    ) {
-      this.loadData.emit();
-    }
-  };
 }

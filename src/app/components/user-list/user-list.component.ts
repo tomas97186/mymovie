@@ -14,6 +14,7 @@ export class UserListComponent implements OnInit {
 
   userList = input.required<Observable<InfoListModel>[]>()
 
+  invitations = input<boolean>(false);
   constructor() { }
 
   ngOnInit() { }

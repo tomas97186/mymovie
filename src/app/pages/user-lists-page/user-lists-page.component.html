@@ -6,23 +6,29 @@
         <ion-icon slot="icon-only" name="film-outline"></ion-icon>
       </ion-button>
     </ion-buttons>
-    <ion-title class="text-center with-icon">Liste Utente</ion-title>
+    <ion-title class="text-center with-icon">{{
+      "pages.userLists.labels.liste" | translate
+    }}</ion-title>
   </ion-toolbar>
 </ion-header>
 <ion-content>
   <div class="container">
     <div class="section-description">
-      Gestisci le liste di cui fai parte oppure aggiungine di nuove!
+      {{ "pages.userLists.labels.descrizione" | translate }}
     </div>
     <hr />
     @if(userInvitations) { @if(userInvitations.length > 0) {
     <div class="invitations-container">
-      <h3>Inviti</h3>
+      <h3>
+        {{ "pages.userLists.labels.inviti" | translate }}
+      </h3>
       <p class="subtitle">
-        Hai degli inviti in sospeso, scegli se accettare o declinare gli inviti
-        alle liste.
+        {{ "pages.userLists.labels.descrizioneInviti" | translate }}
       </p>
-      <app-user-list [userList]="userInvitations"></app-user-list>
+      <app-user-list
+        [userList]="userInvitations"
+        [invitations]="true"
+      ></app-user-list>
     </div>
     } } @if(userLists$ | async; as userLists){ @if(userLists.length > 0) {
     <app-user-list [userList]="userLists"></app-user-list>
@@ -33,11 +39,11 @@
       <ion-fab-list side="top">
         <ion-button (click)="openJoinDialog()">
           <ion-icon name="people-outline" slot="start"></ion-icon>
-          Unisciti ad una lista
+          {{ "pages.userLists.buttons.joinLista" | translate }}
         </ion-button>
         <ion-button (click)="openCreateDialog()">
           <ion-icon name="add" slot="start"></ion-icon>
-          Crea una lista
+          {{ "pages.userLists.buttons.creaLista" | translate }}
         </ion-button>
       </ion-fab-list>
     </ion-fab>

@@ -1,34 +1,24 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, output } from '@angular/core';
-import {
-  ReactiveFormsModule
-} from '@angular/forms';
-import { MatButtonModule } from '@angular/material/button';
-import { MatDialog } from '@angular/material/dialog';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
+import { ReactiveFormsModule } from '@angular/forms';
+import { IonButton, IonIcon } from '@ionic/angular/standalone';
 import { ToastService } from 'src/app/services/toast.service';
 import { MovieListService } from '../../services/movie-list.service';
-import { IonButton, IonIcon } from "@ionic/angular/standalone";
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-no-list-page',
-  imports: [IonIcon, IonButton, 
+  imports: [
+    IonIcon,
+    IonButton,
+    TranslateModule,
     CommonModule,
     ReactiveFormsModule,
-    MatIconModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatButtonModule,
   ],
   templateUrl: './no-list-page.component.html',
   styleUrl: './no-list-page.component.scss',
 })
 export class NoListPageComponent {
-  private listService = inject(MovieListService);
-  private snackBar = inject(ToastService);
-  readonly dialog = inject(MatDialog);
-  joinList = output<void>(); 
-  createList = output<void>(); 
+  joinList = output<void>();
+  createList = output<void>();
 }

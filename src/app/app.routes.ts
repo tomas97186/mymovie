@@ -35,6 +35,14 @@ export const routes: Routes = [
     canMatch: [authenticationGuard()],
   },
   {
+    path: 'settings',
+    loadComponent: () =>
+      import('./pages/settings-page/settings-page.component').then(
+        (m) => m.SettingsPageComponent
+      ),
+    canMatch: [authenticationGuard()],
+  },
+  {
     path: 'no-list',
     loadComponent: () =>
       import('./pages/no-list-page/no-list-page.component').then(
@@ -44,8 +52,11 @@ export const routes: Routes = [
   },
   {
     path: 'lists',
-    loadComponent: () => import('./pages/user-lists-page/user-lists-page.component').then(m => m.UserListsPageComponent),
-    canMatch: [authenticationGuard()]
+    loadComponent: () =>
+      import('./pages/user-lists-page/user-lists-page.component').then(
+        (m) => m.UserListsPageComponent
+      ),
+    canMatch: [authenticationGuard()],
   },
   {
     path: 'lists/:listId',
@@ -85,5 +96,26 @@ export const routes: Routes = [
       import('./pages/login-page/login-page.component').then(
         (m) => m.LoginPage
       ),
+  },
+  {
+    path: 'signup',
+    loadComponent: () =>
+      import('./pages/signup-page/signup-page.component').then(
+        (m) => m.SignupPage
+      ),
+  },
+  {
+    path: 'password-reset',
+    loadComponent: () =>
+      import('./pages/password-reset-page/password-reset-page.component').then(
+        (m) => m.PasswordResetPage
+      ),
+  },
+  {
+    path: 'email-verification',
+    loadComponent: () =>
+      import(
+        './pages/email-verification-page/email-verification-page.component'
+      ).then((m) => m.EmailVerificationPage),
   },
 ];

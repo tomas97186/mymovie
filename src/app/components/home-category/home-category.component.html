@@ -1,17 +1,21 @@
 @if(settings(); as settings) {
 <div class="section-header">
-    <h4>{{settings.title}}</h4>
-    <ion-button size="small" (click)="navigateToAll()" fill="clear">Vedi Altri<ion-icon name="chevron-forward"
-            slot="end"></ion-icon></ion-button>
+  <h4>{{ settings.title | translate | titlecase }}</h4>
+  <ion-button size="small" (click)="navigateToAll()" fill="clear"
+    >{{ "pages.home.labels.vediAltri" | translate
+    }}<ion-icon name="chevron-forward" slot="end"></ion-icon
+  ></ion-button>
 </div>
 @if(settings.data$ | async; as data) {
-<app-movie-list [movies]="data.results" [isHorizontal]="true" [total]="data.results.length"></app-movie-list>
+<app-movie-list
+  [movies]="data.results"
+  [isHorizontal]="true"
+  [total]="data.results.length"
+></app-movie-list>
 } @else {
 <div class="placeholder-container">
-    @for(n of [].constructor(10); track $index)
-    {
-    <div class="image-placeholder"></div>
-    }
+  @for(n of [].constructor(10); track $index) {
+  <div class="image-placeholder"></div>
+  }
 </div>
-}
-}
+} }

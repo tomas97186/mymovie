@@ -1,33 +1,54 @@
 @let searchResult = this.result.value();
 
 <div class="search-page-container">
-  <div class="header">
+  <div
+    class="header"
+    [ngClass]="{ 'justify-content-center': !this.searchQuery() }"
+  >
     @if(this.searchQuery()) {
-    <ion-button @showBackButton (click)="location.back()" class="back-button" shape="round">
+    <ion-button
+      @showBackButton
+      (click)="location.back()"
+      class="back-button"
+      shape="round"
+    >
       <ion-icon slot="icon-only" size="large" name="chevron-back"></ion-icon>
     </ion-button>
     }
     <form (ngSubmit)="search()" [formGroup]="queryForm" class="search-form">
-      <ion-input class="search-field" placeholder="Cerca..." formControlName="query" [clearInput]="true">
+      <ion-input
+        class="search-field"
+        placeholder="Cerca..."
+        formControlName="query"
+        [clearInput]="true"
+      >
         <ion-icon slot="end" name="search"></ion-icon>
       </ion-input>
     </form>
   </div>
 
   @if(this.result.isLoading() || (searchResult && searchResult.results.length >
-  0)) {<app-movie-list-dynamic [(currentPage)]="currentPage" [searchResult]="this.result.value()" [paddingTop]="100"
-    [isLoading]="this.result.isLoading()"></app-movie-list-dynamic>
+  0)) {<app-movie-list-dynamic
+    [(currentPage)]="currentPage"
+    [searchResult]="this.result.value()"
+    [paddingTop]="100"
+    [isLoading]="this.result.isLoading()"
+  ></app-movie-list-dynamic>
   } @else if(searchResult && searchResult.results.length === 0) {
   <div class="no-movies-banner">
     <ion-icon name="sentiment_dissatisfied"></ion-icon><span></span>
-    <span>Nessun risultato trovato.</span>
+    <span>{{ "pages.search.labels.nonTrovato" | translate }}</span>
   </div>
   } @else {
   <div class="no-search">
     <div class="row genre-list">
       @for(genre of genres | async; track genre[0]) {
-      <ion-button (click)="navigateToGenre({ id: genre[0], name: genre[1] })" class="col-6 col-sm-4 mx-0 mt-2"
-        style="color: white" color="light">
+      <ion-button
+        (click)="navigateToGenre({ id: genre[0], name: genre[1] })"
+        class="col-6 col-sm-4 mx-0 mt-2"
+        style="color: white"
+        color="light"
+      >
         {{ genre[1] }}
       </ion-button>
       }

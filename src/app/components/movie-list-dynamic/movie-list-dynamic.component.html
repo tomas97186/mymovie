@@ -2,9 +2,11 @@
 <ion-header class="glass-effect">
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-back-button default-href="#"></ion-back-button>
+      <ion-button fill="clear" (click)="this.location.back()">
+        <ion-icon slot="icon-only" name="chevron-back"></ion-icon>
+      </ion-button>
     </ion-buttons>
-    <ion-title>{{ title }}</ion-title>
+    <ion-title>{{ title | translate : { subject: subject() } }}</ion-title>
   </ion-toolbar>
 </ion-header>
 }
@@ -19,11 +21,11 @@
     [isLoading]="isLoading()"
     [total]="searchResult()?.total_results ?? currentList.length"
   ></app-movie-list>
-  <ion-fab slot="fixed" vertical="bottom" horizontal="end">
+  <!-- <ion-fab slot="fixed" vertical="bottom" horizontal="end">
     <ion-fab-button (click)="scrollToTop()">
       <ion-icon name="arrow-up-outline"></ion-icon>
     </ion-fab-button>
-  </ion-fab>
+  </ion-fab> -->
   } @else if(this.isLoading()) {
   <div
     class="placeholder-container"

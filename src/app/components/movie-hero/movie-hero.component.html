@@ -1,41 +1,53 @@
 @let movie = this.movie() | async;
 
 <div class="movie-container">
-    @if(!heroLoaded) {
-    <div class="placeholder"></div>
-    }
-    @if(movie) {
-    <img class="movie-image" [src]="movie.backdrop_path" [alt]="movie.title" (load)="heroLoaded = true"
-        [hidden]="!heroLoaded">
+  @if(!heroLoaded) {
+  <div class="placeholder"></div>
+  } @if(movie) {
+  <img
+    class="movie-image"
+    [src]="imageUrl + movie.backdrop_path"
+    [alt]="movie.title"
+    (load)="heroLoaded = true"
+    [hidden]="!heroLoaded"
+  />
 
-    <div class="movie-overlay"></div>
-    <div class="movie-info">
-        <div class="d-flex align-items-center">
-            @if(showPoster()) {
-                <img [src]="movie.poster_path" class="movie-poster me-2">
+  <div class="movie-overlay"></div>
+  <div class="movie-info">
+    <div class="d-flex align-items-center">
+      @if(showPoster()) {
+      <img [src]="imageUrl + movie.poster_path" class="movie-poster me-2" />
+      }
+      <div class="flex-grow-1">
+        <div class="d-flex align-items-center justify-content-between">
+          <h2 class="movie-title">{{ movie.title }}</h2>
+          <div>
+            @if(!hideDetailsButton()) {
+            <ion-button
+              size="small"
+              fill="outline"
+              [routerLink]="['/movies', movie.id]"
+              color="white"
+              class="details-button ms-2"
+              >{{ "shared.buttons.dettagli" | translate }}
+              <ion-icon name="chevron-forward" slot="end"></ion-icon
+            ></ion-button>
             }
-            <div class="flex-grow-1">
-                <div class="d-flex align-items-center justify-content-between">
-                    <h2 class="movie-title">{{ movie.title }}</h2>
-                    <div>
-                        @if(!hideDetailsButton()) {
-                        <ion-button size="small" fill="outline" [routerLink]="['/movies', movie.id]" color="white"
-                            class="details-button ms-2">Dettagli
-                            <ion-icon name="chevron-forward" slot="end"></ion-icon></ion-button>
-                        }
-                    </div>
-                </div>
-                <div class="d-flex align-items-center">
-                    <ion-icon class="me-1" name="star-outline"></ion-icon>
-                    <p class="movie-meta mb-0">{{movie.vote_average | number : "1.0-1":'en' }} • {{movie.runtime}}m • {{ movie.release_date |
-                        date:'yyyy'}} {{ hideDescription()? '' : (' • ' + movie.genres[0].name) }}
-                    </p>
-                </div>
-            </div>
+          </div>
         </div>
-        @if(!hideDescription()) {
-        <p class="movie-description limit">{{ movie.overview }}</p>
-        }
+        <div class="d-flex align-items-center">
+          <ion-icon class="me-1" name="star-outline"></ion-icon>
+          <p class="movie-meta mb-0">
+            {{ movie.vote_average | number : "1.0-1" : "en" }} •
+            {{ movie.runtime }}m • {{ movie.release_date | date : "yyyy" }}
+            {{ hideDescription() ? "" : " • " + movie.genres[0].name }}
+          </p>
+        </div>
+      </div>
     </div>
+    @if(!hideDescription()) {
+    <p class="movie-description limit">{{ movie.overview }}</p>
     }
+  </div>
+  }
 </div>

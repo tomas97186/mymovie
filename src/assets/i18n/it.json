@@ -1,0 +1,377 @@
+{
+  "lingue": {
+    "it": "Italiano",
+    "en": "English"
+  },
+  "shared": {
+    "labels": {
+      "returnToLogin": "Torna al login",
+      "oppure": "oppure"
+    },
+    "buttons": {
+      "dettagli": "Dettagli",
+      "conferma": "Conferma",
+      "annulla": "Annulla"
+    },
+    "inputs": {
+      "username": "Username",
+      "nome": "Nome",
+      "codice": "Codice Lista"
+    }
+  },
+  "dialogs": {
+    "movieMenu": {
+      "labels": {
+        "gestisciListe": "Gestisci Liste",
+        "inLista": "In Lista",
+        "nonInLista": "Non In Lista",
+        "visto": "Visto",
+        "daVedere": "Da Vedere",
+        "descrizione": "Aggiungi il film ad una lista oppure impostalo come visto."
+      },
+      "buttons": {
+        "visto": "Segna come visto",
+        "rimuovi": "Rimuovi dalla lista",
+        "aggiungi": "Aggiungi ad una lista",
+        "dettagli": "Visualizza Dettagli"
+      },
+      "messages": {
+        "aggiungi": {
+          "successo": "Film aggiunto alla lista con successo",
+          "errore": "Errore nell'aggiungere il film alla lista"
+        },
+        "rimosso": {
+          "successo": "Film rimosso dalla lista",
+          "errore": "Errore nel rimuover il film alla lista"
+        },
+        "visto": {
+          "successo": "Film segnato come visto.",
+          "errore": "Errore! Impossibile segnare il film come visto."
+        }
+      }
+    }
+  },
+  "components": {
+    "movieCard": {
+      "messages": {
+        "rimosso": {
+          "successo": "Film rimosso dalla lista",
+          "errore": "Errore nel rimuover il film alla lista"
+        },
+        "visto": {
+          "successo": "Film segnato come visto.",
+          "errore": "Errore! Impossibile segnare il film come visto."
+        }
+      }
+    }
+  },
+  "pages": {
+    "home": {
+      "labels": {
+        "diTendenza": "Di Tendenza",
+        "ultimeUscite": "Ultime Uscite",
+        "popolari": "Popolari",
+        "piuVotati": "Più votati",
+        "vediAltri": "Vedi altri"
+      }
+    },
+    "movieDetails": {
+      "labels": {
+        "direttoDa": "Diretto da",
+        "direttoDaSubject": "Diretto da {{subject}}",
+        "trailer": "trailer",
+        "doveGuardarlo": "dove guardarlo",
+        "filmRaccomandati": "film raccomandati",
+        "cast": "cast",
+        "filmCon": "Film con {{subject}}",
+        "providerType": {
+          "flatrate": "abbonamento",
+          "rent": "noleggio",
+          "buy": "acquisto"
+        }
+      },
+      "buttons": {
+        "mostraTutti": "mostra tutti",
+        "mostraMeno": "mostra meno",
+        "mostraTutto": "mostra tutto"
+      }
+    },
+    "discover": {
+      "buttons": {
+        "popolari": "più popolari",
+        "recenti": "più recenti",
+        "votati": "più votati"
+      }
+    },
+    "emailVerification": {
+      "labels": {
+        "verificaEmail": "Verifica la tua email",
+        "descrizione1": "Ti abbiamo inviato un'email di verifica all’indirizzo",
+        "descrizione2": "Controlla la tua casella di posta e clicca sul link per attivare il tuo account!",
+        "nonRicevuta": "Se non ricevi l’email entro pochi minuti, controlla anche la cartella Spam oppure",
+        "reinvia": "Clicca qui per reinviare"
+      },
+      "messages": {
+        "email": {
+          "successo": "Email di verifica invita.",
+          "errore": "Si è verificato un errore durante l'invio dell'email."
+        }
+      }
+    },
+    "listDetails": {
+      "dialogs": {
+        "modificaNome": {
+          "header": "Modifica Nome Lista"
+        }
+      },
+      "settings": {
+        "dialogs": {
+          "lasciaLista": {
+            "header": "Vuoi lasciare la lista?",
+            "message": "Sei sicuro di voler abbandoare la lista?"
+          },
+          "invita": {
+            "header": "Invita utente"
+          },
+          "rimuovi": {
+            "header": "Rimuovi {{username}}",
+            "message": "Confermi di voler rimuovere {{username}} dalla lista?\nL'utente non potrà visualizzare e modificare la lista di film."
+          },
+          "elimina": {
+            "header": "Conferma Eliminazioni",
+            "message": "Sei sicuro di voler eliminare la lista?\nNessun membro potrà più accedervi dopo l'eliminazione"
+          }
+        },
+        "labels": {
+          "codice": "Codice Lista",
+          "descrizioneCodice": "Condividi questo codice con i tuoi amici per unirsi alla lista.",
+          "film": "Film in lista",
+          "totale": "Totale",
+          "visti": "Visti",
+          "daVedere": "Da Vedere",
+          "membri": "Membri",
+          "sconosciuto": "Sconosciuto",
+          "proprietario": "Proprietario",
+          "tu": "Tu",
+          "invitato": "Invitato"
+        },
+        "messages": {
+          "copiaCodice": "Codice della lista copiato negli appunti!",
+          "condividi": {
+            "messaggio": "Codice lista:\n{{listId}}\nAccedi a MoviesMates e incolla il codice nella sezione \"Unisciti ad una lista\" per accedere!",
+            "errore": "Impossibile condividere il codice lista."
+          },
+          "exitList": "Non fai più parte della lista.",
+          "invito": {
+            "nonEsiste": "L'utente {{username}} non  esiste oppure è già in lista.",
+            "successo": "Invito inviato con successo.",
+            "errore": "Errore nell'invio dell'invito."
+          },
+          "rimuoviUtente": {
+            "successo": "Utente {{username}} rimosso dalla lista.",
+            "errore": "Errore! Non è stato possibile rimuovere l'utente {{username}}."
+          },
+          "eliminaLista": {
+            "successo": "Lista eliminata con successo.",
+            "errore": "Errore nell'eliminazione della lista."
+          }
+        },
+        "buttons": {
+          "invita": "Invita Utente",
+          "elimina": "Elimina Lista",
+          "abbandona": "Abbandona Lista"
+        }
+      },
+      "labels": {
+        "daVedere": "da vedere",
+        "visti": "visti",
+        "impostazioni": "impostazioni",
+        "noFilm": "Nessun film da vedere.",
+        "start": "Inizia cercando un film da aggiungere alla lista!",
+        "noFilmVisti": "Nessun film ancora visto.",
+        "error": "Errore! Lista non trovata."
+      },
+      "messages": {
+        "modificaNome": {
+          "successo": "Nome modificato con successo.",
+          "errore": {
+            "generico": "Errore nella modifica del nome.",
+            "minLength": "Il nome della lista deve essere di almeno 3 caratteri."
+          }
+        }
+      }
+    },
+    "login": {
+      "labels": {
+        "accedi": "accedi",
+        "inserisciCredenziali": "Inserisci le tue credenziali per continuare",
+        "noAccount": "Non hai un account?",
+        "creaAccount": "Crea un account",
+        "passwordDimenticata": "Ho dimenticato la password"
+      },
+      "buttons": {
+        "google": "continua con google",
+        "accedi": "Accedi",
+        "accessoInCorso": "Accesso in corso..."
+      },
+      "messages": {
+        "login": {
+          "success": "Accesso eseguito!",
+          "errore": "Accesso fallito"
+        }
+      }
+    },
+    "signup": {
+      "labels": {
+        "registrati": "Registrati",
+        "descrizione": "Crea il tuo account per iniziare a condividere i film da guardare con gli amici!",
+        "passwordHelp": "La password deve contenere almeno: una lettera maiuscola, una lettera minuscola, un numero."
+      },
+      "buttons": {
+        "registrati": "Registrati",
+        "registrazioneInCorso": "Registrazione in corso..."
+      }
+    },
+    "passwordReset": {
+      "labels": {
+        "passwordDimenticata": "Password Dimenticata?",
+        "noProblem": "Nessun problema!",
+        "descrizione": "Inserisci la tua email qui sotto e riceverai un link per impostare una nuova password in pochi secondi."
+      },
+      "buttons": {
+        "reset": "Reset Password"
+      },
+      "messages": {
+        "reset": {
+          "successo": "Ti abbiamo inviato un’email con le istruzioni per reimpostare la password.\nControlla la tua casella di posta e segui il link per scegliere una nuova password.",
+          "errore": "Impossibile effettuare il reset della password."
+        }
+      }
+    },
+    "noLists": {
+      "labels": {
+        "nonFaiParte": "Non fai parte di nessuna lista."
+      },
+      "buttons": {
+        "unisciti": "Unisciti ad una lista",
+        "crea": "Crea una nuova lista"
+      }
+    },
+    "profile": {
+      "labels": {
+        "profilo": "Profilo",
+        "username": "Username",
+        "email": "Email",
+        "liste": "Liste"
+      },
+      "buttons": {
+        "username": "Modifica Username",
+        "password": "Modifica Password",
+        "logout": "Logout"
+      },
+      "dialogs": {
+        "username": {
+          "header": "Modifica Username"
+        },
+        "password": {
+          "header": "Modifica Password",
+          "message": "La password deve contenere almeno: una lettera maiuscola, una lettera minuscola, un numero.",
+          "inputs": {
+            "passwordAttuale": "Password Attuale",
+            "nuovaPassword": "Nuova Password",
+            "ripetiPassword": "Ripeti la Password"
+          }
+        }
+      },
+      "messages": {
+        "password": {
+          "successo": "Password aggiornata con successo",
+          "errore": {
+            "generico": "Errore nell'aggiornamento della password",
+            "minLength": "Lo username deve essere di almeno {{minLength}} caratteri.",
+            "simbolo": "Lo username può contenere solo il simbolo _"
+          }
+        },
+        "username": {
+          "successo": "Username modificato.",
+          "errore": {
+            "generico": "Username già esistente.",
+            "nonCoincide": "Le password inserite non coincidono.",
+            "minLength": "La password deve contenere almeno {{minLength}} caratteri.",
+            "criteriSicurezza": "La nuova password non rispetta i criteri di sicurezza."
+          }
+        }
+      }
+    },
+    "search": {
+      "labels": {
+        "nonTrovato": "Nessun risultato trovato."
+      }
+    },
+    "settings": {
+      "labels": {
+        "impostazioni": "Impostazioni",
+        "preferenze": "Preferenze",
+        "lingua": "Lingua",
+        "apriFilm": "Apri dettaglio film",
+        "apriListe": "Apri menu liste",
+        "licenzaDati": "Licenza Dati",
+        "tmdb": "Questa applicazione utilizza il database TMDB e l'API di TMDB, ma non è approvata né certificata da TMDB.",
+        "about": "About",
+        "creatoDa": "Creato da",
+        "versione": "Versione"
+      }
+    },
+    "userLists": {
+      "dialogs": {
+        "unisciti": {
+          "header": "Unisciti ad una lista",
+          "message": "Inserisci il codice lista per accedere!"
+        },
+        "crea": {
+          "header": "Nuova Lista"
+        }
+      },
+      "labels": {
+        "liste": "Liste Film",
+        "descrizione": "Gestisci le liste di cui fai parte oppure aggiungine di nuove!",
+        "inviti": "Inviti",
+        "descrizioneInviti": "Hai degli inviti in sospeso, scegli se accettare o declinare gli inviti alle liste."
+      },
+      "buttons": {
+        "joinLista": "Unisciti ad una lista",
+        "creaLista": "Crea una lista"
+      },
+      "messages": {
+        "unisciti": {
+          "successo": "Sei stato aggiunto alla lista.",
+          "errore": {
+            "generico": "La lista non esiste o non puoi unirti.",
+            "obbligatorio": "Inserisci il codice della lista."
+          }
+        },
+        "crea": {
+          "successo": "Lista creata con successo!",
+          "errore": {
+            "generico": "Si è verificato un errore durante la creazione della lista.",
+            "minLength": "Il nome della lista deve essere di almeno {{minLength}} caratteri."
+          }
+        },
+        "invito": {
+          "accetta": {
+            "successo": "Invito alla lista accettato.",
+            "errore": "Errore! Impossibile accettare l'invito."
+          },
+          "rifiuta": {
+            "successo": "Invito alla lista declinato.",
+            "errore": "Errore! Impossibile declinare l'invito."
+          }
+        },
+        "condividi": {
+          "messaggio": "Codice lista:\n{{listId}}\nAccedi a MoviesMates e incolla il codice nella sezione \"Unisciti ad una lista\" per accedere!",
+          "errore": "Impossibile condividere il codice lista."
+        }
+      }
+    }
+  }
+}

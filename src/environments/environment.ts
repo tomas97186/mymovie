@@ -10,7 +10,7 @@ export const environment = {
   // Your web app's Firebase configuration
   firebaseConfig: {
     apiKey: 'AIzaSyDuKbBngtqj9egJ8S-bvyac2t5ZfTWimVc',
-    authDomain: 'mymovie-dc845.firebaseapp.com',
+    // authDomain: 'mymovie-dc845.firebaseapp.com',
     databaseURL:
       'https://mymovie-dc845-default-rtdb.europe-west1.firebasedatabase.app',
     projectId: 'mymovie-dc845',

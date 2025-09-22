@@ -1,27 +1,21 @@
 import { CommonModule } from '@angular/common';
-import { Component, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 
 // Angular Material
-import { MatButtonModule } from '@angular/material/button';
-import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatSnackBarModule } from '@angular/material/snack-bar';
 import {
   IonButton,
-  IonIcon,
-  IonItem,
   IonInput,
-  IonInputPasswordToggle, IonSpinner } from '@ionic/angular/standalone';
+  IonInputPasswordToggle,
+  IonSpinner
+} from '@ionic/angular/standalone';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 import { ToastService } from 'src/app/services/toast.service';
 import { AuthService } from '../../services/auth.service';
@@ -31,25 +25,22 @@ import { AuthService } from '../../services/auth.service';
   standalone: true,
   templateUrl: './login-page.component.html',
   styleUrls: ['./login-page.component.scss'],
-  imports: [IonSpinner, 
-    IonItem,
-    IonIcon,
+  imports: [
+    CommonModule,
+    RouterModule,
+    TranslateModule,
+    IonSpinner,
     IonInput,
     IonButton,
-    CommonModule,
     ReactiveFormsModule,
-    // Material
-    MatFormFieldModule,
-    MatInputModule,
-    MatIconModule,
-    MatButtonModule,
-    MatSnackBarModule,
-    MatCheckboxModule,
-    MatProgressSpinnerModule,
     IonInputPasswordToggle,
   ],
 })
 export class LoginPage {
+  private readonly MESSAGE_LABELS = 'pages.login.messages.';
+
+  private readonly translate = inject(TranslateService);
+  
   hidePassword = signal(true);
   loading = signal(false);
   authSub: Subscription;
@@ -63,8 +54,18 @@ export class LoginPage {
     private snack: ToastService
   ) {
     this.form = this.fb.group({
-      email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(8)]],
+      email: [
+        '',
+        [Validators.required, Validators.email, Validators.maxLength(320)],
+      ],
+      password: [
+        '',
+        [
+          Validators.required,
+          Validators.minLength(8),
+          Validators.maxLength(35),
+        ],
+      ],
       remember: [true],
     });
     this.authSub = this.auth.currentUser$.subscribe((user) => {
@@ -78,6 +79,10 @@ export class LoginPage {
     this.authSub?.unsubscribe();
   }
 
+  async loginWithGoogle() {
+    return this.auth.loginWithGoogle();
+  }
+
   async submit() {
     if (this.form.invalid || this.loading()) return;
     this.loading.set(true);
@@ -85,10 +90,10 @@ export class LoginPage {
 
     try {
       await this.auth.login(String(email), String(password));
-      this.snack.open('Accesso eseguito!', { duration: 2500 });
+      this.snack.open(this.translate.instant(this.MESSAGE_LABELS + 'login.success'), { duration: 2500 });
       // Reindirizza dove preferisci
     } catch (err: any) {
-      this.snack.open(err?.message || 'Accesso fallito', { duration: 3500 });
+      this.snack.open(this.translate.instant(this.MESSAGE_LABELS + 'login.errore'), { duration: 3500 });
     } finally {
       this.loading.set(false);
     }

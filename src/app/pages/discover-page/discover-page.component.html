@@ -1,20 +1,37 @@
 <div class="discover-page-container">
-    <app-movie-list-dynamic [(currentPage)]="currentPage" [title]="title" [searchResult]="this.result.value()"
-        [isLoading]="this.result.isLoading()"></app-movie-list-dynamic>
-    <ion-fab slot="fixed" vertical="bottom" horizontal="start">
-        <ion-fab-button>
-            <ion-icon name="filter-outline"></ion-icon>
-        </ion-fab-button>
-        <ion-fab-list side="top" style="align-items: start;" >
-            <ion-button (click)="setOrderBy('popularity.desc')" color="light" style="width: max-content;">
-                Più popolari
-            </ion-button>
-            <ion-button (click)="setOrderBy('release_date.desc')" color="light"  style="width: max-content;">
-                Più recenti
-            </ion-button>
-            <ion-button (click)="setOrderBy('vote_average.desc')" color="light"  style="width: max-content;">
-                Più votati
-            </ion-button>
-        </ion-fab-list>
-    </ion-fab>
+  <app-movie-list-dynamic
+    [(currentPage)]="currentPage"
+    [title]="title"
+    [subject]="subject"
+    [searchResult]="this.result.value()"
+    [isLoading]="this.result.isLoading()"
+  ></app-movie-list-dynamic>
+  <ion-fab slot="fixed" vertical="bottom" horizontal="start">
+    <ion-fab-button>
+      <ion-icon name="filter-outline"></ion-icon>
+    </ion-fab-button>
+    <ion-fab-list side="top" style="align-items: start">
+      <ion-button
+        (click)="setOrderBy('popularity.desc')"
+        color="light"
+        style="width: max-content"
+      >
+        {{ "pages.discover.buttons.popolari" | translate | titlecase }}
+      </ion-button>
+      <ion-button
+        (click)="setOrderBy('release_date.desc')"
+        color="light"
+        style="width: max-content"
+      >
+        {{ "pages.discover.buttons.recenti" | translate | titlecase }}
+      </ion-button>
+      <ion-button
+        (click)="setOrderBy('vote_average.desc')"
+        color="light"
+        style="width: max-content"
+      >
+        {{ "pages.discover.buttons.votati" | translate | titlecase }}
+      </ion-button>
+    </ion-fab-list>
+  </ion-fab>
 </div>

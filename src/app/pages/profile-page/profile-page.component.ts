@@ -4,11 +4,9 @@ import {
   EmailAuthProvider,
   reauthenticateWithCredential,
   updatePassword,
-  updateProfile
+  updateProfile,
 } from '@angular/fire/auth';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import {
   AlertController,
   IonButton,
@@ -25,14 +23,18 @@ import {
 } from '@ionic/angular/standalone';
 import { catchError, filter, first, from, map, switchMap, tap } from 'rxjs';
 import { ToastService } from 'src/app/services/toast.service';
-import { PasswordDialogComponent } from '../../components/password-dialog/password-dialog.component';
-import { UsernameDialogComponent } from '../../components/username-dialog/username-dialog.component';
+import { fieldValidations } from 'src/environments/fields.validation';
 import { AuthService } from '../../services/auth.service';
 import { MovieListService } from '../../services/movie-list.service';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { BUTTONS } from 'src/app/variables';
 
 @Component({
   selector: 'app-profile-page',
   imports: [
+    CommonModule,
+    TranslateModule,
+    RouterModule,
     IonLabel,
     IonItem,
     IonList,
@@ -43,14 +45,15 @@ import { MovieListService } from '../../services/movie-list.service';
     IonHeader,
     IonIcon,
     IonButton,
-    CommonModule,
-    MatButtonModule,
-    MatIconModule,
   ],
   templateUrl: './profile-page.component.html',
   styleUrl: './profile-page.component.scss',
 })
 export class ProfilePageComponent {
+  private readonly MESSAGE_LABELS = 'pages.profile.messages.';
+  private readonly DIALOG_LABELS = 'pages.profile.dialogs.';
+
+  private readonly translate = inject(TranslateService);
   readonly dialog = inject(ModalController);
   readonly alertController = inject(AlertController);
   readonly router = inject(Router);
@@ -64,39 +67,43 @@ export class ProfilePageComponent {
 
   async changeName(oldUsername: string) {
     const alert = await this.alertController.create({
-      header: 'Modifica username',
+      header: this.translate.instant(this.DIALOG_LABELS + 'username.header'),
       inputs: [
         {
           id: 'username',
-          label: 'Username',
-          placeholder: 'Username',
+          label: this.translate.instant('shared.inputs.username'),
+          placeholder: this.translate.instant('shared.inputs.username'),
           name: 'username',
           attributes: {
-            maxLength: 15,
-            minLength: 5,
+            maxLength: fieldValidations.username.maxLength,
           },
         },
       ],
       buttons: [
         {
-          text: 'Annulla',
+          text: this.translate.instant(BUTTONS.ANNULLA),
           role: 'cancel',
           cssClass: 'secondary',
         },
         {
-          text: 'Conferma',
+          text: this.translate.instant(BUTTONS.CONFERMA),
           role: 'confirm',
           handler: (data) => {
-            if (data.username.length < 3) {
+            if (data.username.length < fieldValidations.username.minLength) {
               this.snackBar.open(
-                'Lo username deve essere di almeno 3 caratteri.',
+                this.translate.instant(
+                  this.MESSAGE_LABELS + 'username.errore.minLength',
+                  { minLength: fieldValidations.username.minLength }
+                ),
                 { color: 'danger', duration: 3000 }
               );
               return false;
             }
             if (!/^[A-Za-z0-9_]+$/.test(data.username)) {
               this.snackBar.open(
-                'Lo username può contenere solo il simbolo _',
+                this.translate.instant(
+                  this.MESSAGE_LABELS + 'username.errore.simbolo'
+                ),
                 { color: 'danger', duration: 3000 }
               );
               return false;
@@ -113,59 +120,80 @@ export class ProfilePageComponent {
 
   async changePassword() {
     const alert = await this.alertController.create({
-      header: 'Modifica password',
-      message:
-        'La password deve contenere almeno:\n • Una lettera minuscola.\n  • Una lettera maiuscola\n • Un numero\n • Un simbolo (es. ! # $ % ^ & *)',
+      header: this.translate.instant(this.DIALOG_LABELS + 'password.header'),
+      message: this.translate.instant(this.DIALOG_LABELS + 'password.message'),
       inputs: [
         {
           id: 'oldPassword',
-          label: 'Password Attuale',
-          placeholder: 'Password Attuale',
+          label: this.translate.instant(
+            this.DIALOG_LABELS + 'password.inputs.passwordAttuale'
+          ),
+          placeholder: this.translate.instant(
+            this.DIALOG_LABELS + 'password.inputs.passwordAttuale'
+          ),
           type: 'password',
           name: 'oldPassword',
         },
         {
           id: 'newPassword',
           type: 'password',
-          label: 'Nuova Password',
-          placeholder: 'Nuova Password',
+          label: this.translate.instant(
+            this.DIALOG_LABELS + 'password.inputs.nuovaPassword'
+          ),
+          placeholder: this.translate.instant(
+            this.DIALOG_LABELS + 'password.inputs.nuovaPassword'
+          ),
           name: 'newPassword',
         },
         {
           id: 'repeatPassword',
           type: 'password',
-          label: 'Ripeti la Password',
-          placeholder: 'Ripeti la Password',
+          label: this.translate.instant(
+            this.DIALOG_LABELS + 'password.inputs.ripetiPassword'
+          ),
+          placeholder: this.translate.instant(
+            this.DIALOG_LABELS + 'password.inputs.ripetiPassword'
+          ),
           name: 'repeatPassword',
         },
       ],
       buttons: [
         {
-          text: 'Annulla',
+          text: this.translate.instant(BUTTONS.ANNULLA),
           role: 'cancel',
           cssClass: 'secondary',
         },
         {
-          text: 'Conferma',
+          text: this.translate.instant(BUTTONS.CONFERMA),
           role: 'confirm',
           handler: (data) => {
             if (data.newPassword != data.repeatPassword) {
-              this.snackBar.open('Le password inserite non coincidono.', {
-                color: 'danger',
-                duration: 3000,
-              });
+              this.snackBar.open(
+                this.translate.instant(
+                  this.MESSAGE_LABELS + 'password.errore.nonCoincide'
+                ),
+                {
+                  color: 'danger',
+                  duration: 3000,
+                }
+              );
               return false;
             }
-            if (data.newPassword.length < 8) {
+            if (data.newPassword.length < fieldValidations.password.minLength) {
               this.snackBar.open(
-                'La password deve contenere almeno 8 caratteri.',
+                this.translate.instant(
+                  this.MESSAGE_LABELS + 'password.errore.minLength',
+                  { minLength: fieldValidations.password.minLength }
+                ),
                 { color: 'danger', duration: 3000 }
               );
               return false;
             }
             if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/.test(data.newPassword)) {
               this.snackBar.open(
-                'La nuova password non rispetta i criteri di sicurezza.',
+                this.translate.instant(
+                  this.MESSAGE_LABELS + 'password.errore.criteriSicurezza'
+                ),
                 { color: 'danger', duration: 3000 }
               );
               return false;
@@ -178,84 +206,6 @@ export class ProfilePageComponent {
     });
 
     await alert.present();
-  }
-
-  async oldChangePassword() {
-    const dialogRef = await this.dialog.create({
-      component: PasswordDialogComponent,
-      initialBreakpoint: 0.5,
-      expandToScroll: false,
-    });
-
-    dialogRef.present();
-    const { data } = await dialogRef.onWillDismiss();
-
-    if (data && data.newPassword && data.newPassword.trim().length >= 8) {
-      this.authService.currentUser$
-        .pipe(
-          filter((user) => !!user),
-          first(),
-          switchMap((user) =>
-            from(
-              reauthenticateWithCredential(
-                user!,
-                EmailAuthProvider.credential(user!.email!, data.oldPassword)
-              )
-            ).pipe(map(() => user!))
-          ),
-          switchMap((user) => updatePassword(user!, data.newPassword.trim())),
-          tap(() =>
-            this.snackBar.open(
-              'Password aggiornata con successo',
-
-              { duration: 3000 }
-            )
-          ),
-          catchError((err) => {
-            console.error('Error updating password:', err);
-            this.snackBar.open(
-              "Errore nell'aggiornamento della password",
-
-              { duration: 3000 }
-            );
-            throw err;
-          })
-        )
-        .subscribe();
-    }
-  }
-
-  async oldChangeName(currentUsername: string) {
-    const dialogRef = await this.dialog.create({
-      component: UsernameDialogComponent,
-      componentProps: { currentUsername },
-      initialBreakpoint: 0.2,
-      expandToScroll: false,
-    });
-    dialogRef.present();
-    const { data } = await dialogRef.onWillDismiss();
-    if (
-      data !== undefined &&
-      data != currentUsername &&
-      data.trim().length > 5
-    ) {
-      this.movieListService
-        .setUsername(data.trim())
-        .then(() => {
-          this.authService.currentUser$.pipe(
-            filter((user) => !!user),
-            first(),
-            tap((user) => updateProfile(user, { displayName: data.trim() }))
-          );
-          this.snackBar.open('Username modificato.');
-        })
-        .catch((e) => {
-          console.log(e);
-          this.snackBar.open('Username già esistente.', {
-            duration: 3000,
-          });
-        });
-    }
   }
 
   private __changeUsername(data: { username: string }) {
@@ -271,13 +221,20 @@ export class ProfilePageComponent {
               updateProfile(user, { displayName: data.username.trim() })
             )
           );
-          this.snackBar.open('Username modificato.');
+          this.snackBar.open(
+            this.translate.instant(this.MESSAGE_LABELS + 'username.successo')
+          );
         })
         .catch((e) => {
           console.log(e);
-          this.snackBar.open('Username già esistente.', {
-            duration: 3000,
-          });
+          this.snackBar.open(
+            this.translate.instant(
+              this.MESSAGE_LABELS + 'username.errore.generico'
+            ),
+            {
+              duration: 3000,
+            }
+          );
         });
     }
   }
@@ -298,16 +255,16 @@ export class ProfilePageComponent {
           switchMap((user) => updatePassword(user!, data.newPassword.trim())),
           tap(() =>
             this.snackBar.open(
-              'Password aggiornata con successo',
-
+              this.translate.instant(this.MESSAGE_LABELS + 'password.successo'),
               { duration: 3000 }
             )
           ),
           catchError((err) => {
             console.error('Error updating password:', err);
             this.snackBar.open(
-              "Errore nell'aggiornamento della password",
-
+              this.translate.instant(
+                this.MESSAGE_LABELS + 'password.errore.generico'
+              ),
               { duration: 3000 }
             );
             throw err;

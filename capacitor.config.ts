@@ -1,8 +1,8 @@
 import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'com.mymovie.app',
-  appName: 'myMovie',
+  appId: 'com.moviemates.app',
+  appName: 'Movie Mates',
   webDir: 'www'
 };
 

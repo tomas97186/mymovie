@@ -1,36 +1,26 @@
-import {
-  Component,
-  effect,
-  ElementRef,
-  inject,
-  input,
-  model,
-  signal,
-  ViewChild,
-} from '@angular/core';
-import { MovieListComponent } from '../movie-list/movie-list.component';
-import { MatIconModule } from '@angular/material/icon';
-import { MatButtonModule } from '@angular/material/button';
-import { MatToolbarModule } from '@angular/material/toolbar';
-import { SearchItemModel } from '../../models/search-item.model';
-import { SearchResultsModel } from '../../models/search-results.model';
 import { CommonModule, Location } from '@angular/common';
+import { Component, effect, inject, input, model } from '@angular/core';
 import {
-  IonHeader,
-  IonToolbar,
-  IonTitle,
   IonBackButton,
+  IonButton,
   IonButtons,
   IonContent,
-  IonButton,
-  IonIcon,
-  IonFabButton,
   IonFab,
+  IonFabButton,
+  IonHeader,
+  IonIcon,
+  IonTitle,
+  IonToolbar,
 } from '@ionic/angular/standalone';
+import { SearchItemModel } from '../../models/search-item.model';
+import { SearchResultsModel } from '../../models/search-results.model';
+import { MovieListComponent } from '../movie-list/movie-list.component';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-movie-list-dynamic',
   imports: [
+    TranslateModule,
     IonIcon,
     IonButton,
     IonButtons,
@@ -40,9 +30,6 @@ import {
     IonHeader,
     CommonModule,
     MovieListComponent,
-    MatIconModule,
-    MatButtonModule,
-    MatToolbarModule,
     IonHeader,
     IonContent,
     IonFabButton,
@@ -67,6 +54,8 @@ export class MovieListDynamicComponent {
   isLoading = input<boolean>(false);
 
   paddingTop = input<number>();
+
+  subject = input<string>();
 
   private changedPage = false;
 
