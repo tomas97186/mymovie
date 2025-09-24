@@ -1,7 +1,8 @@
+import { initializeApp } from 'firebase-admin/app';
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
-import jwt from 'jsonwebtoken';
 
+const admin = require('firebase-admin');
 const app = new Hono();
 
 // In-memory store per il rate limiting
@@ -9,6 +10,18 @@ const requests = new Map<string, { count: number; ts: number }>();
 
 // Config
 const JWT_SECRET = Bun.env.JWT_SECRET || 'super-secret';
+
+const credentials = Bun.env.FIREBASE_CREDENTIALS;
+
+if (!credentials) {
+  throw new Error('Credenziali Firebase non trovate.');
+}
+
+const jsonCredentials = JSON.parse(credentials);
+
+admin.initializeApp({
+  credential: admin.credential.cert(jsonCredentials),
+});
 
 // Middleware: rate limiting per IP
 app.use('/*', async (c, next) => {
@@ -18,7 +31,6 @@ app.use('/*', async (c, next) => {
 
   const now = Date.now();
   const entry = requests.get(ip);
-  console.log('IP: ', ip);
 
   if (!entry || now - entry.ts > windowMs) {
     requests.set(ip, { count: 1, ts: now });
@@ -31,7 +43,7 @@ app.use('/*', async (c, next) => {
 
   await next();
 });
-app.use('/*', cors({ origin: '*', allowHeaders: ['*'], allowMethods: ['*'] }));
+// app.use('/*', cors({ origin: '*', allowHeaders: ['*'], allowMethods: ['*'] }));
 
 app.use(
   '/*',
@@ -52,42 +64,22 @@ app.use(
   })
 );
 
-// Endpoint per ottenere un JWT (es: login fake)
-app.post('/auth', async (c) => {
-  const body = await c.req.json();
-  const { apiKey } = body;
-
-  // Semplice check con la tua PROXY_SECRET
-  if (apiKey !== Bun.env.PROXY_SECRET) {
-    return c.text('Unauthorized', 401);
-  }
-
-  // Creazione token JWT valido 15 minuti
-  const token = jwt.sign(
-    { role: 'client' }, // payload
-    JWT_SECRET,
-    { expiresIn: '15m' }
-  );
-
-  return c.json({ token });
-});
-
-// Middleware: JWT check
 app.use('/*', async (c, next) => {
   const authHeader = c.req.header('authorization');
   if (!authHeader?.startsWith('Bearer ')) {
+    console.error('Formato token JWT non valido.');
     return c.text('Unauthorized', 401);
   }
 
-  const token = authHeader.split(' ')[1];
-
+  const idToken = authHeader.split('Bearer ')[1];
   try {
-    const decoded = jwt.verify(token, JWT_SECRET);
-  } catch (err) {
-    return c.text('Invalid or expired token', 401);
+    const decoded = await admin.auth().verifyIdToken(idToken!);
+    await next();
+  } catch (err: any) {
+    console.error(err.message || 'Token JWT non valido.');
+    return c.text('Invalid token', 401);
   }
 
-  await next();
 });
 
 app.get('/*', async (c) => {
