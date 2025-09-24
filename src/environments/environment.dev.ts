@@ -4,7 +4,6 @@ const port = 8080
 
 export const environment = {
   production: false,
-  proxySecret: '+;Y/*D/R#15WP&vpZ5(^zWfPh>_FP<Bi[35a,KdM,aG/}5Dono>P{Fu[IGr|UiH',
   posterUrl: 'https://image.tmdb.org/t/p/original',
   apiUrl: `${protocol}://${host}${port != 8080? (':'+ port) : ''}`,
   // Your web app's Firebase configuration

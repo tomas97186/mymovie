@@ -4,7 +4,6 @@
 
 export const environment = {
   production: true,
-  proxySecret: '',
   posterUrl: 'https://image.tmdb.org/t/p/original',
   apiUrl: '/.netlify/functions/tmdb',
   // Your web app's Firebase configuration

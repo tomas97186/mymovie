@@ -1,16 +1,14 @@
-import { inject, Injectable } from '@angular/core';
 import {
-  HttpRequest,
-  HttpHandler,
   HttpEvent,
+  HttpHandler,
   HttpInterceptor,
-  HttpErrorResponse,
+  HttpRequest
 } from '@angular/common/http';
-import { from, Observable } from 'rxjs';
-import { filter, switchMap, tap } from 'rxjs/operators';
+import { inject, Injectable } from '@angular/core';
 import { Router } from '@angular/router';
+import { from, Observable } from 'rxjs';
+import { filter, switchMap } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
-import { AuthTokenService } from '../services/auth-token.service';
 import { AuthService } from '../services/auth.service';
 
 @Injectable()
