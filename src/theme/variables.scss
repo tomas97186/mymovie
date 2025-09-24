@@ -31,6 +31,21 @@ ion-input.search-field {
   text-align: start !important;
 }
 
+
+ion-input {
+  --border-width: 0 !important;
+  --border-color: transparent !important;
+  --highlight-height: 2px !important;
+  --border-radius: 10px !important;
+  --background: #211f26e4 !important;
+  --padding-start: 1rem !important;
+  --padding-end: 1rem !important;
+  text-align: start !important;
+  margin-bottom: 1rem;
+
+}
+
+
 .transparent {
   --background: transparent !important;
   background: transparent !important;

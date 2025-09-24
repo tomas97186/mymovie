@@ -1,5 +1,6 @@
 export const SHARED_LABELS = 'shared.';
 export const SHARED_INPUTS = SHARED_LABELS + 'inputs.';
+export const SHARED_PLACEHOLDERS = SHARED_LABELS + 'placeholders.';
 export const SHARED_BUTTONS = SHARED_LABELS + 'buttons.';
 
 export const INPUTS = {
@@ -7,6 +8,11 @@ export const INPUTS = {
   NOME: SHARED_INPUTS + 'nome',
   PASSWORD: SHARED_INPUTS + 'password',
   CODICE: SHARED_INPUTS + 'codice',
+  EMAIL: SHARED_INPUTS + 'email'
+};
+
+export const PLACEHOLDERS = {
+  PASSWORD: SHARED_PLACEHOLDERS + 'password',
 };
 
 export const BUTTONS = {

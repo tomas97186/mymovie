@@ -32,8 +32,6 @@ img.movie-poster {
 }
 
 .movie-title {
-    position: sticky;
-    top: calc(env(safe-area-inset-top) + 10px);
     max-width: 100%;
     white-space: pre-wrap;
     /* Webkit */

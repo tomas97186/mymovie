@@ -1,65 +1,64 @@
 .header {
-    display: flex;
-    position: fixed;
-    align-items: center;
-    top: 0px;
-    padding-top: calc(env(safe-area-inset-top) + 10px);
-    display: flex;
-    z-index: 100;
-    gap: 1rem;
-    text-align: center;
-    width: 100%;
-    justify-content: space-between;
-    align-items: center;
-    padding-right: 1rem;
-    padding-left: 1rem;
+  display: flex;
+  position: fixed;
+  align-items: center;
+  top: 0px;
+  // padding-top: calc(env(safe-area-inset-top) + 10px);
+  padding-top: 1.2rem;
+  display: flex;
+  z-index: 100;
+  gap: 1rem;
+  text-align: center;
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+  padding-right: 1rem;
+  padding-left: 1rem;
 
-    & form.search-form {
-        width: 100%;
-        max-width: 500px;
-    }
+  & form.search-form {
+    width: 100%;
+    max-width: 500px;
+  }
 }
 
 .search-page-container {
-    height: calc(100vh - 60px);
-    overflow-y: auto;
+  height: calc(100vh - 60px);
+  overflow-y: auto;
 }
 
-
 .genre-list {
-    align-items: center;
-    justify-content: center;
-    margin-right: 1rem;
-    margin-left: 1rem;
+  align-items: center;
+  justify-content: center;
+  margin-right: 1rem;
+  margin-left: 1rem;
 
-    & ion-button {
-        font-size: .7rem;
-    }
+  & ion-button {
+    font-size: 0.7rem;
+  }
 }
 
 #movieList {
-    scroll-margin-top: 100px;
+  scroll-margin-top: 100px;
 }
 
 .go-up-button {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    z-index: 1000;
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1000;
 }
 
 .no-movies-banner {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    font-size: 1.5rem;
-    color: #6c757d;
-    text-align: center;
-    padding: 2rem;
-    margin-top: 6.5rem;
-
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 1.5rem;
+  color: #6c757d;
+  text-align: center;
+  padding: 2rem;
+  margin-top: 6.5rem;
 }
 
 .no-search {
-    margin-top: 6.5rem;
+  margin-top: 6.5rem;
 }

@@ -14,7 +14,7 @@
   @if(currentList.length > 0) {
   <app-movie-list
     #movieList
-    [paddingTop]="!!title() ? 100 : paddingTop()"
+    [paddingTop]="!!title() ? 70 : paddingTop()"
     [movies]="currentList"
     (loadData)="loadMoreMovies()"
     class="w-100"

@@ -209,7 +209,7 @@ ion-title.with-icon {
 }
 
 .alert-button.secondary {
-  color: gray;
+  color: gray !important;
 }
 
 .subtitle {
@@ -231,19 +231,12 @@ ion-title.with-icon {
 }
 
 ion-fab[slot="fixed"][vertical="top"] {
-  padding-top: env(safe-area-inset-top) !important;
+  // padding-top: env(safe-area-inset-top) !important;
 }
 
 .login-wrap {
-  padding-top: calc(env(safe-area-inset-top) + 1.2rem) !important;
-}
-
-.login-container {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  flex-grow: 1;
+  // padding-top: calc(env(safe-area-inset-top) + 1.2rem) !important;
+  padding-top: 1.2rem !important;
 }
 
 .login-wrap {
@@ -251,4 +244,22 @@ ion-fab[slot="fixed"][vertical="top"] {
   padding: 1.2rem;
   display: flex;
   flex-direction: column;
+
+  .login-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    flex-grow: 1;
+
+    .form {
+      text-align: center;
+      width: 100%;
+      max-width: 400px;
+    }
+  }
+}
+
+ion-toolbar {
+  padding-top: 0px !important;
 }

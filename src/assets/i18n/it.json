@@ -16,7 +16,12 @@
     "inputs": {
       "username": "Username",
       "nome": "Nome",
-      "codice": "Codice Lista"
+      "codice": "Codice Lista",
+      "email": "Email",
+      "password": "Password"
+    },
+    "placeholders": {
+        "password": "Minimo {{minLength}} caratteri."
     }
   },
   "dialogs": {
@@ -230,6 +235,9 @@
       "buttons": {
         "registrati": "Registrati",
         "registrazioneInCorso": "Registrazione in corso..."
+      },
+      "inputs": {
+        "repeatPassword": "Ripeti La Password"
       }
     },
     "passwordReset": {
@@ -287,18 +295,18 @@
         "password": {
           "successo": "Password aggiornata con successo",
           "errore": {
-            "generico": "Errore nell'aggiornamento della password",
-            "minLength": "Lo username deve essere di almeno {{minLength}} caratteri.",
-            "simbolo": "Lo username può contenere solo il simbolo _"
+            "generico": "Username già esistente.",
+            "nonCoincide": "Le password inserite non coincidono.",
+            "minLength": "La password deve contenere almeno {{minLength}} caratteri.",
+            "criteriSicurezza": "La nuova password non rispetta i criteri di sicurezza."
           }
         },
         "username": {
           "successo": "Username modificato.",
           "errore": {
-            "generico": "Username già esistente.",
-            "nonCoincide": "Le password inserite non coincidono.",
-            "minLength": "La password deve contenere almeno {{minLength}} caratteri.",
-            "criteriSicurezza": "La nuova password non rispetta i criteri di sicurezza."
+            "generico": "Errore nell'aggiornamento della password",
+            "minLength": "Lo username deve essere di almeno {{minLength}} caratteri.",
+            "simbolo": "Lo username può contenere solo il simbolo _"
           }
         }
       }
@@ -346,7 +354,6 @@
         "unisciti": {
           "successo": "Sei stato aggiunto alla lista.",
           "errore": {
-            "maxList": "Non puoi far parte di più di {{maxLists}} liste.",
             "generico": "La lista non esiste o non puoi unirti.",
             "obbligatorio": "Inserisci il codice della lista."
           }
@@ -354,7 +361,6 @@
         "crea": {
           "successo": "Lista creata con successo!",
           "errore": {
-            "maxList": "Non puoi far parte di più di {{maxLists}} liste.",
             "generico": "Si è verificato un errore durante la creazione della lista.",
             "minLength": "Il nome della lista deve essere di almeno {{minLength}} caratteri."
           }

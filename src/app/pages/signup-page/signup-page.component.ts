@@ -28,6 +28,8 @@ import { Subscription } from 'rxjs';
 import { ToastService } from 'src/app/services/toast.service';
 import { AuthService } from '../../services/auth.service';
 import { TranslateModule } from '@ngx-translate/core';
+import { fieldValidations } from 'src/environments/fields.validation';
+import { INPUTS, PLACEHOLDERS } from 'src/app/variables';
 
 @Component({
   selector: 'app-login',
@@ -49,6 +51,10 @@ import { TranslateModule } from '@ngx-translate/core';
   ],
 })
 export class SignupPage {
+  INPUTS = INPUTS;
+  PLACEHOLDERS = PLACEHOLDERS;
+  validations = fieldValidations
+
   hidePassword = signal(true);
   loading = signal(false);
   authSub: Subscription;
@@ -62,9 +68,9 @@ export class SignupPage {
     private snack: ToastService
   ) {
     this.form = this.fb.group({
-      email: ['', [Validators.required, Validators.email]],
+      email: [null, [Validators.required, Validators.email]],
       password: [
-        '',
+        null,
         [
           Validators.required,
           Validators.minLength(8),
@@ -73,7 +79,7 @@ export class SignupPage {
         ],
       ],
       repeatPassword: [
-        '',
+        null,
         [
           Validators.required,
           Validators.minLength(8),
@@ -91,6 +97,7 @@ export class SignupPage {
 
   ngOnDestroy() {
     this.authSub?.unsubscribe();
+    this.form.reset();
   }
 
   async submit() {

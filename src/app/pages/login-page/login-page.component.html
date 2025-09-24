@@ -1,6 +1,6 @@
 <div class="login-wrap">
   <div class="app-logo" class="app-logo">
-    <img src="assets/logo-write-dark.png" alt="logo">
+    <img src="assets/logo-write-dark.png" alt="logo" />
   </div>
   <div class="login-container">
     <div class="brand">
@@ -11,18 +11,38 @@
         {{ "pages.login.labels.noAccount" | translate }}
         <a routerLink="/signup">{{
           "pages.login.labels.creaAccount" | translate
-          }}</a>
+        }}</a>
       </p>
     </div>
 
     <form [formGroup]="form" (ngSubmit)="submit()" class="form">
-      <ion-input label="Email" type="email" placeholder="test@email.com" formControlName="email">
+      <ion-input
+        labelPlacement="stacked"
+        label="{{ INPUTS.EMAIL | translate }}"
+        type="email"
+        placeholder="test@email.com"
+        formControlName="email"
+      >
       </ion-input>
 
-      <ion-input label="Password" type="password" placeholder="Minimo 8 caratteri" formControlName="password">
-        <ion-input-password-toggle slot="end"></ion-input-password-toggle></ion-input>
+      <ion-input
+        labelPlacement="stacked"
+        label="{{ INPUTS.PASSWORD | translate }}"
+        type="text"
+        placeholder="{{
+          PLACEHOLDERS.PASSWORD
+            | translate : { minLength: validations.password.minLength }
+        }}"
+        formControlName="password"
+      >
+        <ion-input-password-toggle slot="end"></ion-input-password-toggle
+      ></ion-input>
 
-      <ion-button class="w-100" type="submit" [disabled]="form.invalid || loading()">
+      <ion-button
+        class="w-100"
+        type="submit"
+        [disabled]="form.invalid || loading()"
+      >
         @if(loading()) {
         <ion-spinner></ion-spinner>
         <span>{{ "pages.login.buttons.accessoInCorso" | translate }}</span>
@@ -31,7 +51,7 @@
       <div class="pwd-reset-link">
         <a routerLink="/password-reset">{{
           "pages.login.labels.passwordDimenticata" | translate
-          }}</a>
+        }}</a>
       </div>
       <!-- <div class="separator">
         <div class="separator-line"></div>

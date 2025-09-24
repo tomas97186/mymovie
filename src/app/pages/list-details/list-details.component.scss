@@ -38,5 +38,5 @@
 
 ion-segment-view {
   height: calc(100vh - 56px - 56px - 56px) !important;
-  padding-bottom: calc(env(safe-area-inset-top) + 1rem) !important;
+  // padding-bottom: calc(env(safe-area-inset-top) + 1rem) !important;
 }

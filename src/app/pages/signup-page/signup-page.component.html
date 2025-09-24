@@ -1,6 +1,6 @@
 <div class="login-wrap">
   <div class="app-logo" class="app-logo">
-    <img src="assets/logo-write-dark.png" alt="logo">
+    <img src="assets/logo-write-dark.png" alt="logo" />
   </div>
   <div class="login-container">
     <div class="brand">
@@ -11,30 +11,58 @@
     </div>
 
     <form [formGroup]="form" (ngSubmit)="submit()" class="form">
-      <ion-input label="Email" type="email" placeholder="test@email.com" formControlName="email">
+      <ion-input
+        labelPlacement="stacked"
+        label="{{ INPUTS.EMAIL | translate }}"
+        type="email"
+        placeholder="test@email.com"
+        formControlName="email"
+      >
       </ion-input>
 
-      <ion-input label="Password" type="password" formControlName="password" maxlength="30" minlength="8"
+      <ion-input
+        labelPlacement="stacked"
+        label="{{ INPUTS.PASSWORD | translate }}"
+        type="password"
+        placeholder="{{ INPUTS.PASSWORD | translate }}"
+        formControlName="password"
+        [maxlength]="validations.password.maxLength"
+        [minlength]="validations.password.minLength"
         errorText="{{ 'pages.signup.labels.passwordHelp' | translate }}"
-        helperText="{{ 'pages.signup.labels.passwordHelp' | translate }}">
-        <ion-input-password-toggle slot="end"></ion-input-password-toggle></ion-input>
+        helperText="{{ 'pages.signup.labels.passwordHelp' | translate }}"
+      >
+        <ion-input-password-toggle slot="end"></ion-input-password-toggle
+      ></ion-input>
 
-      <ion-input label="Ripeti la Password" type="password" maxlength="30" minlength="8"
-        formControlName="repeatPassword">
-        <ion-input-password-toggle slot="end"></ion-input-password-toggle></ion-input>
+      <ion-input
+        labelPlacement="stacked"
+        label="{{'pages.signup.inputs.repeatPassword' | translate}}"
+        placeholder="{{'pages.signup.inputs.repeatPassword' | translate}}"
+        type="password"
+        [maxlength]="validations.password.maxLength"
+        [minlength]="validations.password.minLength"
+        formControlName="repeatPassword"
+      >
+        <ion-input-password-toggle slot="end"></ion-input-password-toggle
+      ></ion-input>
 
-      <ion-button class="w-100" type="submit" [disabled]="form.invalid || loading()">
+      <ion-button
+        class="w-100"
+        type="submit"
+        [disabled]="form.invalid || loading()"
+      >
         @if(loading()) {
         <ion-spinner slot="start"></ion-spinner>
         }
         {{
-        "pages.signup.buttons." +
-        (loading() ? "registrazioneInCorso" : "registrati") | translate
+          "pages.signup.buttons." +
+            (loading() ? "registrazioneInCorso" : "registrati") | translate
         }}
       </ion-button>
     </form>
     <div class="login-link">
-      <a routerLink="/login"><ion-icon name="return-up-back-outline" class="me-2"></ion-icon>
+      <a routerLink="/login"
+        ><ion-icon name="return-up-back-outline" class="me-2"></ion-icon>
         {{ "shared.labels.returnToLogin" | translate }}
       </a>
     </div>

@@ -21,6 +21,7 @@ import { Subscription } from 'rxjs';
 import { ToastService } from 'src/app/services/toast.service';
 import { AuthService } from '../../services/auth.service';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { INPUTS } from 'src/app/variables';
 
 @Component({
   selector: 'app-login',
@@ -42,6 +43,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 })
 export class PasswordResetPage {
   private readonly MESSAGE_LABELS = 'pages.passwordReset.messages.';
+  EMAIL = INPUTS.EMAIL;
 
   private readonly translate = inject(TranslateService);
 

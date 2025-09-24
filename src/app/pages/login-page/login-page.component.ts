@@ -19,6 +19,8 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 import { ToastService } from 'src/app/services/toast.service';
 import { AuthService } from '../../services/auth.service';
+import { INPUTS, PLACEHOLDERS } from 'src/app/variables';
+import { fieldValidations } from 'src/environments/fields.validation';
 
 @Component({
   selector: 'app-login',
@@ -38,6 +40,9 @@ import { AuthService } from '../../services/auth.service';
 })
 export class LoginPage {
   private readonly MESSAGE_LABELS = 'pages.login.messages.';
+  INPUTS = INPUTS;
+  PLACEHOLDERS = PLACEHOLDERS;
+  validations = fieldValidations
 
   private readonly translate = inject(TranslateService);
   
