@@ -80,7 +80,7 @@ export class UserListItemComponent {
       // Share text only
       await Share.share({
         text: this.translate.instant(
-          this.MESSAGE_LABELS + 'condividi.messaggio'
+          this.MESSAGE_LABELS + 'condividi.messaggio', { listId: this.list().id }
         ),
       });
     } else {

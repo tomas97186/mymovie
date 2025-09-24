@@ -1,7 +1,7 @@
 export const environment = {
   production: true,
   posterUrl: 'https://image.tmdb.org/t/p/original',
-  apiUrl: '/.netlify/functions/tmdb',
+  apiUrl: 'https://tmdb.up.railway.app',
   proxySecret: '+;Y/*D/R#15WP&vpZ5(^zWfPh>_FP<Bi[35a,KdM,aG/}5Dono>P{Fu[IGr|UiH',
   // Your web app's Firebase configuration
   firebaseConfig: {

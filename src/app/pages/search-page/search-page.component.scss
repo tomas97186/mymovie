@@ -2,7 +2,8 @@
     display: flex;
     position: fixed;
     align-items: center;
-    top: calc(env(safe-area-inset-top) + 10px);
+    top: 0px;
+    padding-top: calc(env(safe-area-inset-top) + 10px);
     display: flex;
     z-index: 100;
     gap: 1rem;
@@ -17,15 +18,6 @@
         width: 100%;
         max-width: 500px;
     }
-}
-
-
-::ng-deep .mat-mdc-text-field-wrapper .mdc-line-ripple {
-    display: none;
-}
-
-::ng-deep .header .mat-mdc-form-field-subscript-wrapper {
-    display: none;
 }
 
 .search-page-container {
@@ -66,10 +58,6 @@
     padding: 2rem;
     margin-top: 6.5rem;
 
-    & mat-icon {
-        scale: 2;
-        margin-bottom: 2rem;
-    }
 }
 
 .no-search {

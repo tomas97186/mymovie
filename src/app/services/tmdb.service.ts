@@ -11,6 +11,7 @@ import { VideoModel } from '../models/video.model';
 import { TvShowModel } from '../models/tv-show.model';
 import { CreditModel } from '../models/credit.model';
 import { ReviewModel } from '../models/review.model';
+import { TranslateService } from '@ngx-translate/core';
 
 @Injectable({
   providedIn: 'root',
@@ -20,7 +21,7 @@ export class TMDBService {
 
   private params = new HttpParams().set('language', 'it');
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private translate: TranslateService) {}
 
   /**
    * Cerca film per query (stringa)
@@ -29,7 +30,7 @@ export class TMDBService {
     query: string,
     page: number = 1
   ): Observable<SearchResultsModel> {
-    const params = this.params.set('query', query).set('page', page.toString());
+    const params = this.getDefaultParams().set('query', query).set('page', page.toString());
 
     return this.http
       .get<SearchResultsModel>(`${environment.apiUrl}/search/movie`, { params })
@@ -51,7 +52,7 @@ export class TMDBService {
     id: number,
     page: number = 1
   ): Observable<SearchResultsModel> {
-    const params = this.params.set('page', page.toString());
+    const params = this.getDefaultParams().set('page', page.toString());
 
     return this.http
       .get<SearchResultsModel>(
@@ -76,7 +77,7 @@ export class TMDBService {
     query: DiscoverMovieRequestModel,
     page: number = 1
   ): Observable<SearchResultsModel> {
-    const params = this.params
+    const params = this.getDefaultParams()
       .appendAll({ ...query })
       .set('page', page.toString());
 
@@ -102,7 +103,7 @@ export class TMDBService {
     movieId: number,
     full: boolean = false
   ): Observable<MovieModel> {
-    let params = this.params.set('movie_id', movieId.toString());
+    let params = this.getDefaultParams().set('movie_id', movieId.toString());
     if (full) {
       params = params.set(
         'append_to_response',
@@ -128,7 +129,7 @@ export class TMDBService {
     type: 'popular' | 'upcoming' | 'top_rated' | 'now_playing',
     page: number = 1
   ): Observable<SearchResultsModel> {
-    const params = this.params.set('page', page.toString());
+    const params = this.getDefaultParams().set('page', page.toString());
 
     return this.http
       .get<SearchResultsModel>(environment.apiUrl + '/movie/' + type, {
@@ -153,7 +154,7 @@ export class TMDBService {
   ): Observable<{ id: string; results: VideoModel[] }> {
     return this.http.get<{ id: string; results: VideoModel[] }>(
       `${environment.apiUrl}/movie/${id}/videos`,
-      { params: this.params }
+      { params: this.getDefaultParams() }
     );
   }
 
@@ -171,13 +172,13 @@ export class TMDBService {
       posters: ImageModel[];
       logos: ImageModel[];
       backdrops: ImageModel[];
-    }>(`${environment.apiUrl}/movie/${id}/images`, { params: this.params });
+    }>(`${environment.apiUrl}/movie/${id}/images`, { params: this.getDefaultParams() });
   }
 
   getMovieCredits(id: number): Observable<CreditModel> {
     return this.http.get<CreditModel>(
       `${environment.apiUrl}/movie/${id}/credits`,
-      { params: this.params }
+      { params: this.getDefaultParams() }
     );
   }
 
@@ -197,14 +198,14 @@ export class TMDBService {
       results: ReviewModel[];
       total_pages: number;
       total_results: number;
-    }>(`${environment.apiUrl}/movie/${id}/reviews`, { params: this.params });
+    }>(`${environment.apiUrl}/movie/${id}/reviews`, { params: this.getDefaultParams() });
   }
 
   getTvShowCollection(
     type: 'on_the_air' | 'airing_today' | 'popular' | 'top_rated',
     page: number = 1
   ): Observable<SearchResultsModel> {
-    const params = this.params.set('page', page.toString());
+    const params = this.getDefaultParams().set('page', page.toString());
 
     return this.http
       .get<SearchResultsModel>(environment.apiUrl + '/tv/' + type, { params })
@@ -224,7 +225,7 @@ export class TMDBService {
     query: string,
     page: number = 1
   ): Observable<SearchResultsModel> {
-    const params = this.params.set('query', query).set('page', page.toString());
+    const params = this.getDefaultParams().set('query', query).set('page', page.toString());
 
     return this.http
       .get<SearchResultsModel>(`${environment.apiUrl}/search/tv`, { params })
@@ -247,7 +248,7 @@ export class TMDBService {
     id: number,
     page: number = 1
   ): Observable<SearchResultsModel> {
-    const params = this.params.set('page', page.toString());
+    const params = this.getDefaultParams().set('page', page.toString());
 
     return this.http
       .get<SearchResultsModel>(`environment.apiUrl/tv/${id}/recommendations`, {
@@ -272,7 +273,7 @@ export class TMDBService {
     query: DiscoverMovieRequestModel,
     page: number = 1
   ): Observable<SearchResultsModel> {
-    const params = this.params
+    const params = this.getDefaultParams()
       .appendAll({ ...query })
       .set('page', page.toString());
 
@@ -294,7 +295,7 @@ export class TMDBService {
    * Ottieni dettagli di un film per ID
    */
   getTvShowDetails(id: number): Observable<TvShowModel> {
-    const params = this.params.set('series_id', id.toString());
+    const params = this.getDefaultParams().set('series_id', id.toString());
 
     return this.http
       .get<TvShowModel>(`environment.apiUrl/tv/${id}`, { params })
@@ -314,7 +315,7 @@ export class TMDBService {
     return this.http
       .get<{ genres: { id: number; name: string }[] }>(
         environment.apiUrl + '/genre/movie/list',
-        { params: this.params }
+        { params: this.getDefaultParams() }
       )
       .pipe(
         tap((response) =>
@@ -323,5 +324,9 @@ export class TMDBService {
         map(() => this.genres!),
         shareReplay()
       );
+  }
+
+  private getDefaultParams() {
+    return new HttpParams().set('language', this.translate.getCurrentLang());
   }
 }

@@ -39,19 +39,7 @@ button.details-button {
     & form {
         width: 100%;
         max-width: 500px;
-
-        & mat-form-field {
-            width: 100%;
-        }
-
-        & .mdc-line-ripple {
-            display: none;
-        }
     }
-}
-
-::ng-deep .mat-mdc-text-field-wrapper .mdc-line-ripple {
-    display: none;
 }
 
 .home-container {

@@ -9,9 +9,6 @@
  * https://ionicframework.com/docs/layout/global-stylesheets
  */
 
-/* You can add global styles to this file, and also import other style files */
-@use "@angular/material" as mat;
-
 /* Core CSS required for Ionic components to work properly */
 @import "@ionic/angular/css/core.css";
 
@@ -37,21 +34,13 @@
 
 /* @import "@ionic/angular/css/palettes/dark.always.css"; */
 /* @import "@ionic/angular/css/palettes/dark.class.css"; */
-@import "@ionic/angular/css/palettes/dark.system.css";
+@import "@ionic/angular/css/palettes/dark.always.css";
 
 /* Importing Bootstrap SCSS file. */
 @import "bootstrap/scss/bootstrap";
 
 html {
   scroll-behavior: smooth;
-  color-scheme: light dark;
-  @include mat.theme(
-    (
-      color: mat.$red-palette,
-      typography: Roboto,
-      density: 0,
-    )
-  );
   scroll-padding-top: 60px;
 }
 
@@ -62,42 +51,11 @@ body {
   background: #0d0d0d;
 }
 
-:root {
-  @include mat.button-overrides(
-    (
-      filled-container-color: orange,
-      filled-label-text-color: red,
-    )
-  );
-}
-
 .card-background {
   background-color: var(--card-background-color);
   border-radius: 10px;
   margin-bottom: 1.2rem;
   margin-top: 1.2rem;
-}
-
-mat-tab-header.mat-mdc-tab-header {
-  background-color: var(--card-background-color) !important;
-}
-
-.mat-mdc-tab-group-dynamic-height .mat-mdc-tab-body-content {
-  overflow: auto !important;
-}
-
-mat-toolbar.glass-effect {
-  width: 100dvw !important;
-  position: fixed;
-  top: env(safe-area-inset-top);
-  height: 64px;
-  padding: 12px 0px;
-  /* From https://css.glass */
-  background: rgba(0, 0, 0, 0.2);
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-  backdrop-filter: blur(5.1px);
-  -webkit-backdrop-filter: blur(5.1px);
-  z-index: 1000;
 }
 
 .profile-picture {
@@ -109,7 +67,12 @@ mat-toolbar.glass-effect {
 }
 
 .app-logo {
-  max-width: 150px;
+  width: 100%;
+  text-align: center;
+
+  & img {
+    width: 150px;
+  }
 }
 
 button.action-button {
@@ -219,14 +182,14 @@ ion-header.glass-effect {
   /* From https://css.glass */
 
   & ion-toolbar {
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-    backdrop-filter: blur(5.1px);
-    -webkit-backdrop-filter: blur(5.1px);
+    box-shadow: 0 4px 30px rgb(0, 0, 0, 0.1);
+    bckdrop-filter: blur(5.1px);
+    -webkit-bckdrop-filter: blur(5.1px);
   }
 }
 
 .section-description {
-  color: gray;
+  color: gry;
   text-align: center;
   margin-top: 1rem;
 }
@@ -257,6 +220,7 @@ ion-title.with-icon {
     color: gray !important;
     font-size: 0.9rem;
   }
+
   text-align: center;
 }
 
@@ -266,4 +230,19 @@ ion-fab[slot="fixed"][vertical="top"] {
 
 .login-wrap {
   padding-top: calc(env(safe-area-inset-top) + 1.2rem) !important;
+}
+
+.login-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  flex-grow: 1;
+}
+
+.login-wrap {
+  min-height: 100dvh;
+  padding: 1.2rem;
+  display: flex;
+  flex-direction: column;
 }

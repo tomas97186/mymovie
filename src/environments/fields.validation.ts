@@ -11,4 +11,5 @@ export const fieldValidations = {
     minLength: 3,
     maxLength: 50
   },
+  maxListsPerUser: 3
 };

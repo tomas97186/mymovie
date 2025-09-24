@@ -84,11 +84,6 @@ export class AuthService {
   }
 
   loginWithGoogle() {
-    const handleSignIn = () => {
-      cfaSignIn('google.com').subscribe((user: User) =>
-        console.log(user.displayName)
-      );
-    };
     const auth = getAuth();
     signInWithPopup(auth, new GoogleAuthProvider())
       .then((result) => {

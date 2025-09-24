@@ -346,6 +346,7 @@
         "unisciti": {
           "successo": "Sei stato aggiunto alla lista.",
           "errore": {
+            "maxList": "Non puoi far parte di più di {{maxLists}} liste.",
             "generico": "La lista non esiste o non puoi unirti.",
             "obbligatorio": "Inserisci il codice della lista."
           }
@@ -353,6 +354,7 @@
         "crea": {
           "successo": "Lista creata con successo!",
           "errore": {
+            "maxList": "Non puoi far parte di più di {{maxLists}} liste.",
             "generico": "Si è verificato un errore durante la creazione della lista.",
             "minLength": "Il nome della lista deve essere di almeno {{minLength}} caratteri."
           }

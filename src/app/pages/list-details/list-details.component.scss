@@ -22,15 +22,6 @@
   color: #6c757d;
   text-align: center;
   padding: 2rem;
-
-  & mat-icon {
-    scale: 2;
-    margin-bottom: 2rem;
-  }
-}
-
-::ng-deep .mat-mdc-tab-body-content {
-  max-height: calc(100vh - 60px - 56px - 48px) !important;
 }
 
 .list-error {
@@ -43,13 +34,6 @@
   color: rgb(192, 192, 192);
   gap: 1rem;
 
-  & mat-icon {
-    scale: 2;
-  }
-}
-
-mat-toolbar {
-  background: var(--card-background-color) !important;
 }
 
 ion-segment-view {

@@ -16,6 +16,8 @@ img.movie-poster {
 }
 
 .movie-container {
+    position: sticky;
+    top: 0px;
     position: relative;
     width: 100%;
     overflow: hidden;
@@ -30,6 +32,8 @@ img.movie-poster {
 }
 
 .movie-title {
+    position: sticky;
+    top: calc(env(safe-area-inset-top) + 10px);
     max-width: 100%;
     white-space: pre-wrap;
     /* Webkit */

@@ -1,7 +1,9 @@
-import { CommonModule, Location } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { EdgeToEdge } from '@capawesome/capacitor-android-edge-to-edge-support';
+import { Platform } from '@ionic/angular';
 import {
+  AlertController,
   IonApp,
   IonIcon,
   IonLabel,
@@ -9,13 +11,16 @@ import {
   IonTabBar,
   IonTabButton,
   IonTabs,
+  ModalController,
   NavController
 } from '@ionic/angular/standalone';
+import { TranslateService } from '@ngx-translate/core';
 import { addIcons } from 'ionicons';
 import {
   add,
   addCircle,
   arrowUpOutline,
+  calendarOutline,
   checkmark,
   chevronBack,
   chevronForward,
@@ -37,18 +42,15 @@ import {
   personAddOutline,
   returnUpBackOutline,
   search,
-  settings,
   settingsOutline,
   shareSocialOutline,
+  sparklesOutline,
   star,
   starOutline,
-  trash,
+  trash
 } from 'ionicons/icons';
 import { AuthService } from './services/auth.service';
-import { TranslateService } from '@ngx-translate/core';
 import { SettingsService } from './services/settings.service';
-import { Preferences } from '@capacitor/preferences';
-import { Platform } from '@ionic/angular';
 
 @Component({
   selector: 'app-root',
@@ -70,6 +72,8 @@ export class AppComponent {
   private settings = inject(SettingsService);
   private platform = inject(Platform);
   private location = inject(NavController);
+  private dialog = inject(ModalController);
+  private alert = inject(AlertController);
   title = 'MoviesMates';
 
   ngOnInit() {
@@ -78,16 +82,23 @@ export class AppComponent {
   }
 
   constructor() {
-    this.platform.backButton.subscribeWithPriority(999, () => {
+    this.platform.backButton.subscribeWithPriority(999, async () => {
       // var currentUrl = window.location.href;
-      this.location.back();
+      const a = await this.alert.getTop();
+      if (a) {
+        a.dismiss();
+        return;
+      }
+
+      const d = await this.dialog.getTop();
+      d ? d.dismiss() : this.location.back();
       // var toLoginPages = ['reset-password/step-1', 'forgot-username'];
 
       // if (toLoginPages.some((x) => currentUrl.indexOf(x) > -1)) {
       //   this.nav.navigateRoot('/login');
       // }
     });
-    EdgeToEdge.disable();
+    EdgeToEdge.setBackgroundColor({ color: '#0d0d0d' });
     addIcons({
       add,
       settingsOutline,
@@ -118,6 +129,8 @@ export class AppComponent {
       pencil,
       logOut,
       ellipsisHorizontalOutline,
+      calendarOutline,
+      sparklesOutline
     });
   }
 }

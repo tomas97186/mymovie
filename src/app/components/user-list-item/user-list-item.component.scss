@@ -41,20 +41,6 @@
   color: gray;
 }
 
-button[mat-icon-button] {
-  color: #8d8d8d;
-  background: #141218;
-  text-align: center;
-
-  &.success {
-    color: #288b2c;
-  }
-
-  &.danger {
-    color: #8b2828;
-  }
-}
-
 .actions {
   ion-button {
     --padding-end: .5rem !important;

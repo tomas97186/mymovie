@@ -37,11 +37,11 @@
         <ion-icon name="add"></ion-icon>
       </ion-fab-button>
       <ion-fab-list side="top">
-        <ion-button (click)="openJoinDialog()">
+        <ion-button color="secondary" (click)="openJoinDialog(userLists.length)">
           <ion-icon name="people-outline" slot="start"></ion-icon>
           {{ "pages.userLists.buttons.joinLista" | translate }}
         </ion-button>
-        <ion-button (click)="openCreateDialog()">
+        <ion-button color="secondary" (click)="openCreateDialog(userLists.length)">
           <ion-icon name="add" slot="start"></ion-icon>
           {{ "pages.userLists.buttons.creaLista" | translate }}
         </ion-button>
@@ -49,8 +49,8 @@
     </ion-fab>
     }　@else {
     <app-no-list-page
-      (joinList)="openJoinDialog()"
-      (createList)="openCreateDialog()"
+      (joinList)="openJoinDialog(0)"
+      (createList)="openCreateDialog(0)"
     ></app-no-list-page>
     } }
   </div>

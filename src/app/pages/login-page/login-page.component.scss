@@ -2,29 +2,14 @@
   display: block;
 }
 
-.login-container {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  align-items: center;
-  flex-grow: 1;
-}
 
 .form {
   text-align: center;
 }
 
-.login-wrap {
-  min-height: 100dvh;
-  padding: 1.2rem;
-  display: flex;
-  flex-direction: column;
-}
-
 .brand {
   text-align: center;
   margin-bottom: 16px;
-  color: var(--mat-sys-on-surface, #1d1d1d);
 }
 
 .logo {

@@ -65,44 +65,14 @@ export class UserListsPageComponent {
       map((listId) => listId.map((id) => this.listService.getListInfo(id)))
     );
 
-  joinList(listId: string) {
-    if (listId) {
-      this.listService
-        .joinList(listId)
-        .then((res) => {
-          if (res) {
-            this.snackBar.open(
-              this.translate.instant(this.MESSAGE_LABELS + 'unisciti.successo'),
-              {
-                duration: 3000,
-              }
-            );
-          } else {
-            this.snackBar.open(
-              this.translate.instant(
-                this.MESSAGE_LABELS + 'unisciti.errore.generico'
-              ),
-              {
-                duration: 3000,
-              }
-            );
-          }
-        })
-        .catch((error) => {
-          this.snackBar.open(
-            this.translate.instant(
-              this.MESSAGE_LABELS + 'unisciti.errore.generico'
-            ),
-            {
-              duration: 3000,
-            }
-          );
-        });
-    } else {
-      console.warn('No list ID provided to join');
+  async openJoinDialog(currentListsCount: number) {
+    if (!this.__canAddList(currentListsCount)) {
+      this.snackBar.open(
+        this.translate.instant(this.MESSAGE_LABELS + 'unisciti.errore.maxList', {
+          maxLists: fieldValidations.maxListsPerUser,
+        }), { color: 'danger', duration: 3000 });
+      return;
     }
-  }
-  async openJoinDialog() {
     const alert = await this.alertController.create({
       header: this.translate.instant(this.DIALOG_LABELS + 'unisciti.header'),
       message: this.translate.instant(this.DIALOG_LABELS + 'unisciti.message'),
@@ -139,7 +109,7 @@ export class UserListsPageComponent {
               );
               return false;
             }
-            return this.joinList(data.code);
+            return this.__joinList(data.code);
           },
         },
       ],
@@ -148,7 +118,53 @@ export class UserListsPageComponent {
     await alert.present();
   }
 
-  async openCreateDialog() {
+
+  private __joinList(listId: string) {
+    if (listId) {
+      this.listService
+        .joinList(listId)
+        .then((res) => {
+          if (res) {
+            this.snackBar.open(
+              this.translate.instant(this.MESSAGE_LABELS + 'unisciti.successo'),
+              {
+                duration: 3000,
+              }
+            );
+          } else {
+            this.snackBar.open(
+              this.translate.instant(
+                this.MESSAGE_LABELS + 'unisciti.errore.generico'
+              ),
+              {
+                duration: 3000,
+              }
+            );
+          }
+        })
+        .catch((error) => {
+          this.snackBar.open(
+            this.translate.instant(
+              this.MESSAGE_LABELS + 'unisciti.errore.generico'
+            ),
+            {
+              duration: 3000,
+            }
+          );
+        });
+    } else {
+      console.warn('No list ID provided to join');
+    }
+  }
+
+  async openCreateDialog(currentListsCount: number) {
+    if (!this.__canAddList(currentListsCount)) {
+      this.snackBar.open(
+        this.translate.instant(this.MESSAGE_LABELS + 'crea.errore.maxList', {
+          maxLists: fieldValidations.maxListsPerUser,
+        }), { color: 'danger', duration: 3000 });
+      return;
+    }
     const alert = await this.alertController.create({
       header: this.translate.instant(this.DIALOG_LABELS + 'crea.header'),
       inputs: [
@@ -190,6 +206,10 @@ export class UserListsPageComponent {
     });
 
     await alert.present();
+  }
+
+  private __canAddList(currentListsCount: number) {
+    return currentListsCount < fieldValidations.maxListsPerUser;
   }
 
   async __createList(data: { name: string }) {
