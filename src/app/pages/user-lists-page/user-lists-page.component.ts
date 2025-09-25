@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, inject, ViewChild } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import {
   AlertController,
@@ -47,6 +47,8 @@ import { NoListPageComponent } from '../no-list-page/no-list-page.component';
   styleUrl: './user-lists-page.component.scss',
 })
 export class UserListsPageComponent {
+  @ViewChild(IonFab) fab!: IonFab;
+
   private readonly MESSAGE_LABELS = 'pages.userLists.messages.';
   private readonly DIALOG_LABELS = 'pages.userLists.dialogs.';
 
@@ -66,6 +68,7 @@ export class UserListsPageComponent {
     );
 
   async openJoinDialog(currentListsCount: number) {
+    this.fab.close();
     if (!this.__canAddList(currentListsCount)) {
       this.snackBar.open(
         this.translate.instant(this.MESSAGE_LABELS + 'unisciti.errore.maxList', {
@@ -158,6 +161,7 @@ export class UserListsPageComponent {
   }
 
   async openCreateDialog(currentListsCount: number) {
+    this.fab.close();
     if (!this.__canAddList(currentListsCount)) {
       this.snackBar.open(
         this.translate.instant(this.MESSAGE_LABELS + 'crea.errore.maxList', {

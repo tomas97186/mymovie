@@ -12,6 +12,7 @@ app-movie-card {
     align-items: center;
     // gap: 1rem;
     width: 100%;
+    gap: 1rem;
     height: min-content;
     -ms-overflow-style: none;
     overflow-x: hidden;
@@ -20,7 +21,6 @@ app-movie-card {
     /* Firefox, Safari 18.2+, Chromium 121+ */
     overflow-y: auto;
     height: min-content;
-    justify-content: space-around;
 
     /* Older Safari and Chromium */
     &.horizontal {

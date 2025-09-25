@@ -9,10 +9,8 @@ import {
 } from '@angular/core';
 import { rxResource, takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
-import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { ToastService } from 'src/app/services/toast.service';
 import { DomSanitizer } from '@angular/platform-browser';
 import {
   ActivatedRoute,
@@ -21,16 +19,19 @@ import {
   RouterModule,
 } from '@angular/router';
 import {
-  ModalController,
+  IonBackButton,
+  IonButton,
   IonContent,
   IonFab,
   IonFabButton,
   IonIcon,
-  IonBackButton,
-  IonButton,
   IonSpinner,
+  ModalController,
 } from '@ionic/angular/standalone';
-import { map, of, Subscription, tap } from 'rxjs';
+import { TranslateModule } from '@ngx-translate/core';
+import { of, Subscription, tap } from 'rxjs';
+import { ProviderModel } from 'src/app/models/provider.model';
+import { ToastService } from 'src/app/services/toast.service';
 import { environment } from '../../../environments/environment';
 import { MovieHeroComponent } from '../../components/movie-hero/movie-hero.component';
 import { MovieListComponent } from '../../components/movie-list/movie-list.component';
@@ -39,8 +40,6 @@ import { MovieModel } from '../../models/movie.model';
 import { TimePipe } from '../../pipes/time.pipe';
 import { MovieListService } from '../../services/movie-list.service';
 import { TMDBService } from '../../services/tmdb.service';
-import { ProviderModel } from 'src/app/models/provider.model';
-import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-movie-details',
@@ -71,9 +70,7 @@ export class MovieDetailsComponent {
   private router = inject(Router);
   private destroyRef = inject(DestroyRef);
   private _sanitizer = inject(DomSanitizer);
-  private _snackBar = inject(ToastService);
   public location = inject(Location);
-  private movieService = inject(MovieListService);
   private dialog = inject(ModalController);
   private eventSub?: Subscription;
   isImgLoaded = false;
@@ -84,11 +81,11 @@ export class MovieDetailsComponent {
 
   movieId = model<number | undefined>(undefined);
   isInModal = input<boolean>(false);
-  movie = rxResource<MovieModel, { id: number | undefined }>({
+  movie = rxResource<MovieModel | undefined, { id: number | undefined }>({
     request: () => ({ id: this.movieId() }),
     loader: ({ request: { id } }) => {
       if (!id) return of(undefined);
-      return this.tmdbService.getMovieDetails(id!, true).pipe(tap(console.log));
+      return this.tmdbService.getMovieDetails(id!, true);
     },
   });
   recommendations = computed(() => this.movie.value()?.recommendations);
@@ -100,8 +97,8 @@ export class MovieDetailsComponent {
       );
     return trailer
       ? this._sanitizer.bypassSecurityTrustResourceUrl(
-          `https://www.youtube.com/embed/${trailer.key}?rel=0&modestbranding=1&showinfo=0`
-        )
+        `https://www.youtube.com/embed/${trailer.key}?rel=0&modestbranding=1&showinfo=0`
+      )
       : undefined;
   });
   cast = computed(() => this.movie.value()?.credits?.cast);
@@ -172,6 +169,8 @@ export class MovieDetailsComponent {
       componentProps: { movie: this.movie.value() },
       initialBreakpoint: 0.5,
       breakpoints: [0, 0.25, 0.5],
+      expandToScroll: false,
+
     });
     dialogRef.present();
   }

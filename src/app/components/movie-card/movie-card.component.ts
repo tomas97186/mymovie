@@ -41,8 +41,11 @@ export class MovieCardComponent {
   movieListService = inject(MovieListService);
   imageUrl = environment.posterUrl;
 
-  async navigateToMovieDetails() {
-    this.dialog.dismiss();
+  async navigateToMovieDetails(event?: Event) {
+    if (await this.dialog.getTop()) {
+      this.dialog.dismiss();
+    }
+    (event?.target! as HTMLElement).blur();
     const dialogRef = await this.dialog.create({
       component: MovieDetailsComponent,
       componentProps: { movieId: this.movie()!.id, isInModal: true },
@@ -59,6 +62,7 @@ export class MovieCardComponent {
       componentProps: { movie: this.movie(), showName: true },
       initialBreakpoint: 0.5,
       breakpoints: [0, 0.25, 0.5],
+      expandToScroll: false
     });
     dialogRef.present();
   }

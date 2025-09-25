@@ -24,6 +24,8 @@
 .list-info {
   display: flex;
   flex-direction: column;
+  max-width: 70%;
+  text-overflow: ellipsis;
 }
 
 .list-meta-item {

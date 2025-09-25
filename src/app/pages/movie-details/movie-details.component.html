@@ -133,11 +133,11 @@ this.trailer();
       } @if(cast(); as cast) {
       <div class="cast-container mt-2 p-2">
         <h3>{{ "pages.movieDetails.labels.cast" | translate | titlecase }}</h3>
-        <div class="cast-list row mt-3">
+        <div class="cast-list mt-3">
           @for (p of cast; let i = $index; track p.id) { @if(i < 6 ||
           isCastExpanded) {
           <div
-            class="cast-item col-6 col-sm-4 col-md-3"
+            class="cast-item"
             routerLink="/discovery/movie"
             [queryParams]="{
               with_cast: p.id,

@@ -128,16 +128,15 @@ export class MovieListService {
       listId = '-' + listId;
     }
     const db = ref(database, `lists/${listId}/info`);
-    return from(get(db)).pipe(
+    return objectVal<InfoListModel>(db).pipe(
       tap((res) => {
-        if (!res.exists()) {
+        if (!res) {
           console.error('Gruppo non esistente, elimino dalla lista'),
             remove(
               ref(database, `users/${this.currentUser!.uid}/lists/${listId}`)
             );
         }
       }),
-      map((res) => res.val())
     );
   }
 

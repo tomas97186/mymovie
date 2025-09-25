@@ -21,7 +21,7 @@
       "password": "Password"
     },
     "placeholders": {
-        "password": "Minimo {{minLength}} caratteri."
+      "password": "Minimo {{minLength}} caratteri."
     }
   },
   "dialogs": {
@@ -31,14 +31,15 @@
         "inLista": "In Lista",
         "nonInLista": "Non In Lista",
         "visto": "Visto",
-        "daVedere": "Da Vedere",
+        "daVedemovire": "Da Vedere",
         "descrizione": "Aggiungi il film ad una lista oppure impostalo come visto."
       },
       "buttons": {
         "visto": "Segna come visto",
         "rimuovi": "Rimuovi dalla lista",
         "aggiungi": "Aggiungi ad una lista",
-        "dettagli": "Visualizza Dettagli"
+        "dettagli": "Visualizza Dettagli",
+        "setAsWatched": "visto"
       },
       "messages": {
         "aggiungi": {
@@ -355,14 +356,16 @@
           "successo": "Sei stato aggiunto alla lista.",
           "errore": {
             "generico": "La lista non esiste o non puoi unirti.",
-            "obbligatorio": "Inserisci il codice della lista."
+            "obbligatorio": "Inserisci il codice della lista.",
+            "maxList": "Non puoi unirti a più liste, elimina una lista esistente per poterti unire ad una nuova."
           }
         },
         "crea": {
           "successo": "Lista creata con successo!",
           "errore": {
             "generico": "Si è verificato un errore durante la creazione della lista.",
-            "minLength": "Il nome della lista deve essere di almeno {{minLength}} caratteri."
+            "minLength": "Il nome della lista deve essere di almeno {{minLength}} caratteri.",
+            "maxList": "Non puoi creare più liste, elimina una lista esistente per poterne creare una nuova."
           }
         },
         "invito": {

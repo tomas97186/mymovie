@@ -7,6 +7,27 @@ ion-list {
 
 ion-item {
   --border-radius: 10px;
+  --padding-top: .3rem;
+  --padding-bottom: .3rem;
+}
+
+ion-label {
+  max-width: 100%;
+
+  & h2 {
+    text-overflow: ellipsis;
+    word-wrap: break-word;
+    overflow: hidden;
+    line-height: 1.2rem;
+    max-height: 2.4rem;
+  }
+}
+
+.section-description {
+  margin: 1rem;
+  font-size: .9rem;
+  color: var(--ion-color-medium);
+  text-align: center;
 }
 
 .loading-placeholder {

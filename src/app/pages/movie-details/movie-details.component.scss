@@ -149,7 +149,10 @@ button.floating-button {
 }
 
 .cast-list {
-  row-gap: 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: .6rem;
+  justify-content: space-around;
 }
 
 .cast-item {
@@ -157,6 +160,7 @@ button.floating-button {
   flex-direction: column;
   align-items: center;
   text-align: center;
+  width: 150px;
 
   & .actor-name {
     margin-top: 0.8rem;
@@ -199,6 +203,7 @@ button.floating-button {
       color: gray;
       text-align: center;
     }
+
     & .provide-img {
       min-width: 60px;
       max-width: 60px;

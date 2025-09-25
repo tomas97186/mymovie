@@ -68,13 +68,11 @@ export class ListDetailsComponent {
   private translate = inject(TranslateService);
   private destroyRef = inject(DestroyRef);
   private route = inject(ActivatedRoute);
-  private router = inject(Router);
   private listService = inject(MovieListService);
   public authService = inject(AuthService);
   private snackBar = inject(ToastService);
   private listId = signal<string | undefined>(undefined);
   private userListsSub!: Subscription;
-  private dialog = inject(ModalController);
   private alertController = inject(AlertController);
   location = inject(Location);
   listDetails = rxResource({

@@ -1,33 +1,23 @@
 @let movie = this.movie()!;
 <!-- @let genres = this.tmdbService.getGenres() | async; -->
-<div
-  class="movie-container"
-  [id]="'open-action-sheet'"
-  longPress
-  (click)="
+<div class="movie-container" [id]="'open-action-sheet'" (click)="
     settings.openFilmOnClick.value
-      ? navigateToMovieDetails()
+      ? navigateToMovieDetails($event)
       : presentActionSheet()
-  "
->
+  ">
   @if(!isImgLoaded) {
   <div class="image-placeholder">
     {{ movie.title }}
     <ion-icon name="image"></ion-icon>
   </div>
   }
-  <img
-    [src]="imageUrl + movie.poster_path"
-    [alt]="movie.title"
-    class="movie-poster"
-    (load)="isImgLoaded = true"
-    [hidden]="!isImgLoaded"
-  />
+  <img [src]="imageUrl + movie.poster_path" [alt]="movie.title" class="movie-poster" (load)="isImgLoaded = true"
+    [hidden]="!isImgLoaded" />
 
   @if(movie.vote_average) {
   <div class="movie-ranking">
-    <ion-icon matListItemIcon class="me-2" name="star"></ion-icon
-    ><span>{{ movie.vote_average | number : "1.0-1" : "en" }}</span>
+    <ion-icon matListItemIcon class="me-2" name="star"></ion-icon><span>{{ movie.vote_average | number : "1.0-1" : "en"
+      }}</span>
   </div>
   }
   <div class="movie-footer"></div>
