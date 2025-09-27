@@ -3,6 +3,7 @@ import { Component, inject, model } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
   ActionSheetController,
+  ActionSheetButton,
   IonIcon,
   ModalController,
 } from '@ionic/angular/standalone';
@@ -45,7 +46,9 @@ export class MovieCardComponent {
     if (await this.dialog.getTop()) {
       this.dialog.dismiss();
     }
-    (event?.target! as HTMLElement).blur();
+    if (event) {
+      (event!.target! as HTMLElement).blur();
+    }
     const dialogRef = await this.dialog.create({
       component: MovieDetailsComponent,
       componentProps: { movieId: this.movie()!.id, isInModal: true },
@@ -110,10 +113,31 @@ export class MovieCardComponent {
         console.error('Errore nel segnare il film come visto', error);
       });
   }
+
+  onClick($event: Event) {
+    console.log(typeof this.settings.openFilmOnClick.value);
+    if (this.settings.openFilmOnClick.value) {
+      console.log('Opening details: ', this.settings.openFilmOnClick.value);
+      this.navigateToMovieDetails($event);
+    } else {
+      this.presentActionSheet();
+    }
+
+  }
+
   async presentActionSheet() {
     const movie = this.movie()!;
     const listId = this.route.snapshot.params['listId'];
-    const buttons = [];
+    const buttons: ActionSheetButton[] = [];
+    buttons.push(
+      ...[
+        {
+          text: this.translate.instant(this.BUTTON_LABELS + 'dettagli'),
+          icon: 'search',
+          handler: () => this.navigateToMovieDetails(),
+        },
+      ]
+    );
     if (listId) {
       if (!movie.watched) {
         buttons.push({
@@ -125,6 +149,7 @@ export class MovieCardComponent {
       buttons.push({
         text: this.translate.instant(this.BUTTON_LABELS + 'rimuovi'),
         icon: 'trash',
+        cssClass: 'danger',
         handler: () => this.removeMovieFromList(listId),
       });
     } else {
@@ -135,15 +160,6 @@ export class MovieCardComponent {
       });
     }
 
-    buttons.push(
-      ...[
-        {
-          text: this.translate.instant(this.BUTTON_LABELS + 'dettagli'),
-          icon: 'search',
-          handler: this.navigateToMovieDetails.bind(this),
-        },
-      ]
-    );
     const actionSheet = await this.actionSheetCtrl.create({
       header: movie.title,
       buttons: buttons,

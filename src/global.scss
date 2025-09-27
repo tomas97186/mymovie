@@ -195,6 +195,26 @@ ion-header.glass-effect {
   }
 }
 
+ion-header.transparent {
+  box-shadow: none !important;
+  --padding-top: 1.4rem !important;
+
+  & ion-toolbar {
+    box-shadow: none !important;
+    --background: transparent !important;
+    background: transparent !important;
+
+    &.large {
+      --min-height: 65px !important;
+
+      & ion-title {
+        font-size: 1.6rem !important;
+      }
+    }
+  }
+
+}
+
 .section-description {
   color: gry;
   text-align: center;
@@ -273,3 +293,8 @@ ion-toolbar {
 //   height: var(--varPer);
 //   top: calc(var(--varPer) / 2);
 // }
+
+button.action-sheet-button.danger {
+  --color: var(--ion-color-danger) !important;
+  color: var(--ion-color-danger) !important;
+}

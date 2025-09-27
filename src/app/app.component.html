@@ -1,4 +1,9 @@
 <ion-app>
+  @if(isDev) {
+  <div class="dev-banner">
+    <span>DEV</span>
+  </div>
+  }
   @let user = currentUser$ | async; @if(user && user.emailVerified) {
   <ion-tabs>
     <ion-tab-bar slot="bottom">

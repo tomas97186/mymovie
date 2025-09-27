@@ -2,8 +2,10 @@
 // http://ionicframework.com/docs/theming/
 
 :root {
-  --ion-color-primary: #FB8500 !important;
+  --ion-color-primary: #fb8500 !important;
+  --ionc-color-primary-rgb: 251, 133, 0 !important;
   --ion-color-secondary: #023047 !important;
+  --ion-color-primary-shade: #ffe3c2 !important;
   --ion-color-secondary-contrast: whitesmoke !important;
   --ion-toolbar-background: rgb(0, 0, 0, 0.4) !important;
   --ion-background-color: #0d0d0d !important;
@@ -16,6 +18,10 @@
   --ion-tab-bar-border-color: none !important;
   --highlight-color-invalid: darkred !important;
   --bs-heading-color: whitesmoke !important;
+}
+
+.ion-color-primary {
+    --ion-color-base-rgb: var(--ionc-color-primary-rgb) !important;
 }
 
 ion-input.search-field {
@@ -47,7 +53,6 @@ ion-input {
   margin-bottom: 1rem;
 
 }
-
 
 .transparent {
   --background: transparent !important;

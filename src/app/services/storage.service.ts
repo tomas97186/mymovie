@@ -9,7 +9,8 @@ export class StorageService {
   }
 
   async getSetting(key: string) {
-    console.log(`Getting ${key}`);
-    return (await Preferences.get({ key })).value;
+    const v = (await Preferences.get({ key })).value;
+    console.log(`Getting ${key}, value is ${v}`);
+    return v;
   }
 }

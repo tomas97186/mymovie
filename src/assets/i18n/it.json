@@ -35,7 +35,7 @@
         "descrizione": "Aggiungi il film ad una lista oppure impostalo come visto."
       },
       "buttons": {
-        "visto": "Segna come visto",
+        "visto": "Imposta come visto",
         "rimuovi": "Rimuovi dalla lista",
         "aggiungi": "Aggiungi ad una lista",
         "dettagli": "Visualizza Dettagli",
@@ -149,6 +149,7 @@
           }
         },
         "labels": {
+          "impostazioni": "Impostazioni Lista",
           "codice": "Codice Lista",
           "descrizioneCodice": "Condividi questo codice con i tuoi amici per unirsi alla lista.",
           "film": "Film in lista",
@@ -189,6 +190,7 @@
         }
       },
       "labels": {
+        "condivisaCon": "Condivisa con {{membersCount}} membri",
         "daVedere": "da vedere",
         "visti": "visti",
         "impostazioni": "impostazioni",

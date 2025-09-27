@@ -1,8 +1,10 @@
 @let userInfo = this.userInfo$ | async;
 
-<ion-header>
-  <ion-toolbar class="transparent">
-    <ion-title>{{ "pages.profile.labels.profilo" | translate }}</ion-title>
+<ion-header class="transparent">
+  <ion-toolbar class="large">
+    <ion-title>
+      {{ "pages.profile.labels.profilo" | translate }}
+    </ion-title>
     <ion-buttons slot="end">
       <ion-button routerLink="/settings">
         <ion-icon slot="icon-only" name="settings-outline"></ion-icon>
@@ -27,25 +29,15 @@
       </ion-item>
     </ion-list>
     <div class="actions text-center">
-      <ion-button
-        class="w-100"
-        (click)="changeName(userInfo!.username)"
-        color="light"
-      >
-        <ion-icon name="pencil" slot="start" class="me-2"></ion-icon
-        >{{ "pages.profile.buttons.username" | translate }}
+      <ion-button class="w-100" (click)="changeName(userInfo!.username)" color="light">
+        <ion-icon name="pencil" slot="start" class="me-2"></ion-icon>{{ "pages.profile.buttons.username" | translate }}
       </ion-button>
       <ion-button class="w-100" (click)="changePassword()" color="light">
-        <ion-icon
-          name="ellipsis-horizontal-outline"
-          slot="start"
-          class="me-2"
-        ></ion-icon
-        >{{ "pages.profile.buttons.password" | translate }}
+        <ion-icon name="ellipsis-horizontal-outline" slot="start" class="me-2"></ion-icon>{{
+        "pages.profile.buttons.password" | translate }}
       </ion-button>
       <ion-button class="w-100" (click)="signout()" color="danger">
-        <ion-icon name="log-out" slot="start" class="me-2"></ion-icon
-        >{{ "pages.profile.buttons.logout" | translate }}
+        <ion-icon name="log-out" slot="start" class="me-2"></ion-icon>{{ "pages.profile.buttons.logout" | translate }}
       </ion-button>
     </div>
   </div>

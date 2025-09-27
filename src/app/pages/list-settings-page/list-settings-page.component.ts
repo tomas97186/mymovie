@@ -5,27 +5,24 @@ import { Router } from '@angular/router';
 import { Share } from '@capacitor/share';
 import {
   AlertController,
-  IonAlert,
-  IonAvatar,
   IonButton,
   IonIcon,
   IonItem,
   IonLabel,
   IonList,
-  IonNote,
-  ModalController,
+  ModalController, IonHeader, IonContent, IonToolbar, IonButtons, IonBackButton, IonTitle
 } from '@ionic/angular/standalone';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { map } from 'rxjs';
 import { ToastService } from 'src/app/services/toast.service';
-import { InfoListModel } from '../../../models/movie-list.model';
-import { AuthService } from '../../../services/auth.service';
-import { MovieListService } from '../../../services/movie-list.service';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { BUTTONS } from 'src/app/variables';
+import { InfoListModel } from '../../models/movie-list.model';
+import { AuthService } from '../../services/auth.service';
+import { MovieListService } from '../../services/movie-list.service';
 
 @Component({
   selector: 'app-list-page-settings',
-  imports: [
+  imports: [IonTitle, IonBackButton, IonButtons, IonToolbar, IonContent, IonHeader,
     TranslateModule,
     IonLabel,
     IonItem,
@@ -33,12 +30,11 @@ import { BUTTONS } from 'src/app/variables';
     IonIcon,
     IonButton,
     CommonModule,
-    ClipboardModule,
-  ],
-  templateUrl: './settings.component.html',
-  styleUrl: './settings.component.scss',
+    ClipboardModule],
+  templateUrl: './list-settings-page.component.html',
+  styleUrl: './list-settings-page.component.scss',
 })
-export class SettingsComponent {
+export class ListSettingsPageComponent {
   authService = inject(AuthService);
   snackBar = inject(ToastService);
   private translate = inject(TranslateService);
@@ -55,13 +51,17 @@ export class SettingsComponent {
     return !membersMap
       ? undefined
       : Object.keys(membersMap).map((key) =>
-          this.listService
-            .getUserInfo(key)
-            .pipe(map((res) => ({ ...res, invited: !membersMap[key] })))
-        );
+        this.listService
+          .getUserInfo(key)
+          .pipe(map((res) => ({ ...res, invited: !membersMap[key] })))
+      );
   });
 
   updateListNameFn = output<void>();
+
+  closeSettings() {
+    this.dialog.dismiss();
+  }
 
   copyToClipboardNotification() {
     this.snackBar.open(

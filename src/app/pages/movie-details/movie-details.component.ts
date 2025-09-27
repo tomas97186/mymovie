@@ -29,16 +29,14 @@ import {
   ModalController,
 } from '@ionic/angular/standalone';
 import { TranslateModule } from '@ngx-translate/core';
-import { of, Subscription, tap } from 'rxjs';
+import { of, Subscription } from 'rxjs';
 import { ProviderModel } from 'src/app/models/provider.model';
-import { ToastService } from 'src/app/services/toast.service';
 import { environment } from '../../../environments/environment';
 import { MovieHeroComponent } from '../../components/movie-hero/movie-hero.component';
 import { MovieListComponent } from '../../components/movie-list/movie-list.component';
 import { MovieListsDialogComponent } from '../../components/movie-lists-dialog/movie-lists-dialog.component';
 import { MovieModel } from '../../models/movie.model';
 import { TimePipe } from '../../pipes/time.pipe';
-import { MovieListService } from '../../services/movie-list.service';
 import { TMDBService } from '../../services/tmdb.service';
 
 @Component({

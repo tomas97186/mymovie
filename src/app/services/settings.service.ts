@@ -7,10 +7,10 @@ import { StorageService } from './storage.service';
 export class SettingsService {
   private storage = inject(StorageService);
 
-  public openFilmOnClick = new Setting('openFilmOnClick', false, this.storage);
+  public openFilmOnClick = new Setting<boolean>('openFilmOnClick', false, this.storage, (v) => v === 'true');
   public language = new Setting('language', 'it', this.storage);
 
-  constructor() {}
+  constructor() { }
 
   async init() {
     await this.language.init();
@@ -18,22 +18,23 @@ export class SettingsService {
   }
 }
 
-class Setting {
-  private __value!: any;
+class Setting<T> {
+  private __value!: T;
 
   constructor(
     private key: string,
-    private defaultValue: any,
-    private storage: StorageService
-  ) {}
+    private defaultValue: T,
+    private storage: StorageService,
+    private transform?: (value: string) => T,
+  ) { }
 
   async init() {
-    const value = await this.storage.getSetting(this.key);
+    const value = await this.storage.getSetting(this.key) as T;
     this.__value = value ?? this.defaultValue;
   }
 
-  get value() {
-    return this.__value;
+  get value(): T {
+    return this.transform? this.transform(this.__value as string) : this.__value;
   }
 
   set value(newValue: any) {

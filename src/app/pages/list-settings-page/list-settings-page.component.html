@@ -1,0 +1,108 @@
+@let currentUser = this.authService.currentUser$ | async; @let details =
+this.details()!; @let members = this.members();
+
+<ion-header class="transparent">
+  <ion-toolbar class="large">
+    <ion-buttons slot="start">
+      <ion-button fill="clear" (click)="this.closeSettings()">
+        <ion-icon name="chevron-back" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>{{ 'pages.listDetails.settings.labels.impostazioni' | translate }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <div class="container pb-4">
+    <div class="text-description">
+      {{ "pages.listDetails.settings.labels.codice" | translate }}
+    </div>
+    <div class="code-list-container">
+      {{ details.id }}
+      <div class="code-actions">
+        <ion-button fill="clear" (click)="shareListCode(details.id)">
+          <ion-icon slot="icon-only" name="share-social-outline" size="medium"></ion-icon>
+        </ion-button>
+      </div>
+    </div>
+    <div class="code-description">
+      {{ "pages.listDetails.settings.labels.descrizioneCodice" | translate }}
+    </div>
+    <div class="text-description">
+      {{ "pages.listDetails.settings.labels.film" | translate }}
+    </div>
+    <div class="statistics card-background">
+      <div class="statistic-item">
+        <span class="statistic-label">{{
+          "pages.listDetails.settings.labels.totale" | translate
+          }}</span>
+        <span class="statistic-value">{{ details.moviesCount }}</span>
+      </div>
+      <div class="statistic-item">
+        <span class="statistic-label">{{
+          "pages.listDetails.settings.labels.daVedere" | translate
+          }}</span>
+        <span class="statistic-value" style="color: var(--ion-color-danger)">{{
+          details.moviesCount - details.watchedMovies
+          }}</span>
+      </div>
+      <div class="statistic-item">
+        <span class="statistic-label">{{
+          "pages.listDetails.settings.labels.visti" | translate
+          }}</span>
+        <span class="statistic-value" style="color: var(--ion-color-success)">{{
+          details.watchedMovies
+          }}</span>
+      </div>
+    </div>
+    <div class="text-description">
+      {{ "pages.listDetails.settings.labels.membri" | translate }}
+    </div>
+    <ion-list lines="none">
+      @for(member$ of members; let i = $index; track $index) { @if(member$ |
+      async; as member ){
+      <ion-item>
+        <div class="avatar" [ngClass]="`avatar-${i+1}`">
+          {{ member.username | slice : 0 : 1 | uppercase }}
+        </div>
+        <ion-label>{{
+          member.username ||
+          ("pages.listDetails.settings.labels.sconosciuto" | translate)
+          }}
+          @if(member.uid === currentUser?.uid) { ({{
+          "pages.listDetails.settings.labels.tu" | translate
+          }}) } @if(member.uid === details.createdBy) {
+          <p>
+            {{ "pages.listDetails.settings.labels.proprietario" | translate }}
+          </p>
+          }@else if(member.invited) {
+          <p>{{ "pages.listDetails.settings.labels.invitato" | translate }}</p>
+          }
+        </ion-label>
+        @if(currentUser?.uid === details.createdBy && member.uid !=
+        currentUser?.uid) {
+        <ion-button slot="end" fill="clear" color="trash" size="medium" color="danger"
+          (click)="removeUser(member.uid!, member.username ?? 'Sconosciuto')">
+          <ion-icon slot="icon-only" name="trash"></ion-icon>
+        </ion-button>
+        }
+      </ion-item>
+      }}
+    </ion-list>
+    <div class="actions">
+      <ion-button class="w-100" (click)="this.openInviteUserDialog()" color="light">
+        <ion-icon name="person-add-outline" slot="start"></ion-icon>
+        {{ "pages.listDetails.settings.buttons.invita" | translate }}
+      </ion-button>
+      @if(currentUser?.uid === details.createdBy) {
+      <ion-button class="w-100" (click)="deleteList()" color="danger">
+        <ion-icon name="trash" slot="start"></ion-icon>{{ "pages.listDetails.settings.buttons.elimina" | translate }}
+      </ion-button>
+      } @else {
+      <ion-button class="w-100" (click)="exitList()" color="danger">
+        <ion-icon name="log-out" slot="start"></ion-icon>{{ "pages.listDetails.settings.buttons.abbandona" | translate
+        }}
+      </ion-button>
+      }
+    </div>
+  </div>
+</ion-content>

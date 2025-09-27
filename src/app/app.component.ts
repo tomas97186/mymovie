@@ -51,10 +51,12 @@ import {
 } from 'ionicons/icons';
 import { AuthService } from './services/auth.service';
 import { SettingsService } from './services/settings.service';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html',
+  styleUrl: 'app.component.scss',
   imports: [
     CommonModule,
     IonApp,
@@ -75,6 +77,7 @@ export class AppComponent {
   private dialog = inject(ModalController);
   private alert = inject(AlertController);
   title = 'MoviesMates';
+  isDev = !environment.production;
 
   ngOnInit() {
     console.log('Using language: ', this.settings.language.value);

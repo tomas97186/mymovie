@@ -1,5 +1,5 @@
 const protocol: 'http' | 'https' = 'https'
-const host = 'tmdb.up.railway.app';
+const host = 'tmdb-dev.up.railway.app';
 const port = 8080
 
 export const environment = {
@@ -8,13 +8,12 @@ export const environment = {
   apiUrl: `${protocol}://${host}${port != 8080? (':'+ port) : ''}`,
   // Your web app's Firebase configuration
   firebaseConfig: {
-    apiKey: 'AIzaSyDuKbBngtqj9egJ8S-bvyac2t5ZfTWimVc',
-    authDomain: 'mymovie-dc845.firebaseapp.com',
-    databaseURL:
-      'https://mymovie-dc845-default-rtdb.europe-west1.firebasedatabase.app',
-    projectId: 'mymovie-dc845',
-    storageBucket: 'mymovie-dc845.firebasestorage.app',
-    messagingSenderId: '998649665443',
-    appId: '1:998649665443:web:59746c7dc26e1d046aac16',
+  apiKey: "AIzaSyBtYDImwWDYGOdpt0B_94MFHl7UermtLHk",
+  authDomain: "moviemates-dev.firebaseapp.com",
+  databaseURL: "https://moviemates-dev-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "moviemates-dev",
+  storageBucket: "moviemates-dev.firebasestorage.app",
+  messagingSenderId: "219921804483",
+  appId: "1:219921804483:web:5831a105a94f229e6a0676"
   },
 };

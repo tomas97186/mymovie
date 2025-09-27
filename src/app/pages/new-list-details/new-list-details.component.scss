@@ -1,0 +1,55 @@
+.list-title {
+  font-size: 2rem;
+  font-weight: 500;
+  padding-top: 24px;
+  padding-bottom: 12px;
+  text-align: center;
+  background-color: var(--card-background-color) !important;
+}
+
+.app-name {
+  font-size: 2.5rem;
+  font-weight: 500;
+}
+
+.no-movies-banner {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  font-size: 1.5rem;
+  color: #6c757d;
+  text-align: center;
+  padding: 1.2rem;
+}
+
+.list-error {
+  width: 100%;
+  height: 500px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: rgb(192, 192, 192);
+  gap: 1rem;
+}
+
+.shared-section {
+  font-size: .9rem;
+  color: gray;
+  font-weight: 500;
+  margin-left: 1rem;
+}
+
+.filters-section {
+  display: flex;
+  gap: 0.5rem;
+  padding-bottom: .8rem;
+  justify-content: start;
+  flex-wrap: wrap;
+  position: sticky;
+  top: 0px;
+  background-color: var(--ion-background-color);
+  z-index: 1000;
+}

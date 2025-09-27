@@ -61,8 +61,8 @@ export const routes: Routes = [
   {
     path: 'lists/:listId',
     loadComponent: () =>
-      import('./pages/list-details/list-details.component').then(
-        (m) => m.ListDetailsComponent
+      import('./pages/new-list-details/new-list-details.component').then(
+        (m) => m.NewListDetailsComponent
       ),
     canMatch: [authenticationGuard()],
   },

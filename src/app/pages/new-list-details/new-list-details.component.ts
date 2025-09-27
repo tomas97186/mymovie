@@ -1,45 +1,42 @@
 import { ClipboardModule } from '@angular/cdk/clipboard';
 import { CommonModule, Location } from '@angular/common';
-import { Component, DestroyRef, inject, signal } from '@angular/core';
+import { Component, computed, DestroyRef, inject, signal } from '@angular/core';
 import { rxResource, takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, RouterModule } from '@angular/router';
+import { Share } from '@capacitor/share';
 import {
   AlertController,
   IonBackButton,
   IonButton,
   IonButtons,
+  IonChip,
   IonContent,
   IonHeader,
   IonIcon,
   IonLabel,
   IonProgressBar,
-  IonSegment,
-  IonSegmentButton,
-  IonSegmentContent,
-  IonSegmentView,
   IonTitle,
   IonToolbar,
-  ModalController,
+  ModalController
 } from '@ionic/angular/standalone';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { of, Subscription, tap } from 'rxjs';
 import { ToastService } from 'src/app/services/toast.service';
-// import { SettingsComponent } from '../list-settings-page/list-settings-page.component';
+import { BUTTONS, INPUTS } from 'src/app/variables';
 import { MovieListComponent } from '../../components/movie-list/movie-list.component';
 import { SearchItemModel } from '../../models/search-item.model';
 import { AuthService } from '../../services/auth.service';
 import { MovieListService } from '../../services/movie-list.service';
-import { BUTTONS, INPUTS } from 'src/app/variables';
+import { ListSettingsPageComponent } from '../list-settings-page/list-settings-page.component';
 
 @Component({
   selector: 'app-list-details',
-  imports: [
+  imports: [IonChip,
     TranslateModule,
     IonContent,
     IonLabel,
-    IonSegmentButton,
-    IonSegment,
+    RouterModule,
     IonProgressBar,
     IonButtons,
     IonHeader,
@@ -52,16 +49,13 @@ import { BUTTONS, INPUTS } from 'src/app/variables';
     ReactiveFormsModule,
     MovieListComponent,
     FormsModule,
-    // SettingsComponent,
     IonToolbar,
     IonTitle,
-    IonSegmentView,
-    IonSegmentContent,
   ],
-  templateUrl: './list-details.component.html',
-  styleUrl: './list-details.component.scss',
+  templateUrl: './new-list-details.component.html',
+  styleUrl: './new-list-details.component.scss',
 })
-export class ListDetailsComponent {
+export class NewListDetailsComponent {
   private readonly MESSAGE_LABELS = 'pages.listDetails.messages.';
   private readonly DIALOG_LABELS = 'pages.listDetails.dialogs.';
 
@@ -74,6 +68,8 @@ export class ListDetailsComponent {
   private listId = signal<string | undefined>(undefined);
   private userListsSub!: Subscription;
   private alertController = inject(AlertController);
+  private dialog = inject(ModalController);
+  selectedFilter = signal<'toWatch' | 'watched'>('toWatch');
   location = inject(Location);
   listDetails = rxResource({
     request: this.listId,
@@ -97,6 +93,7 @@ export class ListDetailsComponent {
       return this.listService.getListMovies(request, false);
     },
   });
+  movies = computed(() => this.selectedFilter() === 'toWatch' ? this.moviesToWatch.value() : this.watchedMovies.value());
   members = rxResource({
     request: this.listId,
     loader: ({ request }) => {
@@ -104,6 +101,18 @@ export class ListDetailsComponent {
       return this.listService.getListMembers(request);
     },
   });
+
+  async openSettings() {
+    const alert = await this.dialog.create({
+      component: ListSettingsPageComponent,
+      initialBreakpoint: 1,
+      componentProps: {
+        details: this.listDetails.value()!,
+        members: this.members.value()!,
+      }
+    });
+    await alert.present();
+  }
 
   async openUpdateDialog() {
     const alert = await this.alertController.create({
@@ -148,6 +157,24 @@ export class ListDetailsComponent {
     });
 
     await alert.present();
+  }
+
+  async shareListCode() {
+    if ((await Share.canShare()).value) {
+      // Share text only
+      await Share.share({
+        text: this.translate.instant(
+          this.MESSAGE_LABELS + 'condividi.messaggio',
+          {
+            listId: this.listDetails.value()?.id,
+          }
+        ),
+      });
+    } else {
+      this.snackBar.open(
+        this.translate.instant(this.MESSAGE_LABELS + 'condivi.errore')
+      );
+    }
   }
 
   private __updateName(data: { name: string }) {

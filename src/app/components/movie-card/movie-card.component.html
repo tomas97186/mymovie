@@ -1,9 +1,6 @@
 @let movie = this.movie()!;
 <!-- @let genres = this.tmdbService.getGenres() | async; -->
-<div class="movie-container" [id]="'open-action-sheet'" (click)="
-    settings.openFilmOnClick.value
-      ? navigateToMovieDetails($event)
-      : presentActionSheet()
+<div class="movie-container" [id]="'open-action-sheet'" (click)="onClick($event)
   ">
   @if(!isImgLoaded) {
   <div class="image-placeholder">
