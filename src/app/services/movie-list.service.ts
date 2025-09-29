@@ -136,7 +136,7 @@ export class MovieListService {
               ref(database, `users/${this.currentUser!.uid}/lists/${listId}`)
             );
         }
-      }),
+      })
     );
   }
 
@@ -246,9 +246,7 @@ export class MovieListService {
       return false; // La lista non esiste.
     }
     const uid = res.val();
-    const isInList = await get(
-      ref(database, `lists/${listId}/members/${uid}`)
-    );
+    const isInList = await get(ref(database, `lists/${listId}/members/${uid}`));
     if (isInList.exists()) {
       return false; // L'utente è già in lista.
     }
@@ -390,6 +388,15 @@ export class MovieListService {
     updates[`lists/${listId ?? this.currentListId}/info/watchedMovies`] =
       increment(1);
     updates[`movies/${id}/${listId ?? this.currentListId}`] = true;
+
+    return update(ref(database), updates);
+  }
+
+  reviewMovie(movieId: string, review: -1 | 1) {
+    const updates: { [key: string]: unknown } = {};
+
+    updates[`reviews/${movieId}/${this.currentUser!.uid}`] = review;
+    updates[`users/${this.currentUser!.uid}/reviews/${movieId}`] = review;
 
     return update(ref(database), updates);
   }

@@ -4,14 +4,14 @@ app-movie-card {
 
 .movie-list-container {
     display: flex;
-    padding: 1rem;
+    padding: .6rem;
     flex-wrap: wrap;
     scroll-snap-type: x mandatory;
     -webkit-overflow-scrolling: touch;
     justify-content: space-around;
     // gap: 1rem;
     width: 100%;
-    gap: 1rem;
+    gap: .6rem;
     height: min-content;
     -ms-overflow-style: none;
     overflow-x: hidden;

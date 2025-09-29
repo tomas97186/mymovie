@@ -1,0 +1,22 @@
+.vote-container {
+  text-align: center;
+  ion-button {
+    font-size: 2rem;
+  }
+}
+
+.title {
+    padding-left: 1.2rem;
+    padding-right: 1.2rem;
+    text-align: center;
+
+    & h3 {
+        padding-top: 1.2rem;
+    }
+    
+    & p {
+        font-size: .9rem;
+        color: gray;
+    }    
+    
+}

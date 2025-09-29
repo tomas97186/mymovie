@@ -16,6 +16,7 @@ import { MovieListService } from '../../services/movie-list.service';
 import { TMDBService } from '../../services/tmdb.service';
 import { MovieListsDialogComponent } from '../movie-lists-dialog/movie-lists-dialog.component';
 import { TranslateService } from '@ngx-translate/core';
+import { MovieReviewDialogComponent } from '../movie-review-dialog/movie-review-dialog.component';
 
 @Component({
   selector: 'app-movie-card',
@@ -65,7 +66,7 @@ export class MovieCardComponent {
       componentProps: { movie: this.movie(), showName: true },
       initialBreakpoint: 0.5,
       breakpoints: [0, 0.25, 0.5],
-      expandToScroll: false
+      expandToScroll: false,
     });
     dialogRef.present();
   }
@@ -92,7 +93,28 @@ export class MovieCardComponent {
       });
   }
 
-  setAsWatched(listId: string): void {
+  async openReviewModal() {
+    this.actionSheetCtrl.dismiss();
+    const ref = await this.dialog.create({
+      component: MovieReviewDialogComponent,
+      componentProps: {
+        movieId: this.movie()?.id,
+      },
+      cssClass: 'central-modal',
+    });
+    ref.present();
+    const { role } = await ref.onWillDismiss();
+    return role;
+  }
+
+  async setAsWatched(listId: string) {
+    const role = await this.openReviewModal();
+    if (role === 'confirm') {
+      this.OLD_setAsWatched(listId);
+    }
+  }
+
+  OLD_setAsWatched(listId: string): void {
     this.movieService
       .setMovieAsWatched(this.movie()!.id, listId)
       .then(() => {
@@ -122,7 +144,6 @@ export class MovieCardComponent {
     } else {
       this.presentActionSheet();
     }
-
   }
 
   async presentActionSheet() {

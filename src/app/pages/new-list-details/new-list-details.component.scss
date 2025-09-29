@@ -36,20 +36,21 @@
 }
 
 .shared-section {
-  font-size: .9rem;
+  font-size: 0.9rem;
   color: gray;
   font-weight: 500;
   margin-left: 1rem;
 }
 
-.filters-section {
-  display: flex;
-  gap: 0.5rem;
-  padding-bottom: .8rem;
-  justify-content: start;
-  flex-wrap: wrap;
+ion-segment {
   position: sticky;
   top: 0px;
   background-color: var(--ion-background-color);
   z-index: 1000;
 }
+
+ion-segment-content {
+  height: 100% !important;
+}
+
+

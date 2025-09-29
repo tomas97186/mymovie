@@ -18,8 +18,9 @@ import {
   IonProgressBar,
   IonTitle,
   IonToolbar,
-  ModalController
-} from '@ionic/angular/standalone';
+  IonSegmentContent,
+  IonSegmentView,
+  ModalController, IonNote, IonSegment, IonSegmentButton } from '@ionic/angular/standalone';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { of, Subscription, tap } from 'rxjs';
 import { ToastService } from 'src/app/services/toast.service';
@@ -32,7 +33,7 @@ import { ListSettingsPageComponent } from '../list-settings-page/list-settings-p
 
 @Component({
   selector: 'app-list-details',
-  imports: [IonChip,
+  imports: [IonSegmentButton, IonSegment, IonNote, IonChip,
     TranslateModule,
     IonContent,
     IonLabel,
@@ -51,6 +52,8 @@ import { ListSettingsPageComponent } from '../list-settings-page/list-settings-p
     FormsModule,
     IonToolbar,
     IonTitle,
+    IonSegmentContent,
+    IonSegmentView
   ],
   templateUrl: './new-list-details.component.html',
   styleUrl: './new-list-details.component.scss',
@@ -164,7 +167,7 @@ export class NewListDetailsComponent {
       // Share text only
       await Share.share({
         text: this.translate.instant(
-          this.MESSAGE_LABELS + 'condividi.messaggio',
+          this.MESSAGE_LABELS + 'settings.condividi.messaggio',
           {
             listId: this.listDetails.value()?.id,
           }

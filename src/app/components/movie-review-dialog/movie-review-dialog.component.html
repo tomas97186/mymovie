@@ -1,0 +1,19 @@
+<div class="title">
+  <h3>{{ "dialogs.movieReview.labels.title" | translate }}</h3>
+  <p>{{ "dialogs.movieReview.labels.subtitle" | translate }}</p>
+</div>
+<div class="vote-container">
+  <ion-button fill="clear" size="large" (click)="this.reviewFilm(-1)">
+    👎
+  </ion-button>
+  <ion-button fill="clear" size="large" (click)="this.reviewFilm(1)">
+    👍
+  </ion-button>
+</div>
+<ion-button
+  size="small"
+  fill="clear"
+  color="medium"
+  (click)="this.dialog.dismiss(null, 'confirm')"
+  >{{ "dialogs.movieReview.buttons.votaDopo" | translate }}</ion-button
+>

@@ -25,6 +25,15 @@
     }
   },
   "dialogs": {
+    "movieReview": {
+      "labels": {
+        "title": "Consiglieresti il film ai tuoi amici?",
+        "subtitle": "I tuoi amici potranno vedere i film che consigli."
+      },
+      "buttons": {
+        "votaDopo": "Vota più tardi"
+      }
+    },
     "movieMenu": {
       "labels": {
         "gestisciListe": "Gestisci Liste",

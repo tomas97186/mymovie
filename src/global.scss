@@ -212,7 +212,6 @@ ion-header.transparent {
       }
     }
   }
-
 }
 
 .section-description {
@@ -285,7 +284,6 @@ ion-toolbar {
   padding-top: 0px !important;
 }
 
-
 // ion-modal::part(content) {
 //   position: relative;
 //   --varPer: 50%;
@@ -297,4 +295,13 @@ ion-toolbar {
 button.action-sheet-button.danger {
   --color: var(--ion-color-danger) !important;
   color: var(--ion-color-danger) !important;
+}
+
+ion-modal.central-modal {
+  --width: fit-content;
+  --min-width: 250px;
+  --max-width: 80dvw;
+  --height: fit-content;
+  --border-radius: 20px;
+  --box-shadow: 0 28px 48px rgba(0, 0, 0, 0.4);
 }
