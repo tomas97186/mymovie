@@ -1,3 +1,5 @@
+@let account = this.account | async;
+
 <ion-header>
   <ion-toolbar>
     <ion-buttons slot="start">
@@ -7,42 +9,84 @@
     </ion-buttons>
     <ion-title>{{
       "pages.settings.labels.impostazioni" | translate
-    }}</ion-title>
+      }}</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
   <div class="container">
-    <div class="card-background p-3">
+    <div class="section-title">
       <h5>{{ "pages.settings.labels.preferenze" | translate }}</h5>
-      <ion-list lines="none">
+    </div>
+    <div class="card-background">
+      <ion-list inset="true">
         <ion-item>
-          <ion-select
-            label="{{ 'pages.settings.labels.lingua' | translate }}"
-            [value]="this.settings.language.value"
-            interface="popover"
-            (ionChange)="changeLanguage($event)"
-          >
+          <ion-select label="{{ 'pages.settings.labels.lingua' | translate }}" [value]="this.settings.language.value"
+            interface="popover" (ionChange)="changeLanguage($event)">
             @for(l of languages; track $index) {
             <ion-select-option [value]="l">{{
               "lingue." + l | translate
-            }}</ion-select-option>
+              }}</ion-select-option>
             }
           </ion-select>
         </ion-item>
         <ion-item>
-          <ion-toggle
-            [checked]="settings.openFilmOnClick.value"
-            (ionChange)="
+          <ion-toggle [checked]="settings.openFilmOnClick.value" (ionChange)="
               this.settings.openFilmOnClick.value =
                 !settings.openFilmOnClick.value
-            "
-            helperText="{{'pages.settings.labels.comportamentoClick' | translate}}"
-          >
+            ">
             {{
-              "pages.settings.labels." +
-                (settings.openFilmOnClick.value ? "apriFilm" : "apriListe")
-                | translate
+            "pages.settings.labels.click"
+            | translate
+            }}
+          </ion-toggle>
+        </ion-item>
+        <ion-item>
+          <ion-toggle [checked]="settings.voteWhenWatched.value" (ionChange)="
+              this.settings.voteWhenWatched.value =
+                !settings.voteWhenWatched.value
+            ">
+            {{
+            "pages.settings.labels.voto"
+            | translate
+            }}
+          </ion-toggle>
+        </ion-item>
+      </ion-list>
+    </div>
+    <div class="section-title">
+      <h5>{{ "pages.settings.labels.account" | translate }}</h5>
+    </div>
+    <div class="card-background">
+      <ion-list inset="true">
+        <ion-item button="true" detail="false">
+          <ion-label>
+            {{ "pages.settings.labels.account.username" | translate }}
+          </ion-label>
+          <div class="metadata-end-wrapper" slot="end">
+            <ion-note color="medium">{{account?.displayName || 'tizio'}}</ion-note>
+            <ion-icon color="medium" name="chevron-forward"></ion-icon>
+          </div>
+        </ion-item>
+        <ion-item>
+          <ion-toggle [checked]="settings.openFilmOnClick.value" (ionChange)="
+              this.settings.openFilmOnClick.value =
+                !settings.openFilmOnClick.value
+            ">
+            {{
+            "pages.settings.labels.click"
+            | translate
+            }}
+          </ion-toggle>
+        </ion-item>
+        <ion-item>
+          <ion-toggle [checked]="settings.voteWhenWatched.value" (ionChange)="
+              this.settings.voteWhenWatched.value =
+                !settings.voteWhenWatched.value
+            ">
+            {{
+            "pages.settings.labels.voto"
+            | translate
             }}
           </ion-toggle>
         </ion-item>

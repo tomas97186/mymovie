@@ -1,4 +1,4 @@
-import { Location } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import packageJson from '../../../../package.json';
 import {
@@ -15,16 +15,19 @@ import {
   IonToggle,
   IonSelect,
   IonSelectOption,
-  IonLabel,
-} from '@ionic/angular/standalone';
+  IonLabel, IonItemDivider, IonNote } from '@ionic/angular/standalone';
 import { SettingsService } from 'src/app/services/settings.service';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { Auth } from '@angular/fire/auth';
+import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
   selector: 'app-settings-page',
   templateUrl: './settings-page.component.html',
   styleUrls: ['./settings-page.component.scss'],
   imports: [
+    CommonModule,
+    IonNote, IonItemDivider, 
     TranslateModule,
     IonLabel,
     IonToggle,
@@ -45,6 +48,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 export class SettingsPageComponent {
   location = inject(Location);
   settings = inject(SettingsService);
+  account = inject(AuthService).currentUser$;
   private readonly translate = inject(TranslateService);
   languages = this.translate.getLangs();
   public version: string = packageJson.version;

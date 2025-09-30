@@ -8,6 +8,7 @@ export class SettingsService {
   private storage = inject(StorageService);
 
   public openFilmOnClick = new Setting<boolean>('openFilmOnClick', false, this.storage, (v) => v === 'true');
+  public voteWhenWatched = new Setting<boolean>('voteWhenWatched', false, this.storage, (v) => v === 'true');
   public language = new Setting('language', 'it', this.storage);
 
   constructor() { }

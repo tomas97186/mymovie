@@ -54,8 +54,6 @@ body {
 .card-background {
   background-color: var(--card-background-color);
   border-radius: 10px;
-  margin-bottom: 1.2rem;
-  margin-top: 1.2rem;
 }
 
 .profile-picture {
@@ -304,4 +302,8 @@ ion-modal.central-modal {
   --height: fit-content;
   --border-radius: 20px;
   --box-shadow: 0 28px 48px rgba(0, 0, 0, 0.4);
+}
+
+ion-list ion-item:last-child {
+  --inner-border-width: 0 0 0px 0 !important;
 }
