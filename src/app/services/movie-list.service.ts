@@ -20,37 +20,39 @@ import { InfoListModel } from '../models/movie-list.model';
 import { SearchItemModel } from '../models/search-item.model';
 import { UserModel } from '../models/user.model';
 import { AuthService } from './auth.service';
+import { DatabaseService } from './database.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class MovieListService {
   private authService = inject(AuthService);
+  private database = inject(DatabaseService);
 
   private currentUser?: User;
   private currentListId?: string;
 
   constructor() {
-    this.authService.currentUser$.pipe().subscribe((user) => {
-      this.currentUser = user!;
-      this.getUserInfo()
-        .pipe(
-          first(),
-          switchMap((userInfo) => {
-            if (!userInfo) {
-              return from(this.setUserInfo()).pipe(first());
-            }
-            return of(userInfo);
-          }),
-          switchMap(this.getUserLists.bind(this)),
-          first(),
-          tap(
-            (lists) =>
-              (this.currentListId = lists?.length ? lists[0] : undefined)
-          )
-        )
-        .subscribe();
-    });
+    // this.authService.currentUser$.pipe().subscribe((user) => {
+    //   this.currentUser = user!;
+    //   this.getUserInfo()
+    //     .pipe(
+    //       first(),
+    //       switchMap((userInfo) => {
+    //         if (!userInfo) {
+    //           return from(this.setUserInfo()).pipe(first());
+    //         }
+    //         return of(userInfo);
+    //       }),
+    //       switchMap(this.getUserLists.bind(this)),
+    //       first(),
+    //       tap(
+    //         (lists) =>
+    //           (this.currentListId = lists?.length ? lists[0] : undefined)
+    //       )
+    //     )
+    //     .subscribe();
+    // });
   }
 
   /**
@@ -61,10 +63,9 @@ export class MovieListService {
     privateList: boolean = true,
     initialMovies: [] = []
   ): Promise<string> {
-    if (!this.currentUser) throw new Error('Utente non autenticato');
 
     // Crea una nuova chiave lista
-    const newListRef = push(ref(database, 'lists'));
+    const newListRef =  push(ref(database, 'lists'));
     const newListId = newListRef.key;
 
     if (!newListId) throw new Error("Errore nel generare l'ID della lista");
@@ -410,44 +411,6 @@ export class MovieListService {
     return list(db).pipe(
       map((actions) => actions.map((a) => a.snapshot.key as string))
     );
-  }
-
-  getUserInfo(uid?: string): Observable<UserModel | undefined> {
-    if (!this.currentUser) throw new Error('Utente non autenticato');
-    return objectVal<UserModel>(
-      ref(database, `users/${uid ?? this.currentUser.uid}/info`)
-    );
-  }
-
-  async setUserInfo() {
-    if (!this.currentUser) throw new Error('Utente non autenticato');
-
-    const username = 'User' + Math.floor(Math.random() * 999999);
-    const updates: { [key: string]: unknown } = {};
-    updates[`usernames/${username.toLowerCase()}`] = this.currentUser.uid;
-    updates[`users/${this.currentUser.uid}/info`] = {
-      username: username,
-      email: this.currentUser.email,
-      uid: this.currentUser.uid,
-    };
-
-    return update(ref(database), updates);
-  }
-
-  async setUsername(username: string) {
-    if (!this.currentUser) throw new Error('Utente non autenticato');
-
-    const updates: { [key: string]: unknown } = {};
-    const oldUsername = await get(
-      ref(database, `users/${this.currentUser.uid}/info/username`)
-    );
-    if (oldUsername.exists()) {
-      updates[`usernames/${oldUsername.val().toLowerCase()}`] = null;
-    }
-    updates[`usernames/${username.toLowerCase()}`] = this.currentUser.uid;
-    updates[`users/${this.currentUser.uid}/info/username`] = username;
-
-    return update(ref(database), updates);
   }
 
   movieStatus(id: number, listId?: string): Observable<MovieStatusEnum> {
