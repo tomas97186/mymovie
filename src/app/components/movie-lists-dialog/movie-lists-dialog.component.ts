@@ -15,13 +15,14 @@ import {
   IonToolbar,
   ModalController,
 } from '@ionic/angular/standalone';
-import { map, shareReplay } from 'rxjs';
+import { filter, firstValueFrom, from, map, shareReplay } from 'rxjs';
 import { SearchItemModel } from 'src/app/models/search-item.model';
 import { ToastService } from 'src/app/services/toast.service';
 import { MovieStatusEnum } from '../../enum/movie-status.enum';
 import { MovieModel } from '../../models/movie.model';
 import { MovieListService } from '../../services/movie-list.service';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { MembershipEnum } from 'src/app/enum/membership.enum';
 
 @Component({
   selector: 'app-movie-lists-dialog',
@@ -59,12 +60,14 @@ export class MovieListsDialogComponent {
 
   movieStatusEnum = MovieStatusEnum;
 
-  userLists$ = this.listService.getUserLists().pipe(
-    map((listId) =>
-      listId.map((id) => ({
-        listInfo: this.listService.getListInfo(id),
-        movieStatus: this.listService.movieStatus(this.movie().id, id),
-      }))
+  userLists$ = this.listService.getUserLists()?.pipe(
+    map((res) =>
+      res
+        .filter((m) => m.status === MembershipEnum.ACCEPTED)
+        .map((l) => ({
+          listInfo: l.list,
+          movieStatus: this.listService.movieStatus(this.movie().id, l.list.id),
+        }))
     )
   );
 

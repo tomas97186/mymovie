@@ -20,7 +20,11 @@ import {
   IonToolbar,
   IonSegmentContent,
   IonSegmentView,
-  ModalController, IonNote, IonSegment, IonSegmentButton } from '@ionic/angular/standalone';
+  ModalController,
+  IonNote,
+  IonSegment,
+  IonSegmentButton,
+} from '@ionic/angular/standalone';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { of, Subscription, tap } from 'rxjs';
 import { ToastService } from 'src/app/services/toast.service';
@@ -33,7 +37,11 @@ import { ListSettingsPageComponent } from '../list-settings-page/list-settings-p
 
 @Component({
   selector: 'app-list-details',
-  imports: [IonSegmentButton, IonSegment, IonNote, IonChip,
+  imports: [
+    IonSegmentButton,
+    IonSegment,
+    IonNote,
+    IonChip,
     TranslateModule,
     IonContent,
     IonLabel,
@@ -53,7 +61,7 @@ import { ListSettingsPageComponent } from '../list-settings-page/list-settings-p
     IonToolbar,
     IonTitle,
     IonSegmentContent,
-    IonSegmentView
+    IonSegmentView,
   ],
   templateUrl: './new-list-details.component.html',
   styleUrl: './new-list-details.component.scss',
@@ -96,7 +104,6 @@ export class NewListDetailsComponent {
       return this.listService.getListMovies(request, false);
     },
   });
-  movies = computed(() => this.selectedFilter() === 'toWatch' ? this.moviesToWatch.value() : this.watchedMovies.value());
   members = rxResource({
     request: this.listId,
     loader: ({ request }) => {
@@ -112,7 +119,7 @@ export class NewListDetailsComponent {
       componentProps: {
         details: this.listDetails.value()!,
         members: this.members.value()!,
-      }
+      },
     });
     await alert.present();
   }
@@ -213,6 +220,11 @@ export class NewListDetailsComponent {
     return movieList.filter(
       (movie) => (!!!movie.watched && !watched) || movie.watched === watched
     );
+  }
+
+  scrollToTop() {
+    const element = document.querySelector('.container');
+    element?.scroll({ top: 0, behavior: 'smooth' });
   }
 
   ngOnInit() {

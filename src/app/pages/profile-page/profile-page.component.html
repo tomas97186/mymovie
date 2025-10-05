@@ -19,25 +19,31 @@
         <ion-label>{{ "pages.profile.labels.username" | translate }}</ion-label>
         <span class="colored-text">{{ userInfo?.username }}</span>
       </ion-item>
-      <ion-item class="profile-item">
+      <!-- <ion-item class="profile-item">
         <ion-label>{{ "pages.profile.labels.email" | translate }}</ion-label>
         <span class="colored-text">{{ userInfo?.email }}</span>
-      </ion-item>
+      </ion-item> -->
       <ion-item class="profile-item">
         <ion-label>{{ "pages.profile.labels.liste" | translate }}</ion-label>
         <span class="colored-text">{{ userInfo?.listCount }}</span>
       </ion-item>
     </ion-list>
     <div class="actions text-center">
-      <ion-button class="w-100" (click)="changeName(userInfo!.username)" color="light">
-        <ion-icon name="pencil" slot="start" class="me-2"></ion-icon>{{ "pages.profile.buttons.username" | translate }}
+      <ion-button
+        class="w-100"
+        (click)="changeName(userInfo!.uid)"
+        color="light"
+      >
+        <ion-icon name="pencil" slot="start" class="me-2"></ion-icon
+        >{{ "pages.profile.buttons.username" | translate }}
       </ion-button>
       <ion-button class="w-100" (click)="changePassword()" color="light">
-        <ion-icon name="ellipsis-horizontal-outline" slot="start" class="me-2"></ion-icon>{{
-        "pages.profile.buttons.password" | translate }}
-      </ion-button>
-      <ion-button class="w-100" (click)="signout()" color="danger">
-        <ion-icon name="log-out" slot="start" class="me-2"></ion-icon>{{ "pages.profile.buttons.logout" | translate }}
+        <ion-icon
+          name="ellipsis-horizontal-outline"
+          slot="start"
+          class="me-2"
+        ></ion-icon
+        >{{ "pages.profile.buttons.password" | translate }}
       </ion-button>
     </div>
   </div>

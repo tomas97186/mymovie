@@ -3,5 +3,6 @@ export enum CollectionEnum {
     USERS = 'users',
     MEMBERSHIPS = 'memberships',
     LISTS = 'lists',
-    REVIEWS = 'reviews'
+    REVIEWS = 'reviews',
+    FRIEDS = 'friends'
 }

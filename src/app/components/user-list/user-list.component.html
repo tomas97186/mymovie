@@ -1,5 +1,10 @@
 <div class="user-list">
-  @for(list of this.userList(); track $index) {
-  <app-user-list-item [list]="list" [invitation]="invitations()"></app-user-list-item>
-  }
+  @for(list of this.userList(); let i = $index; track $index) {
+  <app-user-list-item
+    [membership]="list"
+    [invitation]="invitations()"
+  ></app-user-list-item>
+  @if(i < this.userList().length - 1) {
+  <hr class="my-1" />
+  } }
 </div>

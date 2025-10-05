@@ -18,7 +18,6 @@ app-movie-card {
     /* Internet Explorer 10+ */
     scrollbar-width: none;
     /* Firefox, Safari 18.2+, Chromium 121+ */
-    overflow-y: auto;
     height: min-content;
 
     /* Older Safari and Chromium */
@@ -27,7 +26,7 @@ app-movie-card {
         height: min-content;
         flex-direction: row;
         overflow-x: auto;
-        overflow-y: hidden;
+        overflow-y: hidden !important;
         flex-wrap: nowrap;
         justify-content: start;
 

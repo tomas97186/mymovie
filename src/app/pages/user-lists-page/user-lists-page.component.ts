@@ -57,18 +57,18 @@ export class UserListsPageComponent {
   private listService = inject(MovieListService);
   private alertController = inject(AlertController);
   private snackBar = inject(ToastService);
-  userMemberships$ = this.listService
-    .getUserLists()!;
+  userMemberships$ = this.listService.getUserLists()!;
   // .pipe(
   //   map((listId) => listId.map((id) => this.listService.getListInfo(id)))
   // );
   userLists$ = this.userMemberships$.pipe(
-    map((memList) => memList.filter(m => m.status === MembershipEnum.ACCEPTED).map(m => m.list))
-  )
-  userInvitations$ = this.userMemberships$
-    .pipe(
-      map((memList) => memList.filter(m => m.status === MembershipEnum.PENDING).map(m => m.list)),
-    );
+    map((memList) =>
+      memList.filter((m) => m.status === MembershipEnum.ACCEPTED)
+    )
+  );
+  userInvitations$ = this.userMemberships$.pipe(
+    map((memList) => memList.filter((m) => m.status === MembershipEnum.PENDING))
+  );
 
   async openJoinDialog(currentListsCount: number) {
     if (this.fab) {
@@ -76,9 +76,14 @@ export class UserListsPageComponent {
     }
     if (!this.__canAddList(currentListsCount)) {
       this.snackBar.open(
-        this.translate.instant(this.MESSAGE_LABELS + 'unisciti.errore.maxList', {
-          maxLists: fieldValidations.maxListsPerUser,
-        }), { color: 'danger', duration: 3000 });
+        this.translate.instant(
+          this.MESSAGE_LABELS + 'unisciti.errore.maxList',
+          {
+            maxLists: fieldValidations.maxListsPerUser,
+          }
+        ),
+        { color: 'danger', duration: 3000 }
+      );
       return;
     }
     const alert = await this.alertController.create({
@@ -126,7 +131,6 @@ export class UserListsPageComponent {
     await alert.present();
   }
 
-
   private __joinList(listId: string) {
     if (listId) {
       this.listService
@@ -173,7 +177,9 @@ export class UserListsPageComponent {
       this.snackBar.open(
         this.translate.instant(this.MESSAGE_LABELS + 'crea.errore.maxList', {
           maxLists: fieldValidations.maxListsPerUser,
-        }), { color: 'danger', duration: 3000 });
+        }),
+        { color: 'danger', duration: 3000 }
+      );
       return;
     }
     const alert = await this.alertController.create({

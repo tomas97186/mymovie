@@ -154,9 +154,9 @@ ion-button {
 }
 
 .image-placeholder {
-  width: 150px;
-  min-width: 150px;
-  max-width: 150px;
+  width: 120px;
+  min-width: 120px;
+  max-width: 120px;
   height: 225px;
   max-height: 225px;
   min-height: 225px;
@@ -213,9 +213,9 @@ ion-header.transparent {
 }
 
 .section-description {
-  color: gry;
-  text-align: center;
-  margin-top: 1rem;
+  color: gray;
+  font-size: .9rem;
+  margin-left: .4rem;
 }
 
 ion-title.with-icon {
@@ -306,4 +306,9 @@ ion-modal.central-modal {
 
 ion-list ion-item:last-child {
   --inner-border-width: 0 0 0px 0 !important;
+}
+
+ion-note {
+  vertical-align: top;
+  margin-right: .5rem;
 }

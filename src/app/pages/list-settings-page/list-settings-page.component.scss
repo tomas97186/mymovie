@@ -97,4 +97,8 @@ $avatar-colors: #e53935,
 
 ion-list {
   border-radius: 10px !important;
+
+  & ion-button {
+    --box-shadow: none !important;
+  }
 }

@@ -97,17 +97,18 @@ export class ProfilePageComponent {
               );
               return false;
             }
-            if (!/^[A-Za-z0-9_]+$/.test(data.username)) {
-              this.snackBar.open(
-                this.translate.instant(
-                  this.MESSAGE_LABELS + 'username.errore.simbolo'
-                ),
-                { color: 'danger', duration: 3000 }
-              );
-              return false;
-            } else {
-              return this.__changeUsername(data, uid);
-            }
+            // if (!/^[A-Za-z0-9_]+$/.test(data.username)) {
+            //   this.snackBar.open(
+            //     this.translate.instant(
+            //       this.MESSAGE_LABELS + 'username.errore.simbolo'
+            //     ),
+            //     { color: 'danger', duration: 3000 }
+            //   );
+            //   return false;
+            // }
+            //  else {
+            return this.__changeUsername(data, uid);
+            // }
           },
         },
       ],
@@ -207,7 +208,7 @@ export class ProfilePageComponent {
   }
 
   private __changeUsername(data: { username: string }, uid: string) {
-    console.log('Change username');
+    console.log('Change username: ', data.username, ' for user: ', uid);
     if (data.username !== undefined) {
       this.userService
         .setUsername(data.username.trim(), uid)
@@ -272,7 +273,4 @@ export class ProfilePageComponent {
     }
   }
 
-  signout() {
-    this.authService.signOut().then(() => this.router.navigate(['/']));
-  }
 }

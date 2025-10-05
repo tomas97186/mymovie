@@ -1,3 +1,8 @@
+.container {
+  overflow-y: auto;
+  padding-top: 56px !important;
+}
+
 .list-title {
   font-size: 2rem;
   font-weight: 500;
@@ -42,15 +47,85 @@
   margin-left: 1rem;
 }
 
-ion-segment {
+.watched-filter {
   position: sticky;
   top: 0px;
-  background-color: var(--ion-background-color);
   z-index: 1000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-top: 0.2rem;
+
+  & ion-segment {
+    background: rgba(13, 13, 13, 0.56);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    width: 300px;
+  }
+}
+
+.movie-count {
+  margin-left: 0.6rem;
 }
 
 ion-segment-content {
-  height: 100% !important;
+  overflow-y: hidden;
 }
 
+ion-content {
+  --overflow: hidden !important;
+  --offset-bottom: 100px !important;
+}
 
+.info-section {
+  padding: .6rem;
+  padding-top: 1rem;
+  justify-content: center;
+  border-radius: 30px;
+  display: flex;
+  flex-direction: column;
+
+  & .info {
+    display: flex;
+    justify-content: space-evenly;
+
+    & div {
+      display: flex;
+      flex-direction: column-reverse;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+
+      & .info-label {
+        font-size: 0.8rem;
+        color: gray;
+      }
+
+      & .info-value {
+        font-size: 1.4rem;
+        font-weight: 500;
+      }
+    }
+  }
+
+  & .actions {
+    margin-top: 1rem;
+    display: flex;
+
+    & ion-button {
+      --border-radius: 40px !important;
+      --box-shadow: none !important;
+    }
+  }
+}
+
+ion-segment-view {
+  overflow-y: hidden;
+  height: min-content !important;
+}
+
+ion-segment-content {
+  height: min-content !important;
+  overflow-y: hidden;
+}

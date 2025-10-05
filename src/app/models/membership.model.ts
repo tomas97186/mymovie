@@ -1,8 +1,12 @@
-import { MembershipEnum } from "../enum/membership.enum"
-import { ListPartialModel } from "./list.partial.model"
+import { MembershipEnum } from '../enum/membership.enum';
+import { ListPartialModel } from './list.partial.model';
 
 export interface MembershipModel {
-    uid: string
-    status: MembershipEnum,
-    list: ListPartialModel
+  user: {
+    uid: string;
+    username: string;
+  };
+  id: string;
+  status: MembershipEnum;
+  list: ListPartialModel;
 }

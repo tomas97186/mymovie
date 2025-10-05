@@ -1,9 +1,7 @@
 .list-item {
-  background-color: var(--card-background-color);
   width: 100%;
   border-radius: 10px;
   height: min-content !important;
-  margin-bottom: 1rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -47,5 +45,7 @@
   ion-button {
     --padding-end: .5rem !important;
     --padding-start: .5rem !important;
+    --padding-top: .5rem !important;
+    --padding-bottom: .5rem !important;
   }
 }

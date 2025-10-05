@@ -107,11 +107,11 @@ button.floating-button {
 }
 
 .header {
-  background-color: rgba(0, 0, 0, 0.3);
+  background-color: var(--card-background-color);
 }
 
 .image-placeholder {
-  width: 150px;
+  width: 120px;
   height: 225px;
   border-radius: 10px;
   background-color: var(--card-background-color);

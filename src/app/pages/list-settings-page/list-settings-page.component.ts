@@ -10,7 +10,13 @@ import {
   IonItem,
   IonLabel,
   IonList,
-  ModalController, IonHeader, IonContent, IonToolbar, IonButtons, IonBackButton, IonTitle
+  ModalController,
+  IonHeader,
+  IonContent,
+  IonToolbar,
+  IonButtons,
+  IonBackButton,
+  IonTitle,
 } from '@ionic/angular/standalone';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { map } from 'rxjs';
@@ -19,10 +25,19 @@ import { BUTTONS } from 'src/app/variables';
 import { InfoListModel } from '../../models/movie-list.model';
 import { AuthService } from '../../services/auth.service';
 import { MovieListService } from '../../services/movie-list.service';
+import { UserService } from 'src/app/services/user.service';
+import { MembershipModel } from 'src/app/models/membership.model';
+import { MembershipEnum } from 'src/app/enum/membership.enum';
 
 @Component({
   selector: 'app-list-page-settings',
-  imports: [IonTitle, IonBackButton, IonButtons, IonToolbar, IonContent, IonHeader,
+  imports: [
+    IonTitle,
+    IonBackButton,
+    IonButtons,
+    IonToolbar,
+    IonContent,
+    IonHeader,
     TranslateModule,
     IonLabel,
     IonItem,
@@ -30,7 +45,8 @@ import { MovieListService } from '../../services/movie-list.service';
     IonIcon,
     IonButton,
     CommonModule,
-    ClipboardModule],
+    ClipboardModule,
+  ],
   templateUrl: './list-settings-page.component.html',
   styleUrl: './list-settings-page.component.scss',
 })
@@ -44,18 +60,11 @@ export class ListSettingsPageComponent {
   private readonly DIALOGS_LABELS = 'pages.listDetails.settings.dialogs.';
   router = inject(Router);
   listService = inject(MovieListService);
+  userService = inject(UserService);
   details = input.required<InfoListModel>();
-  _members = input.required<{ [key: string]: boolean }>({ alias: 'members' });
-  members = computed(() => {
-    const membersMap = this._members();
-    return !membersMap
-      ? undefined
-      : Object.keys(membersMap).map((key) =>
-        this.listService
-          .getUserInfo(key)
-          .pipe(map((res) => ({ ...res, invited: !membersMap[key] })))
-      );
-  });
+  members = input.required<MembershipModel[]>();
+
+  MembershipEnum = MembershipEnum;
 
   updateListNameFn = output<void>();
 

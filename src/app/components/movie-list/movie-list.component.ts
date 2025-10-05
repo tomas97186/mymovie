@@ -28,6 +28,7 @@ export class MovieListComponent {
   total = input.required<number>();
   isHorizontal = model<boolean>(false);
   paddingTop = input<number>();
+  scroll = input<boolean>(true);
   private stopLoading = effect(() =>
     !this.isLoading() ? this.infiniteScroll?.complete() : undefined
   );

@@ -9,6 +9,7 @@ import { InfoListModel } from '../../models/movie-list.model';
 import { MovieListService } from '../../services/movie-list.service';
 import { TranslateService } from '@ngx-translate/core';
 import { ListPartialModel } from 'src/app/models/list.partial.model';
+import { MembershipModel } from 'src/app/models/membership.model';
 
 @Component({
   selector: 'app-user-list-item',
@@ -23,12 +24,12 @@ export class UserListItemComponent {
   private snackbar = inject(ToastService);
   private translate = inject(TranslateService);
 
-  list = input.required<ListPartialModel>();
+  membership = input.required<MembershipModel>();
   invitation = input<boolean>(false);
 
   acceptInvitation() {
     this.listService
-      .acceptListInvitation(this.list().id)
+      .acceptListInvitation(this.membership().id)
       .then((res) => {
         this.snackbar.open(
           this.translate.instant(
@@ -51,7 +52,7 @@ export class UserListItemComponent {
 
   declineInvitation() {
     this.listService
-      .declineListInvitation(this.list().id)
+      .declineListInvitation(this.membership().id)
       .then((res) => {
         this.snackbar.open(
           this.translate.instant(
@@ -77,13 +78,14 @@ export class UserListItemComponent {
       // Share text only
       await Share.share({
         text: this.translate.instant(
-          this.MESSAGE_LABELS + 'condividi.messaggio', { listId: this.list().id }
+          this.MESSAGE_LABELS + 'condividi.messaggio',
+          { listId: this.membership().list.id }
         ),
       });
     } else {
       this.snackbar.open(
         this.translate.instant(this.MESSAGE_LABELS + 'condividi.errore', {
-          listId: this.list().id,
+          listId: this.membership().id,
         })
       );
     }

@@ -134,6 +134,9 @@
       }
     },
     "listDetails": {
+      "buttons": {
+        "condividi": "Condividi Lista"
+      },
       "dialogs": {
         "modificaNome": {
           "header": "Modifica Nome Lista"
@@ -206,7 +209,12 @@
         "noFilm": "Nessun film da vedere.",
         "start": "Inizia cercando un film da aggiungere alla lista!",
         "noFilmVisti": "Nessun film ancora visto.",
-        "error": "Errore! Lista non trovata."
+        "error": "Errore! Lista non trovata.",
+        "info": {
+          "daVedere": "Film Da Vedere",
+          "visti": "Film Visti",
+          "membri": "Membri"
+        }
       },
       "messages": {
         "modificaNome": {
@@ -316,7 +324,7 @@
         "username": {
           "successo": "Username modificato.",
           "errore": {
-            "generico": "Errore nell'aggiornamento della password",
+            "generico": "Errore nell'aggiornamento dello username.",
             "minLength": "Lo username deve essere di almeno {{minLength}} caratteri.",
             "simbolo": "Lo username può contenere solo il simbolo _"
           }
@@ -330,10 +338,17 @@
     },
     "settings": {
       "labels": {
+        "account": {
+          "title": "Account",
+          "username": "Username",
+          "password": "Modifica Password",
+          "email": "Email",
+          "liste": "Liste"
+        },
         "impostazioni": "Impostazioni",
         "preferenze": "Preferenze",
         "lingua": "Lingua",
-        "click": "Inverti comportamento click",
+        "click": "Inverti pressione prolungata",
         "voto": "Chiedi di votare i film visti",
         "licenzaDati": "Licenza Dati",
         "tmdb": "Questa applicazione utilizza il database TMDB e l'API di TMDB, ma non è approvata né certificata da TMDB.",

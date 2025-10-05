@@ -1,10 +1,8 @@
 @let details = this.listDetails.value()!; @let isLoading =
-this.listDetails.isLoading(); @let members = this.members.value()!; @let filter
-= this.selectedFilter(); @let movies = this.movies(); @if(isLoading) {
+this.listDetails.isLoading(); @if(isLoading) {
 <ion-progress-bar type="indeterminate"></ion-progress-bar>
-} @else if(!!details && !!details.id) { @let moviesToWatch =
-this.moviesToWatch.value(); @let watchedMovies = this.watchedMovies.value();
-<ion-header class="transparent">
+} @else if(!!details && !!details.id) {
+<ion-header class="glass-effect">
   <ion-toolbar class="large">
     <ion-buttons slot="start">
       <ion-button fill="clear" routerLink="..">
@@ -13,40 +11,76 @@ this.moviesToWatch.value(); @let watchedMovies = this.watchedMovies.value();
     </ion-buttons>
     <ion-title>{{ details.name }}</ion-title>
     <ion-buttons slot="end">
-      <ion-button (click)="shareListCode()">
+      <!-- <ion-button (click)="shareListCode()">
         <ion-icon slot="icon-only" name="share-social-outline"></ion-icon>
-      </ion-button>
+      </ion-button> -->
       <ion-button (click)="openSettings()">
         <ion-icon slot="icon-only" name="settings-outline"></ion-icon>
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
-<!-- <div class="shared-section">
-  <p>
-    {{
-      "pages.listDetails.labels.condivisaCon"
-        | translate : { membersCount: details.membersCount - 1 }
-    }}
-  </p>
-</div> -->
-<ion-segment value="toWatch">
-  <ion-segment-button value="toWatch" content-id="toWatch">
-    <ion-label>{{
-      "pages.listDetails.labels.daVedere" | translate | titlecase
-    }}</ion-label>
-  </ion-segment-button>
-  <ion-segment-button value="watched" content-id="watched">
-    <ion-label>{{
-      "pages.listDetails.labels.visti" | translate | titlecase
-    }}</ion-label>
-  </ion-segment-button>
-</ion-segment>
 
-<ion-segment-view>
-  <ion-segment-content id="toWatch">
-    <ion-content>
-      @if(movies && movies.length > 0) {
+<div class="container h-100">
+  <div class="info-section card-background m-2">
+    <div class="info">
+      <div>
+        <span class="info-label">
+          {{ "pages.listDetails.labels.info.daVedere" | translate }}
+        </span>
+        <span class="info-value">
+          {{ details.moviesCount - details.watchedMovies }}
+        </span>
+      </div>
+      <div>
+        <span class="info-label">
+          {{ "pages.listDetails.labels.info.visti" | translate }}
+        </span>
+        <span class="info-value">
+          {{ details.watchedMovies }}
+        </span>
+      </div>
+      <div>
+        <span class="info-label">
+          {{ "pages.listDetails.labels.info.membri" | translate }}
+        </span>
+        <span class="info-value">
+          {{ details.membersCount }}
+        </span>
+      </div>
+    </div>
+
+    <div class="actions">
+      <ion-button class="w-100" color="medium" fill="clear" size="small" (click)="shareListCode()">
+        <ion-icon name="share-social-outline" slot="start"></ion-icon>
+        {{ "pages.listDetails.buttons.condividi" | translate }}
+      </ion-button>
+      <ion-button class="w-100" color="light" size="small">
+        <ion-icon name="person-add-outline" slot="start"></ion-icon>
+        {{ "pages.listDetails.settings.buttons.invita" | translate }}
+      </ion-button>
+    </div>
+  </div>
+  <div class="watched-filter">
+    <ion-segment value="toWatch" mode="ios" (ionChange)="scrollToTop()">
+      <ion-segment-button value="toWatch" content-id="toWatch">
+        <ion-label
+          >{{ "pages.listDetails.labels.daVedere" | translate | titlecase }}
+          <!-- <span class="movie-count">{{ details.moviesCount - details.watchedMovies }}</span> -->
+        </ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="watched" content-id="watched">
+        <ion-label>{{
+          "pages.listDetails.labels.visti" | translate | titlecase
+        }}</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+  </div>
+
+  <ion-segment-view>
+    <ion-segment-content id="toWatch">
+      @let moviesToWatch = this.moviesToWatch.value(); @if(moviesToWatch &&
+      moviesToWatch.length > 0) {
       <app-movie-list
         [movies]="moviesToWatch"
         [total]="moviesToWatch!.length"
@@ -62,11 +96,10 @@ this.moviesToWatch.value(); @let watchedMovies = this.watchedMovies.value();
         }}</span>
       </div>
       }
-    </ion-content>
-  </ion-segment-content>
-  <ion-segment-content id="watched">
-    <ion-content>
-      @if(movies && movies.length > 0) {
+    </ion-segment-content>
+    <ion-segment-content id="watched">
+      @let watchedMovies = this.watchedMovies.value(); @if(watchedMovies &&
+      watchedMovies.length > 0) {
       <app-movie-list
         [movies]="watchedMovies"
         [total]="watchedMovies!.length"
@@ -82,9 +115,10 @@ this.moviesToWatch.value(); @let watchedMovies = this.watchedMovies.value();
         }}</span>
       </div>
       }
-    </ion-content>
-  </ion-segment-content>
-</ion-segment-view>
+    </ion-segment-content>
+  </ion-segment-view>
+</div>
+
 } @else {
 <div class="list-error">
   <ion-icon name="sentiment_dissatisfied"></ion-icon>

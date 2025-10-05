@@ -3,7 +3,7 @@
   #movieList
   id="movieList"
   class="movie-list-container"
-  [ngStyle]="{ 'padding-top': paddingTop() ? paddingTop() + 'px' : undefined }"
+  [ngStyle]="{ 'padding-top': paddingTop() ? paddingTop() + 'px' : undefined, 'overflow-y': scroll()? 'auto' : 'hidden' }"
   [ngClass]="{'horizontal': isHorizontal(),}"
 >
   @for(movie of movies; track movie.id) {

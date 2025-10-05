@@ -1,17 +1,17 @@
-@let list = this.list();
+@let list = this.membership().list;
 
-<div class="list-item" [routerLink]="invitation() ? undefined : '-' + list.id">
+<div class="list-item" [routerLink]="invitation() ? undefined : list.id">
   <div class="list-info">
-    <h6>{{ list.name }}</h6>
+    <h6 class="mb-0">{{ list.name }}</h6>
     <div class="list-meta">
-      <div class="list-meta-item">
+      <!-- <div class="list-meta-item">
         <ion-icon size="small" name="film-outline"></ion-icon
         ><span>{{ list.moviesCount }} film</span>
       </div>
       <div class="list-meta-item">
         <ion-icon size="small" name="people-outline"></ion-icon>
         {{ list.membersCount }} membri
-      </div>
+      </div> -->
     </div>
   </div>
   <div>
