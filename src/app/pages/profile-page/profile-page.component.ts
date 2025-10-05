@@ -28,6 +28,7 @@ import { AuthService } from '../../services/auth.service';
 import { MovieListService } from '../../services/movie-list.service';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { BUTTONS } from 'src/app/variables';
+import { UserService } from 'src/app/services/user.service';
 
 @Component({
   selector: 'app-profile-page',
@@ -59,13 +60,10 @@ export class ProfilePageComponent {
   readonly router = inject(Router);
   private readonly snackBar = inject(ToastService);
   authService = inject(AuthService);
-  movieListService = inject(MovieListService);
-  userInfo$ = this.movieListService.getUserInfo();
-  userListsCount$ = this.movieListService
-    .getUserLists()
-    .pipe(map((res) => res.length));
+  userService = inject(UserService);
+  userInfo$ = this.userService.getUserInfo();
 
-  async changeName(oldUsername: string) {
+  async changeName(uid: string) {
     const alert = await this.alertController.create({
       header: this.translate.instant(this.DIALOG_LABELS + 'username.header'),
       inputs: [
@@ -108,7 +106,7 @@ export class ProfilePageComponent {
               );
               return false;
             } else {
-              return this.__changeUsername(data);
+              return this.__changeUsername(data, uid);
             }
           },
         },
@@ -208,11 +206,11 @@ export class ProfilePageComponent {
     await alert.present();
   }
 
-  private __changeUsername(data: { username: string }) {
+  private __changeUsername(data: { username: string }, uid: string) {
     console.log('Change username');
     if (data.username !== undefined) {
-      this.movieListService
-        .setUsername(data.username.trim())
+      this.userService
+        .setUsername(data.username.trim(), uid)
         .then(() => {
           this.authService.currentUser$.pipe(
             filter((user) => !!user),

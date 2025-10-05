@@ -23,6 +23,7 @@ import { BUTTONS, INPUTS } from 'src/app/variables';
 import { fieldValidations } from 'src/environments/fields.validation';
 import { MovieListService } from '../../services/movie-list.service';
 import { NoListPageComponent } from '../no-list-page/no-list-page.component';
+import { MembershipEnum } from 'src/app/enum/membership.enum';
 
 @Component({
   selector: 'app-user-lists-page',
@@ -56,19 +57,21 @@ export class UserListsPageComponent {
   private listService = inject(MovieListService);
   private alertController = inject(AlertController);
   private snackBar = inject(ToastService);
-  userLists$ = this.listService
-    .getUserLists()
+  userMemberships$ = this.listService
+    .getUserLists()!;
+  // .pipe(
+  //   map((listId) => listId.map((id) => this.listService.getListInfo(id)))
+  // );
+  userLists$ = this.userMemberships$.pipe(
+    map((memList) => memList.filter(m => m.status === MembershipEnum.ACCEPTED).map(m => m.list))
+  )
+  userInvitations$ = this.userMemberships$
     .pipe(
-      map((listId) => listId.map((id) => this.listService.getListInfo(id)))
-    );
-  userInvitations$ = this.listService
-    .getListInvitations()
-    .pipe(
-      map((listId) => listId.map((id) => this.listService.getListInfo(id)))
+      map((memList) => memList.filter(m => m.status === MembershipEnum.PENDING).map(m => m.list)),
     );
 
   async openJoinDialog(currentListsCount: number) {
-    if(this.fab) {
+    if (this.fab) {
       this.fab.close();
     }
     if (!this.__canAddList(currentListsCount)) {
@@ -163,7 +166,7 @@ export class UserListsPageComponent {
   }
 
   async openCreateDialog(currentListsCount: number) {
-    if(this.fab) {
+    if (this.fab) {
       this.fab.close();
     }
     if (!this.__canAddList(currentListsCount)) {

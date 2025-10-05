@@ -8,6 +8,7 @@ import { ToastService } from 'src/app/services/toast.service';
 import { InfoListModel } from '../../models/movie-list.model';
 import { MovieListService } from '../../services/movie-list.service';
 import { TranslateService } from '@ngx-translate/core';
+import { ListPartialModel } from 'src/app/models/list.partial.model';
 
 @Component({
   selector: 'app-user-list-item',
@@ -22,25 +23,21 @@ export class UserListItemComponent {
   private snackbar = inject(ToastService);
   private translate = inject(TranslateService);
 
-  list = input.required<InfoListModel>();
+  list = input.required<ListPartialModel>();
   invitation = input<boolean>(false);
 
   acceptInvitation() {
     this.listService
       .acceptListInvitation(this.list().id)
       .then((res) => {
-        if (res) {
-          this.snackbar.open(
-            this.translate.instant(
-              this.MESSAGE_LABELS + 'invito.accetta.successo'
-            ),
-            {
-              duration: 3000,
-            }
-          );
-        } else {
-          throw new Error("Impossibile accettare l'invito");
-        }
+        this.snackbar.open(
+          this.translate.instant(
+            this.MESSAGE_LABELS + 'invito.accetta.successo'
+          ),
+          {
+            duration: 3000,
+          }
+        );
       })
       .catch((err) => {
         this.snackbar.open(

@@ -14,6 +14,7 @@ import {
   updateDoc,
   writeBatch,
 } from '@angular/fire/firestore';
+import { from } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -36,20 +37,20 @@ export class DatabaseService {
   add(path: string, data: any, id?: string) {
     if (!id) {
       const collectionRef = collection(this.firestore, path);
-      return addDoc(collectionRef, data);
+      return from(addDoc(collectionRef, data));
     } else {
       const collectionRef = doc(this.firestore, path, id);
-      return setDoc(collectionRef, data);
+      return from(setDoc(collectionRef, data));
     }
   }
 
   set(path: string, data: any) {
     const collectionRef = doc(this.firestore, path);
-    return setDoc(collectionRef, data);
+    return from(setDoc(collectionRef, data));
   }
 
   setDoc(doc: DocumentReference<DocumentData, DocumentData>, value: any) {
-    return setDoc(doc, value);
+    return from(setDoc(doc, value));
   }
 
   setMultiple(updates: UpdateModel[]) {
@@ -75,12 +76,12 @@ export class DatabaseService {
 
   update(path: string, data: any) {
     const docRef = doc(this.firestore, path);
-    return updateDoc(docRef, data, { merge: true });
+    return from(updateDoc(docRef, data, { merge: true }));
   }
 
   delete(path: string) {
     const docRef = doc(this.firestore, path);
-    return deleteDoc(docRef);
+    return from(deleteDoc(docRef));
   }
 }
 

@@ -1,58 +1,44 @@
-import { inject, Injectable } from '@angular/core';
-import { User } from '@angular/fire/auth';
-import {
-  get,
-  increment,
-  list,
-  listVal,
-  objectVal,
-  push,
-  ref,
-  remove,
-  set,
-  update,
-} from '@angular/fire/database';
-import { first, from, map, Observable, of, switchMap, tap } from 'rxjs';
-import { environment } from '../../environments/environment';
-import { MovieStatusEnum } from '../enum/movie-status.enum';
-import { database } from '../firebase';
-import { InfoListModel } from '../models/movie-list.model';
-import { SearchItemModel } from '../models/search-item.model';
-import { UserModel } from '../models/user.model';
+import { DestroyRef, inject, Injectable } from '@angular/core';
+import { and, collection, collectionData, deleteDoc, doc, docData, Firestore, getDoc, getDocs, increment, query, setDoc, updateDoc, where, writeBatch, WriteBatch } from '@angular/fire/firestore';
+import { first, firstValueFrom, from, Observable, of, switchMap } from 'rxjs';
+import { CollectionEnum } from '../enum/collection.enum';
 import { AuthService } from './auth.service';
-import { DatabaseService } from './database.service';
+import { User } from '@angular/fire/auth';
+import { UserService } from './user.service';
+import { SearchItemModel } from '../models/search-item.model';
+import { MovieStatusEnum } from '../enum/movie-status.enum';
+import { MembershipModel } from '../models/membership.model';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { MembershipEnum } from '../enum/membership.enum';
+import { UserPartialModel } from '../models/user.partial.model';
 
 @Injectable({
   providedIn: 'root',
 })
 export class MovieListService {
+  private firestore = inject(Firestore);
   private authService = inject(AuthService);
-  private database = inject(DatabaseService);
+  private userService = inject(UserService);
+  private destroyRef = inject(DestroyRef);
 
-  private currentUser?: User;
-  private currentListId?: string;
+
+  public currentUser?: User;
 
   constructor() {
-    // this.authService.currentUser$.pipe().subscribe((user) => {
-    //   this.currentUser = user!;
-    //   this.getUserInfo()
-    //     .pipe(
-    //       first(),
-    //       switchMap((userInfo) => {
-    //         if (!userInfo) {
-    //           return from(this.setUserInfo()).pipe(first());
-    //         }
-    //         return of(userInfo);
-    //       }),
-    //       switchMap(this.getUserLists.bind(this)),
-    //       first(),
-    //       tap(
-    //         (lists) =>
-    //           (this.currentListId = lists?.length ? lists[0] : undefined)
-    //       )
-    //     )
-    //     .subscribe();
-    // });
+    this.authService.currentUser$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((user) => {
+      this.currentUser = user!;
+      this.userService.getUserInfo(this.currentUser.uid)
+        .pipe(
+          first(),
+          switchMap((userInfo) => {
+            if (!userInfo) {
+              return from(this.userService.setUserInfo(this.currentUser!.uid)).pipe(first());
+            }
+            return of(userInfo);
+          }),
+        )
+        .subscribe();
+    });
   }
 
   /**
@@ -60,370 +46,271 @@ export class MovieListService {
    */
   async createList(
     name: string,
-    privateList: boolean = true,
-    initialMovies: [] = []
-  ): Promise<string> {
+    privateList: boolean = true
+  ) {
+    if (this.isLoggedIn()) {
+      const batch = writeBatch(this.firestore);
+      const listRef = doc(this.firestore, CollectionEnum.LISTS);
 
-    // Crea una nuova chiave lista
-    const newListRef =  push(ref(database, 'lists'));
-    const newListId = newListRef.key;
-
-    if (!newListId) throw new Error("Errore nel generare l'ID della lista");
-
-    this.currentListId = newListId;
-    // Struttura iniziale della lista
-    const newListData = {
-      members: {
-        [this.currentUser.uid]: true,
-      },
-      movies: initialMovies ?? [],
-      info: {
+      batch.set(listRef, {
         name,
         privateList,
-        createdBy: this.currentUser.uid,
+        createdBy: this.currentUser!.uid,
         watchedMovies: 0,
-        moviesCount: initialMovies?.length || 0,
-        id: newListId.slice(1),
+        moviesCount: 0,
         membersCount: 1,
-      },
-    };
-    // Salva la lista
-    await set(newListRef, newListData);
+      });
+      this.addToUserList({ name, id: listRef.id }, this.currentUser!.uid, MembershipEnum.ACCEPTED, batch);
 
-    // Aggiungi la lista all'utente
-    set(
-      ref(database, `users/${this.currentUser.uid}/lists/${newListId}`),
-      newListId
-    );
+      return batch.commit();
 
-    return newListId; // Ritorna l'ID della nuova lista
+    }
   }
 
   /**
    * Elimina una lista
    */
   async deleteList(listId: string) {
-    if (!this.currentUser) throw new Error('Utente non autenticato');
-    listId = listId.startsWith('-') ? listId : '-' + listId;
+    const batch = writeBatch(this.firestore);
 
-    const updates: { [key: string]: unknown } = {};
-    updates[`lists/${listId}`] = null;
-    updates[`users/${this.currentUser.uid}/lists/${listId}`] = null;
-    return update(ref(database), updates);
-  }
-  /**
-   * Legge l'elenco degli ID lista dell'utente autenticato
-   */
-  getUserLists(): Observable<string[]> {
-    if (!this.currentUser) throw new Error('Utente non autenticato');
-    const db = ref(database, `users/${this.currentUser.uid}/lists`);
-    return listVal<string>(db).pipe(map((lists) => Object.values(lists || [])));
+    batch.delete(doc(this.firestore, `${CollectionEnum.LISTS}/${listId}`));
+    await this.removeUserList(listId, batch);
+    return batch.commit();
   }
 
+
+  // /**
+  //  * Modifica il nome di una lista
+  //  */
+  async changeListName(name: string, listId: string): Promise<void> {
+    const batch = writeBatch(this.firestore);
+
+    batch.update(doc(this.firestore, `${CollectionEnum.LISTS}/${listId}`), { name });
+    await this.updateListName({ name, id: listId }, batch);
+
+    return batch.commit();
+  }
+
+  // /**
+  //  * Legge le info di una lista (solo se l'utente è membro)
+  //  */
+  getListInfo(listId: string): Observable<SearchItemModel> {
+    return docData(doc(this.firestore, `${CollectionEnum.LISTS}/${listId}`)) as Observable<SearchItemModel>;
+  }
+
   /**
-   * Legge le info di una lista (solo se l'utente è membro)
+   * Modifica il contenuto dei film della lista di cui l'utente è membro
    */
-  getListInfo(listId: string): Observable<InfoListModel> {
-    if (!this.currentUser) throw new Error('Utente non autenticato');
-    if (!!listId && !listId.startsWith('-')) {
-      listId = '-' + listId;
+  async addMovie(newMovie: SearchItemModel, listId: string) {
+    if (this.isLoggedIn()) {
+      const batch = writeBatch(this.firestore);
+      // const movieRef = doc(this.firestore, `${CollectionEnum.MOVIES}/${newMovie.id}`);
+      const listRef = doc(this.firestore, `${CollectionEnum.LISTS}/${listId}`);
+
+      // batch.set(movieRef, newMovie);
+      batch.set(doc(this.firestore, `${CollectionEnum.LISTS}/${listId}/${CollectionEnum.MOVIES}/${newMovie.id}`), {
+        listId: listId,
+        movie: {
+          id: newMovie.id,
+          title: newMovie.title,
+          poster_path: newMovie.poster_path,
+        }, addedDate: new Date().toISOString(), addedBy: this.currentUser!.uid, watched: false
+      });
+      batch.update(listRef, { moviesCount: increment(1) });
+      // batch.set(doc(this.firestore, `${CollectionEnum.MOVIES}/${newMovie.id}/${CollectionEnum.LISTS}/${listId}`), { list: listRef });
+      await batch.commit();
+
     }
-    const db = ref(database, `lists/${listId}/info`);
-    return objectVal<InfoListModel>(db).pipe(
-      tap((res) => {
-        if (!res) {
-          console.error('Gruppo non esistente, elimino dalla lista'),
-            remove(
-              ref(database, `users/${this.currentUser!.uid}/lists/${listId}`)
-            );
-        }
-      })
-    );
   }
 
-  /**
-   * Legge i film di una lista (solo se l'utente è membro)
-   */
+  // /**
+  //  * Aggiunge l'utente autenticato come membro a una lista esistente
+  //  */
+  async joinList(listId: string): Promise<boolean> {
+    if (this.isLoggedIn()) {
+      const batch = writeBatch(this.firestore);
+      const listRef = doc(this.firestore, `${CollectionEnum.LISTS}/${listId}`);
+      const list = await getDoc(listRef);
+
+      if (list.exists()) {
+        throw new Error(`Lista ${listId} non esistente.`);
+      }
+
+      this.addToUserList({ id: listId, name: list.data()!['name'] }, { uid: this.currentUser!.uid, username: this.currentUser?.displayName! }, MembershipEnum.ACCEPTED, batch);
+      batch.set(doc(this.firestore, `${CollectionEnum.LISTS}/${listRef.id}/members/${this.currentUser!.uid}`), { status: 'accepted', uid: this.currentUser!.uid, username: this.currentUser!.displayName });
+      batch.update(listRef, { membersCount: increment(1) });
+
+      await batch.commit();
+
+      return true;
+    }
+
+    return false;
+  }
+
+  // /**
+  //  * Esce dalla lista corrente dell'utente autenticato
+  //  */
+  async exitList(listId: string): Promise<void> {
+    if (this.isLoggedIn()) {
+      return this.removeUser(listId, this.currentUser!.uid);
+    }
+  }
+
+  async removeUser(listId: string, userUid: string) {
+    const batch = writeBatch(this.firestore);
+
+    await this.removeUserList(listId, batch, userUid);
+    batch.update(doc(this.firestore, `${CollectionEnum.LISTS}/${listId}`), { membersCount: increment(-1) });
+    return batch.commit();
+  }
+
+
+  // /**
+  //  * Modifica il contenuto dei film della lista di cui l'utente è membro
+  //  */
+  async removeMovie(id: number, listId?: string): Promise<void> {
+    const batch = writeBatch(this.firestore);
+
+    const movieRef = doc(this.firestore, `${CollectionEnum.LISTS}/${listId}/${CollectionEnum.MOVIES}/${id}`);
+
+    const movie = await firstValueFrom(docData(movieRef));
+
+    batch.delete(movieRef);
+    batch.delete(doc(this.firestore, `${CollectionEnum.MOVIES}/${id}/${CollectionEnum.LISTS}/${listId}`));
+    batch.update(doc(this.firestore, `${CollectionEnum.LISTS}/${listId}`), { moviesCount: increment(-1), watchedMovies: increment(movie!['watched'] ? -1 : 0) });
+
+    return batch.commit();
+  }
+
+  // /**
+  //  * Modifica il contenuto dei film della lista di cui l'utente è membro
+  //  */
+  async setMovieAsWatched(id: number, listId: string): Promise<void> {
+    const batch = writeBatch(this.firestore);
+
+    const movieRef = doc(this.firestore, `${CollectionEnum.LISTS}/${listId}/${CollectionEnum.MOVIES}/${id}`);
+
+    batch.update(movieRef, { watched: true, watchedDate: new Date().toISOString() });
+    batch.update(doc(this.firestore, `${CollectionEnum.LISTS}/${listId}`), { watchedMovies: increment(1) });
+    return batch.commit();
+  }
+
+
+  reviewMovie(movieId: string, review: -1 | 1) {
+
+    return setDoc(doc(this.firestore, CollectionEnum.REVIEWS), { review, user: this.currentUser!.uid, movie: movieId });
+  }
+
+  async movieStatus(id: number, listId?: string): Promise<MovieStatusEnum> {
+
+    const movie = await getDoc(doc(this.firestore, `${CollectionEnum.MOVIES}/${id}/${CollectionEnum.LISTS}/${listId}`));
+
+    if (!movie.exists()) {
+      return MovieStatusEnum.NOT_IN_LIST;
+    }
+    return movie.get('watched') ? MovieStatusEnum.WATCHED : MovieStatusEnum.TO_WATCH;
+  }
+
+  // /**
+  //  * Legge i film di una lista (solo se l'utente è membro)
+  //  */
   getListMovies(
     listId: string,
     watched = false
   ): Observable<SearchItemModel[]> {
-    if (!this.currentUser) throw new Error('Utente non autenticato');
-    const db = ref(
-      database,
-      `lists/${listId}/${watched ? 'watched_movies' : 'movies'}`
-    );
-
-    return listVal<SearchItemModel>(db).pipe(
-      map((res) =>
-        res.map((m) => ({
-          ...m,
-          watched: watched,
-          poster_path: m.poster_path.startsWith(environment.posterUrl)
-            ? m.poster_path
-            : environment.posterUrl + m.poster_path,
-        }))
-      )
-    );
+    return collectionData(query(collection(this.firestore, `${CollectionEnum.LISTS}/${listId}/${CollectionEnum.MOVIES}`), where('watched', '==', watched))) as Observable<SearchItemModel[]>;
   }
 
-  /**
-   * Legge i membri di una lista (solo se l'utente è membro)
-   */
-  getListMembers(listId: string): Observable<{ [key: string]: boolean }> {
-    if (!this.currentUser) throw new Error('Utente non autenticato');
-    const db = ref(database, `lists/${listId}/members`);
-    return list(db).pipe(
-      map((actions) =>
-        Object.fromEntries(
-          actions.map((a) => [a.snapshot.key, a.snapshot.val()])
-        )
-      )
-    );
+  // /**
+  //  * Legge i memberi di una lista (solo se l'utente è membro)
+  //  */
+  getListMembers(
+    listId: string,
+  ) {
+    return collectionData(query(collection(this.firestore, `${CollectionEnum.MEMBERSHIPS}`), where('list.id', '==', listId))) as Observable<MembershipModel[]>;
   }
 
-  /**
-   * Aggiunge l'utente autenticato come membro a una lista esistente
-   */
-  async joinList(listId: string): Promise<boolean> {
-    listId = listId.startsWith('-') ? listId : '-' + listId;
-    console.log('Aggiungi alla lista: ', listId);
-    if (!this.currentUser) throw new Error('Utente non autenticato');
-    const res = await get(ref(database, `lists/${listId}/info/id`));
-    if (!res.exists()) {
-      console.log('Errore! lista non esistente');
-      return false; // La lista non esiste
-    }
-    const alreadyInlist = await get(
-      ref(database, `lists/${listId}/members/${this.currentUser.uid}`)
-    );
-    if (alreadyInlist.exists() && alreadyInlist.val()) {
-      console.log('Errore! Utente già in lista');
-      return false;
-    }
-    const updates: { [key: string]: unknown } = {};
-    updates[`lists/${listId}/members/${this.currentUser.uid}`] = true;
-    updates[`lists/${listId}/info/membersCount`] = increment(1);
-    updates[`users/${this.currentUser.uid}/lists/${listId}`] = listId;
-    await update(ref(database), updates);
-    console.log('Invito accettato');
-    return true;
-  }
-
-  async removeUser(listId: string, userUid: string) {
-    console.log('Removing user ' + userUid + ' dalla lista ' + listId);
-
-    listId = listId.startsWith('-') ? listId : '-' + listId;
-    const res = await get(ref(database, `lists/${listId}/info/createdBy`));
-    if (!res.exists) {
-      throw new Error('Lista non esistente');
-    } else if (res.val() != this.currentUser?.uid) {
-      throw new Error("L`'utente non è amministratore della lista.");
-    }
-    const userStatus = await get(
-      ref(database, `lists/${listId}/members/${userUid}`)
-    );
-    if (!userStatus.exists) {
-      throw new Error('Utente non esistente');
-    }
-    const updates: { [key: string]: unknown } = {};
-    updates[`lists/${listId}/members/${userUid}`] = null;
-    if (userStatus.val()) {
-      updates[`lists/${listId}/info/membersCount`] = increment(-1);
-    } else {
-      updates[`invitations/${userUid}/${listId}`] = null;
-    }
-    await update(ref(database), updates);
-  }
-
-  /**
-   * Aggiunge l'utente autenticato come membro a una lista esistente
-   */
+  // /**
+  //  * Aggiunge l'utente autenticato come membro a una lista esistente
+  //  */
   async inviteToList(listId: string, username: string): Promise<boolean> {
-    if (!this.currentUser) throw new Error('Utente non autenticato');
-    listId = listId.startsWith('-') ? listId : '-' + listId;
-    const res = await get(ref(database, `usernames/${username.toLowerCase()}`));
-    if (!res.exists()) {
-      return false; // La lista non esiste.
+    const user = await getDocs(query(collection(this.firestore, CollectionEnum.USERS), where('username', '==', username)));
+
+    if (user.empty) {
+      return false; // L'utente non esiste
     }
-    const uid = res.val();
-    const isInList = await get(ref(database, `lists/${listId}/members/${uid}`));
-    if (isInList.exists()) {
+    const uid = user.docs[0].id;
+
+    if (await this.userInList(listId, uid)) {
       return false; // L'utente è già in lista.
     }
-    const updates: { [key: string]: unknown } = {};
-    updates[`invitations/${uid}/${listId}`] = true;
-    updates[`lists/${listId}/members/${uid}`] = false;
-    await update(ref(database), updates);
+
+    const list = await firstValueFrom(this.getListInfo(listId));
+
+    await this.addToUserList({ id: listId, name: list.name }, { uid: uid, username: username }, MembershipEnum.PENDING);
 
     return true;
   }
 
-  getListInvitations(): Observable<string[]> {
-    if (!this.currentUser) throw new Error('Utente non autenticato');
-    const db = ref(database, `invitations/${this.currentUser.uid}`);
+  async acceptListInvitation(invitationId: string) {
 
-    return list(db).pipe(
-      map((actions) => actions.map((a) => a.snapshot.key as string)),
-      tap(console.log)
-    );
-  }
+    return await updateDoc(doc(this.firestore, `${CollectionEnum.MEMBERSHIPS}/${invitationId}`), { status: 'accepted' });
 
-  async acceptListInvitation(listId: string): Promise<boolean> {
-    if (!this.currentUser) throw new Error('Utente non autenticato');
-    listId = listId.startsWith('-') ? listId : '-' + listId;
-
-    const res = await this.joinList(listId);
-    if (res) {
-      await remove(
-        ref(database, `invitations/${this.currentUser.uid}/${listId}`)
-      );
-    }
-
-    return res;
   }
 
   async declineListInvitation(listId: string): Promise<void> {
-    if (!this.currentUser) throw new Error('Utente non autenticato');
-    listId = listId.startsWith('-') ? listId : '-' + listId;
-
-    const updates: { [key: string]: unknown } = {};
-    updates[`lists/${listId}/members/${this.currentUser.uid}`] = null;
-    updates[`invitations/${this.currentUser.uid}/${listId}`] = null;
-
-    await update(ref(database), updates);
-  }
-
-  /**
-   * Modifica il nome di una lista
-   */
-  async changeListName(name: string, listId: string): Promise<void> {
-    if (!this.currentUser) throw new Error('Utente non autenticato');
-    await set(ref(database, `lists/${listId}/info/name`), name);
-  }
-
-  /**
-   * Esce dalla lista corrente dell'utente autenticato
-   */
-  async exitList(listId: string): Promise<void> {
-    if (!this.currentUser) throw new Error('Utente non autenticato');
-    console.log('Exiting from list', listId);
-    listId = listId.startsWith('-') ? listId : '-' + listId;
-
-    const updates: { [key: string]: unknown } = {};
-    updates[`users/${this.currentUser.uid}/lists/${listId}`] = null;
-    updates[`lists/${listId}/info/membersCount`] = increment(-1);
-    updates[`lists/${listId}/members/${this.currentUser.uid}`] = null;
-
-    return update(ref(database), updates);
-  }
-
-  /**
-   * Modifica il contenuto dei film della lista di cui l'utente è membro
-   */
-  async addMovie(newMovie: SearchItemModel, listId?: string): Promise<void> {
-    if (!this.currentListId)
-      throw new Error('Utente non presente in nessuna lista');
-
-    const updates: { [key: string]: unknown } = {};
-    updates[`lists/${listId ?? this.currentListId}/movies/${newMovie.id}`] = {
-      id: newMovie.id,
-      title: newMovie.title,
-      poster_path: newMovie.poster_path.replace(environment.posterUrl, ''),
-      // vote_average: newMovie.vote_average,
-      createdDate: new Date().toISOString(),
-    };
-    updates[`lists/${listId ?? this.currentListId}/info/moviesCount`] =
-      increment(1);
-    updates[`movies/${newMovie.id}/${listId ?? this.currentListId}`] = false;
-
-    await update(ref(database), updates);
-  }
-
-  /**
-   * Modifica il contenuto dei film della lista di cui l'utente è membro
-   */
-  async removeMovie(id: number, listId?: string): Promise<void> {
-    const watched = await get(
-      ref(
-        database,
-        `lists/${listId ?? this.currentListId}/watched_movies/${id}/id`
-      )
-    );
-
-    const updates: { [key: string]: unknown } = {};
-    updates[`lists/${listId ?? this.currentListId}/info/moviesCount`] =
-      increment(-1);
-    if (watched.exists()) {
-      updates[`lists/${listId ?? this.currentListId}/watched_movies/${id}`] =
-        null;
-      updates[`lists/${listId ?? this.currentListId}/info/watchedMovies`] =
-        increment(-1);
-    } else {
-      updates[`lists/${listId ?? this.currentListId}/movies/${id}`] = null;
+    if (this.isLoggedIn()) {
+      return await this.removeUserList(listId, undefined, this.currentUser!.uid);
     }
-    updates[`movies/${id}/${listId ?? this.currentListId}`] = null;
-
-    return update(ref(database), updates);
   }
 
   /**
-   * Modifica il contenuto dei film della lista di cui l'utente è membro
+   * Legge l'elenco degli ID lista dell'utente autenticato
    */
-  async setMovieAsWatched(id: number, listId?: string): Promise<void> {
-    const listRef = ref(database, `lists/${listId ?? this.currentListId}`);
+  getUserLists(uid?: string) {
+    if (uid || this.isLoggedIn()) {
+      return collectionData(query(collection(this.firestore, CollectionEnum.MEMBERSHIPS), where('uid', '==', uid || this.currentUser!.uid))) as Observable<MembershipModel[]>
+    }
 
-    console.log(listId);
-    console.log(id);
-    const movie = (
-      await get(
-        ref(database, `lists/${listId ?? this.currentListId}/movies/${id}`)
-      )
-    ).val();
-
-    movie.watchedDate = new Date().toISOString();
-    const updates: { [key: string]: unknown } = {};
-    updates[`lists/${listId ?? this.currentListId}/movies/${id}`] = null;
-    updates[`lists/${listId ?? this.currentListId}/watched_movies/${id}`] =
-      movie;
-    updates[`lists/${listId ?? this.currentListId}/info/watchedMovies`] =
-      increment(1);
-    updates[`movies/${id}/${listId ?? this.currentListId}`] = true;
-
-    return update(ref(database), updates);
+    return undefined;
   }
 
-  reviewMovie(movieId: string, review: -1 | 1) {
-    const updates: { [key: string]: unknown } = {};
-
-    updates[`reviews/${movieId}/${this.currentUser!.uid}`] = review;
-    updates[`users/${this.currentUser!.uid}/reviews/${movieId}`] = review;
-
-    return update(ref(database), updates);
+  private async userInList(listId: string, uid: string) {
+    return !(await getDocs(query(collection(this.firestore, CollectionEnum.MEMBERSHIPS), and(where('list.id', '==', listId), where('user.uid', '==', uid))))).empty;
   }
 
-  /**
-   * Ritorna le liste in cui è presente il film specificato
-   */
-  getMovieLists(id: number): Observable<string[]> {
-    if (!this.currentUser) throw new Error('Utente non autenticato');
-    const db = ref(database, `movies/${id}`);
-    return list(db).pipe(
-      map((actions) => actions.map((a) => a.snapshot.key as string))
+  private addToUserList(list: { name: string, id: string }, user: UserPartialModel, status: MembershipEnum, batch?: WriteBatch) {
+    const m = doc(this.firestore, CollectionEnum.MEMBERSHIPS);
+    if (batch) {
+      if (status == MembershipEnum.ACCEPTED) {
+        batch.update(doc(this.firestore, `${CollectionEnum.USERS}/${user.uid}`), { listCount: increment(1) })
+      }
+      return batch.set(m, { list, user, status });
+    } else {
+      return setDoc(m, { list, user, status });
+    }
+  }
+
+  private async updateListName(list: { name: string, id: string }, batch: WriteBatch) {
+    const q = query(collection(this.firestore, CollectionEnum.MEMBERSHIPS), where('list.id', '==', list.id));
+    (await getDocs(q)).forEach(
+      d => batch.update(d.ref, { 'list.name': list.name })
     );
   }
 
-  movieStatus(id: number, listId?: string): Observable<MovieStatusEnum> {
-    if (!this.currentUser) throw new Error('Utente non autenticato');
-    listId = listId || this.currentListId;
-    const db = ref(database, `movies/${id}/${listId}`);
-    return objectVal<MovieStatusEnum>(db).pipe(
-      map((val) => {
-        if (val != null) {
-          return val ? MovieStatusEnum.WATCHED : MovieStatusEnum.TO_WATCH;
-        }
-        return MovieStatusEnum.NOT_IN_LIST;
-      })
-    );
+  private async removeUserList(listId: string, batch?: WriteBatch, uid?: string,) {
+    const q = uid ? query(collection(this.firestore, CollectionEnum.MEMBERSHIPS), and(where('list.id', '==', listId), where('list.uid', '==', uid))) : query(collection(this.firestore, `memberships`), where('list.id', '==', listId));
+    (await getDocs(q)).forEach(async d => batch ? batch.delete(d.ref) : await deleteDoc(d.ref));
+    if (batch) {
+      batch.update(doc(this.firestore, `${CollectionEnum.USERS}/${uid}`), { listCount: increment(-1) })
+    }
   }
+
+  private isLoggedIn() {
+    if (!this.currentUser) throw new Error('Utente non autenticato.')
+    return true;
+  }
+
+
 }

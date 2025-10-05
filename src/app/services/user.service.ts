@@ -1,106 +1,58 @@
-import { inject, Injectable } from '@angular/core';
-import { User } from '@angular/fire/auth';
-import { get, listVal, objectVal, ref, update } from '@angular/fire/database';
-import { filter, first, from, map, Observable, of, switchMap, tap } from 'rxjs';
-import { UserModel } from '../models/user.model';
+import { DestroyRef, inject, Injectable } from '@angular/core';
+import { collection, doc, docData, Firestore, getDocs, query, setDoc, updateDoc, where, writeBatch, WriteBatch } from '@angular/fire/firestore';
+import { Observable } from 'rxjs';
+import { CollectionEnum } from '../enum/collection.enum';
 import { AuthService } from './auth.service';
-import { DatabaseService, UpdateModel } from './database.service';
+import { UserModel } from '../models/user.model';
+import { User } from '@angular/fire/auth';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Injectable({
   providedIn: 'root',
 })
 export class UserService {
+  private firestore = inject(Firestore);
+  private destroyRef = inject(DestroyRef);
   private authService = inject(AuthService);
-  private database = inject(DatabaseService);
+  public currentUser?: User;
 
-  addUserList(list: string) {
-    return this.authService.currentUser$.pipe(
-      filter((user) => !!user),
-      switchMap((user) =>
-        this.database.set(`users/${user.uid}/lists/${list}`, true)
-      )
-    );
-  }
-
-  removeUserList(list: string) {
-    return this.authService.currentUser$.pipe(
-      filter((user) => !!user),
-      switchMap((user) =>
-        this.database.delete(`users/${user.uid}/lists/${list}`)
-      )
-    );
-  }
-  /**
-   * Legge l'elenco degli ID lista dell'utente autenticato
-   */
-  getUserLists(): Observable<string[]> {
-    return this.authService.currentUser$.pipe(
-      filter((user) => !!user),
-      switchMap((user) =>
-        this.database
-          .getList(`users/${user.uid}/lists`)
-          .pipe(map((items) => items.map((i: any) => i.id as string)))
-      )
-    );
+  constructor() {
+    this.authService.currentUser$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((user) => {
+      this.currentUser = user!;
+    });
   }
 
   getUserInfo(uid?: string): Observable<UserModel | undefined> {
-    return this.authService.currentUser$.pipe(
-      filter((user) => !!user),
-      switchMap(
-        (user) =>
-          this.database.get(`users/${user.uid}/info`) as Observable<UserModel>
-      )
-    );
+    uid ??= this.currentUser?.uid;
+    return docData(doc(this.firestore, `${CollectionEnum.USERS}/${uid}`)) as Observable<UserModel>;
+
   }
 
-  setUserInfo() {
+  setUserInfo(uid?: string) {
     const username = 'User' + Math.floor(Math.random() * 999999);
+    uid ??= this.currentUser?.uid;
 
-    return this.authService.currentUser$.pipe(
-      filter((user) => !!user),
-      switchMap((user) => {
-        const updates: UpdateModel[] = [
-          {
-            path: `usernames/${username.toLowerCase()}`,
-            value: user.uid,
-          },
-          {
-            path: `users/${user.uid}/info`,
-            value: {
-              username: username,
-              email: user.email,
-              uid: user.uid,
-            },
-          },
-        ];
-
-        return this.database.setMultiple(updates);
-      })
-    );
+    return setDoc(doc(this.firestore, `${CollectionEnum.USERS}/${uid}`),
+      {
+        username: username,
+        uid: uid,
+        listCount: 0
+      },)
   }
 
-  async setUsername(newUsername: string, oldUsername: string) {
-    return this.authService.currentUser$.pipe(
-      filter((user) => !!user),
-      switchMap((user) => {
-        const updates: UpdateModel[] = [
-          {
-            path: `users/${oldUsername.toLocaleLowerCase()}`,
-            type: 'delete',
-          },
-          {
-            path: `usernames/${newUsername.toLowerCase()}`,
-            value: user.uid,
-          },
-          {
-            path: `users/${user.uid}/info/username`,
-            value: newUsername,
-          },
-        ];
+  async setUsername(username: string, uid?: string) {
+    const batch = writeBatch(this.firestore);
+    uid ??= this.currentUser?.uid;
+    batch.update(doc(this.firestore, `${CollectionEnum.USERS}/${uid}`),
+      {
+        username,
+      });
 
-        return this.database.setMultiple(updates);
-      })
+    const q = query(collection(this.firestore, CollectionEnum.MEMBERSHIPS), where('user.uid', '==', uid));
+    (await getDocs(q)).forEach(
+      d => batch.update(d.ref, { 'user.username': username })
     );
+
+    return batch.commit();
   }
 }
