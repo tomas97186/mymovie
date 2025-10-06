@@ -18,14 +18,14 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 60px;
-    height: 60px;
-    height: auto;
-    aspect-ratio: 1;
+    width: 70px;
+    height: 70px;
     background-color: var(--card-background-color);
+    margin-bottom: 1rem;
 
     & ion-icon {
       color: rgba(255, 255, 255, 0.6);
+      transform: scale(1.4);
     }
   }
 
@@ -38,6 +38,7 @@
 .info-section {
   display: flex;
   justify-content: space-evenly;
+  align-items: start;
 
   & div {
     display: flex;
@@ -45,6 +46,7 @@
     justify-content: center;
     align-items: center;
     text-align: center;
+    width: 100px;
 
     & .info-label {
       font-size: 0.8rem;

@@ -290,7 +290,10 @@
         "profilo": "Profilo",
         "username": "Username",
         "email": "Email",
-        "liste": "Liste"
+        "liste": "Liste",
+        "voti": "Film votati",
+        "likes": "Raccomandati",
+        "dislikes": "Non raccomandati" 
       },
       "buttons": {
         "username": "Modifica Username",
