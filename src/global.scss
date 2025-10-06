@@ -136,6 +136,15 @@ ion-fab-button {
   --color: whitesmoke;
 }
 
+ion-fab-button.glass {
+  -webkit-backdrop-filter: blur(5.1px);
+  --background: #211f26e4;
+  height: 44px;
+  width: 44px;
+  --border-radius: 50% !important;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+}
+
 ion-button {
   --color: whitesmoke !important;
   --padding-top: 1rem;
@@ -214,8 +223,8 @@ ion-header.transparent {
 
 .section-description {
   color: gray;
-  font-size: .9rem;
-  margin-left: .4rem;
+  font-size: 0.9rem;
+  margin-left: 0.4rem;
 }
 
 ion-title.with-icon {
@@ -310,5 +319,5 @@ ion-list ion-item:last-child {
 
 ion-note {
   vertical-align: top;
-  margin-right: .5rem;
+  margin-right: 0.5rem;
 }

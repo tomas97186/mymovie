@@ -98,7 +98,7 @@ export class MovieCardComponent {
     const ref = await this.dialog.create({
       component: MovieReviewDialogComponent,
       componentProps: {
-        movieId: this.movie()?.id,
+        movie: this.movie(),
       },
       cssClass: 'central-modal',
     });

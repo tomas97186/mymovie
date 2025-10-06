@@ -47,6 +47,10 @@ import {
   sparklesOutline,
   star,
   starOutline,
+  thumbsDownOutline,
+  thumbsDownSharp,
+  thumbsUpOutline,
+  thumbsUpSharp,
   trash
 } from 'ionicons/icons';
 import { AuthService } from './services/auth.service';
@@ -133,7 +137,11 @@ export class AppComponent {
       logOut,
       ellipsisHorizontalOutline,
       calendarOutline,
-      sparklesOutline
+      sparklesOutline,
+      thumbsDownSharp,
+      thumbsDownOutline,
+      thumbsUpSharp,
+      thumbsUpOutline
     });
   }
 }

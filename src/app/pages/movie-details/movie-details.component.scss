@@ -123,6 +123,36 @@ button.floating-button {
   color: #b1b1b1;
 }
 
+.review-list {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+
+  & .review {
+    font-size: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    .label {
+      font-size: .9rem;
+      color: gray;
+    }
+  }
+
+  & ion-button:first-child {
+    --border-radius: 20px 0px 0px 20px !important;
+  }
+
+  & ion-button:last-child {
+    --border-radius: 00px 20px 20px 0px !important;
+  }
+}
+
+.add-review {
+  display: flex;
+  justify-content: space-evenly;
+}
+
 .movie-title {
   max-width: 100%;
   white-space: pre-wrap;

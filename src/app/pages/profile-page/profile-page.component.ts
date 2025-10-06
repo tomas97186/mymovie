@@ -9,43 +9,36 @@ import {
 import { Router, RouterModule } from '@angular/router';
 import {
   AlertController,
-  IonButton,
-  IonButtons,
   IonContent,
-  IonHeader,
   IonIcon,
-  IonItem,
-  IonLabel,
-  IonList,
-  IonTitle,
-  IonToolbar,
-  ModalController,
-} from '@ionic/angular/standalone';
+  IonSegment,
+  IonSegmentButton,
+  IonSegmentView,
+  IonSegmentContent,
+  ModalController, IonLabel, IonFab, IonFabButton } from '@ionic/angular/standalone';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { catchError, filter, first, from, map, switchMap, tap } from 'rxjs';
+import { MovieListComponent } from 'src/app/components/movie-list/movie-list.component';
 import { ToastService } from 'src/app/services/toast.service';
+import { UserService } from 'src/app/services/user.service';
+import { BUTTONS } from 'src/app/variables';
 import { fieldValidations } from 'src/environments/fields.validation';
 import { AuthService } from '../../services/auth.service';
 import { MovieListService } from '../../services/movie-list.service';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { BUTTONS } from 'src/app/variables';
-import { UserService } from 'src/app/services/user.service';
 
 @Component({
   selector: 'app-profile-page',
-  imports: [
+  imports: [IonFabButton, IonFab, IonLabel, 
+    IonSegmentButton,
+    IonSegment,
     CommonModule,
     TranslateModule,
     RouterModule,
-    IonLabel,
-    IonItem,
-    IonList,
-    IonButtons,
     IonContent,
-    IonTitle,
-    IonToolbar,
-    IonHeader,
     IonIcon,
-    IonButton,
+    IonSegmentView,
+    IonSegmentContent,
+    MovieListComponent,
   ],
   templateUrl: './profile-page.component.html',
   styleUrl: './profile-page.component.scss',
@@ -61,7 +54,10 @@ export class ProfilePageComponent {
   private readonly snackBar = inject(ToastService);
   authService = inject(AuthService);
   userService = inject(UserService);
+  listService = inject(MovieListService);
   userInfo$ = this.userService.getUserInfo();
+  userLikes = this.listService.getUserReviews(undefined, true);
+  userDislikes = this.listService.getUserReviews(undefined, false);
 
   async changeName(uid: string) {
     const alert = await this.alertController.create({
@@ -117,6 +113,11 @@ export class ProfilePageComponent {
     await alert.present();
   }
 
+  scrollToTop() {
+    const element = document.querySelector('.container');
+    element?.scroll({ top: 0, behavior: 'smooth' });
+  }
+  
   async changePassword() {
     const alert = await this.alertController.create({
       header: this.translate.instant(this.DIALOG_LABELS + 'password.header'),
@@ -272,5 +273,4 @@ export class ProfilePageComponent {
         .subscribe();
     }
   }
-
 }

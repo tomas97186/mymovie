@@ -1,5 +1,5 @@
-@let movie = this.movie.value(); @let isLoading = this.movie.isLoading();
-@if(isLoading) {
+@let movie = this.movie.value(); @let isLoading = this.movie.isLoading(); @let
+reviews = this.reviews.value(); @if(isLoading) {
 <div class="loading-page">
   <ion-spinner style="width: 100px; height: 100px" name="bubbles"></ion-spinner>
 </div>
@@ -80,11 +80,43 @@ this.trailer();
         }
       </div>
       <hr class="mx-3" />
+      } @if(reviews) {
+      <h4 class="p-2">
+        {{ "pages.movieDetails.labels.amiciReviews" | translate }}
+      </h4>
+      <div class="review-list">
+        <ion-button color="light" size="small">
+          <ion-icon name="thumbs-down-outline" slot="start"></ion-icon>
+          {{
+            reviews.dislikes +
+              " " +
+              ("pages.movieDetails.labels.dislike" | translate)
+          }}
+        </ion-button>
+        <ion-button  size="small">
+          <ion-icon name="thumbs-up-sharp" slot="start"></ion-icon>
+          {{
+            reviews.likes + " " + ("pages.movieDetails.labels.like" | translate)
+          }}
+        </ion-button>
+        <!-- <div class="review">
+          <span> 👎 {{ reviews.dislikes }} </span>
+          <span class="label">
+            {{ "pages.movieDetails.labels.dislike" | translate }}
+          </span>
+        </div>
+        <div class="review">
+          <span> 👍 {{ reviews.likes }} </span>
+          <span class="label">
+            {{ "pages.movieDetails.labels.like" | translate }}
+          </span>
+        </div> -->
+      </div>
       } @if(trailer) {
       <div class="trailer-container mt-4">
-        <h3 class="p-2">
+        <h4 class="p-2">
           {{ "pages.movieDetails.labels.trailer" | translate | titlecase }}
-        </h3>
+        </h4>
         <div class="text-center">
           <iframe
             class="trailer"
@@ -96,34 +128,32 @@ this.trailer();
           ></iframe>
         </div>
       </div>
-      @if(providers(); as providers) {
-        @if(providers.length > 0) {
-          <h3 class="p-2 mt-4 mt-2">
-            {{ "pages.movieDetails.labels.doveGuardarlo" | translate | titlecase }}
-          </h3>
-          <div class="provider-list">
-            @for(p of providers; track p.provider_id) {
-            <div class="provider-container">
-              <img class="provide-img" [src]="posterUrl + p.logo_path" alt="" />
-              <p class="watch-type">
-                @for(type of p.type; track $index) {
-                {{
-                  "pages.movieDetails.labels.providerType." + type
-                    | translate
-                    | titlecase
-                }}}
-              </p>
-            </div>
-            }
-          </div>
+      @if(providers(); as providers) { @if(providers.length > 0) {
+      <h4 class="p-2 mt-4 mt-2">
+        {{ "pages.movieDetails.labels.doveGuardarlo" | translate | titlecase }}
+      </h4>
+      <div class="provider-list">
+        @for(p of providers; track p.provider_id) {
+        <div class="provider-container">
+          <img class="provide-img" [src]="posterUrl + p.logo_path" alt="" />
+          <p class="watch-type">
+            @for(type of p.type; track $index) {
+            {{
+              "pages.movieDetails.labels.providerType." + type
+                | translate
+                | titlecase
+            }}}
+          </p>
+        </div>
         }
-      } } @if(recommendations && recommendations.results.length > 0) {
+      </div>
+      } } } @if(recommendations && recommendations.results.length > 0) {
       <div class="related-movies mt-4 p-2">
-        <h3>
+        <h4>
           {{
             "pages.movieDetails.labels.filmRaccomandati" | translate | titlecase
           }}
-        </h3>
+        </h4>
         <app-movie-list
           [movies]="recommendations!.results"
           [total]="recommendations.results.length"
@@ -132,7 +162,7 @@ this.trailer();
       </div>
       } @if(cast(); as cast) {
       <div class="cast-container mt-2 p-2">
-        <h3>{{ "pages.movieDetails.labels.cast" | translate | titlecase }}</h3>
+        <h4>{{ "pages.movieDetails.labels.cast" | translate | titlecase }}</h4>
         <div class="cast-list mt-3">
           @for (p of cast; let i = $index; track p.id) { @if(i < 6 ||
           isCastExpanded) {

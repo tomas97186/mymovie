@@ -24,12 +24,12 @@ import { MovieListService } from 'src/app/services/movie-list.service';
 export class MovieReviewDialogComponent {
   private listService = inject(MovieListService);
   dialog = inject(ModalController);
-  movieId = input.required<string>();
+  movie = input.required<{ id: string; poster_path: string }>();
 
   constructor() {}
 
   async reviewFilm(value: -1 | 1) {
-    await this.listService.reviewMovie(this.movieId(), value);
+    await this.listService.reviewMovie(this.movie(), value);
     await this.dialog.dismiss(value, 'confirm');
   }
 }

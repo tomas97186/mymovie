@@ -29,7 +29,7 @@ import {
   ModalController,
 } from '@ionic/angular/standalone';
 import { TranslateModule } from '@ngx-translate/core';
-import { of, Subscription } from 'rxjs';
+import { from, of, Subscription } from 'rxjs';
 import { ProviderModel } from 'src/app/models/provider.model';
 import { environment } from '../../../environments/environment';
 import { MovieHeroComponent } from '../../components/movie-hero/movie-hero.component';
@@ -38,6 +38,7 @@ import { MovieListsDialogComponent } from '../../components/movie-lists-dialog/m
 import { MovieModel } from '../../models/movie.model';
 import { TimePipe } from '../../pipes/time.pipe';
 import { TMDBService } from '../../services/tmdb.service';
+import { MovieListService } from 'src/app/services/movie-list.service';
 
 @Component({
   selector: 'app-movie-details',
@@ -71,6 +72,7 @@ export class MovieDetailsComponent {
   public location = inject(Location);
   private dialog = inject(ModalController);
   private eventSub?: Subscription;
+  private listService = inject(MovieListService);
   isImgLoaded = false;
   isOverviewExpanded = false;
   isCastExpanded = false;
@@ -86,6 +88,16 @@ export class MovieDetailsComponent {
       return this.tmdbService.getMovieDetails(id!, true);
     },
   });
+  reviews = rxResource<
+    { likes: number; dislikes: number } | undefined,
+    { id: number | undefined }
+  >({
+    request: () => ({ id: this.movieId() }),
+    loader: ({ request: { id } }) => {
+      if (!id) return of(undefined);
+      return from(this.listService.getMovieReviews(id));
+    },
+  });
   recommendations = computed(() => this.movie.value()?.recommendations);
   trailer = computed(() => {
     const trailer = this.movie
@@ -95,8 +107,8 @@ export class MovieDetailsComponent {
       );
     return trailer
       ? this._sanitizer.bypassSecurityTrustResourceUrl(
-        `https://www.youtube.com/embed/${trailer.key}?rel=0&modestbranding=1&showinfo=0`
-      )
+          `https://www.youtube.com/embed/${trailer.key}?rel=0&modestbranding=1&showinfo=0`
+        )
       : undefined;
   });
   cast = computed(() => this.movie.value()?.credits?.cast);
@@ -122,7 +134,7 @@ export class MovieDetailsComponent {
       res[p.provider_id].type.push('rent');
     }
 
-    return Object.values(res).sort(p => p.display_priority);
+    return Object.values(res).sort((p) => p.display_priority);
   });
 
   ngOnInit() {
@@ -168,7 +180,6 @@ export class MovieDetailsComponent {
       initialBreakpoint: 0.5,
       breakpoints: [0, 0.25, 0.5],
       expandToScroll: false,
-
     });
     dialogRef.present();
   }

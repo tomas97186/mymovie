@@ -1,25 +1,25 @@
 @let userInfo = this.userInfo$ | async;
 
-<!-- <ion-header class="transparent">
-  <ion-toolbar class="large">
-    <ion-title>
-      {{ "pages.profile.labels.profilo" | translate }}
-    </ion-title>
-    <ion-buttons slot="end">
-      <ion-button routerLink="/settings">
-        <ion-icon slot="icon-only" name="settings-outline"></ion-icon>
-      </ion-button>
-    </ion-buttons>
-  </ion-toolbar>
-</ion-header> -->
-<ion-content>
+<ion-fab slot="fixed" vertical="top" horizontal="end">
+  <ion-fab-button class="glass" routerLink="/settings">
+    <ion-icon name="settings-outline"></ion-icon>
+  </ion-fab-button>
+</ion-fab>
+<div class="profile-page">
+  <!-- <div class="image-background">
+    <div class="movie-overlay"></div>
+    <img
+      src="	https://image.tmdb.org/t/p/original/deUWVEgNh2IGjShyymZhaYP40ye.jpg"
+      alt=""
+    />
+  </div> -->
   <div class="container py-2">
     <div class="user-info">
       <div class="icon-avatar">
         <ion-icon name="person"></ion-icon>
       </div>
       <h6>{{ userInfo?.username }}</h6>
-      <p class="bio">Questa è la mia bio di prova.</p>
+      <p class="bio">{{userInfo?.bio}}</p>
     </div>
     <div class="info-section">
       <div>
@@ -47,5 +47,60 @@
         </div>
       </div>
     </div>
+    <div class="review-filter">
+      <ion-segment value="like" mode="ios" (ionChange)="scrollToTop()">
+        <ion-segment-button value="like" content-id="like">
+          <ion-label
+            >{{ "pages.profile.labels.likes" | translate | titlecase }}
+            <!-- <span class="movie-count">{{ details.moviesCount - details.watchedMovies }}</span> -->
+          </ion-label>
+        </ion-segment-button>
+        <ion-segment-button value="dislike" content-id="dislike">
+          <ion-label>{{
+            "pages.profile.labels.dislikes" | translate | titlecase
+          }}</ion-label>
+        </ion-segment-button>
+      </ion-segment>
+    </div>
+    <ion-segment-view>
+      <ion-segment-content id="like">
+        @let userLikes = this.userLikes | async; @if(userLikes &&
+        userLikes.length > 0) {
+        <app-movie-list
+          [movies]="userLikes"
+          [total]="userLikes!.length"
+        ></app-movie-list>
+        } @else {
+        <div class="no-movies-banner">
+          <ion-icon name="sentiment_dissatisfied"></ion-icon
+          ><span>{{
+            "pages.profile.labels.noFilm" | translate | titlecase
+          }}</span>
+          <span style="font-size: 0.7rem">{{
+            "pages.profile.labels.start" | translate | titlecase
+          }}</span>
+        </div>
+        }
+      </ion-segment-content>
+      <ion-segment-content id="dislike">
+        @let userDislikes = this.userDislikes | async; @if(userDislikes &&
+        userDislikes.length > 0) {
+        <app-movie-list
+          [movies]="userDislikes"
+          [total]="userDislikes!.length"
+        ></app-movie-list>
+        } @else {
+        <div class="no-movies-banner">
+          <ion-icon name="sentiment_dissatisfied"></ion-icon
+          ><span>{{
+            "pages.profile.labels.noFilm" | translate | titlecase
+          }}</span>
+          <span style="font-size: 0.7rem">{{
+            "pages.profile.labels.start" | translate | titlecase
+          }}</span>
+        </div>
+        }
+      </ion-segment-content>
+    </ion-segment-view>
   </div>
-</ion-content>
+</div>

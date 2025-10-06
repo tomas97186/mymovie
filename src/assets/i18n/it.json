@@ -92,6 +92,10 @@
     },
     "movieDetails": {
       "labels": {
+        "amiciReviews": "Cosa ne pensano i tuoi amici?",
+        "eTu": "E tu?",
+        "like": "Mi piace",
+        "dislike": "Non mi piace",
         "direttoDa": "Diretto da",
         "direttoDaSubject": "Diretto da {{subject}}",
         "trailer": "trailer",
@@ -293,7 +297,9 @@
         "liste": "Liste",
         "voti": "Film votati",
         "likes": "Raccomandati",
-        "dislikes": "Non raccomandati" 
+        "dislikes": "Non raccomandati",
+        "noFilm": "Nessuna recensione",
+        "start": "Ancora nessuna recensione aggiunta"
       },
       "buttons": {
         "username": "Modifica Username",
@@ -344,6 +350,7 @@
         "account": {
           "title": "Account",
           "username": "Username",
+          "bio": "Modifica Bio",
           "password": "Modifica Password",
           "email": "Email",
           "liste": "Liste"
