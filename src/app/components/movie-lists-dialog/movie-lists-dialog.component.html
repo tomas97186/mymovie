@@ -15,12 +15,12 @@
   </ion-toolbar>
 </ion-header>
 <ion-content>
-  <p class="section-description">
+  <!-- <p class="section-description">
     {{ "dialogs.movieMenu.labels.descrizione" | translate }}
-  </p>
+  </p> -->
   @if(userLists$ | async; as userLists) {
   <div class="container">
-    <ion-list lines="none">
+    <ion-list>
       @for(list of userLists; track list.listInfo.id) { @if(list.movieStatus |
       async; as movieStatus) {
       <ion-item>

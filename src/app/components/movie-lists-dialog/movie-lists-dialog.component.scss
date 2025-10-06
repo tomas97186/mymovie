@@ -1,7 +1,6 @@
 ion-list {
   display: flex;
   flex-direction: column;
-  gap: .6rem;
   background: transparent;
 }
 
@@ -9,6 +8,7 @@ ion-item {
   --border-radius: 10px;
   --padding-top: .3rem;
   --padding-bottom: .3rem;
+  --background: transparent !important;
 }
 
 ion-label {

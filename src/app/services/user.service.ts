@@ -84,6 +84,8 @@ export class UserService {
       username: username,
       uid: this.currentUser!.uid!,
       listCount: 0,
+      dislikedMovies: 0,
+      likedMovies: 0,
       friends: [],
     };
 

@@ -1,8 +1,59 @@
-
 .actions {
-    margin-top: 2rem;
+  margin-top: 2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.user-info {
+  text-align: center;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  & .icon-avatar {
+    border-radius: 50%;
     display: flex;
-    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 60px;
+    height: 60px;
+    height: auto;
+    aspect-ratio: 1;
+    background-color: var(--card-background-color);
+
+    & ion-icon {
+      color: rgba(255, 255, 255, 0.6);
+    }
+  }
+
+  & .bio {
+    color: gray;
+    font-size: 0.9rem;
+  }
+}
+
+.info-section {
+  display: flex;
+  justify-content: space-evenly;
+
+  & div {
+    display: flex;
+    flex-direction: column-reverse;
     justify-content: center;
     align-items: center;
+    text-align: center;
+
+    & .info-label {
+      font-size: 0.8rem;
+      color: gray;
+    }
+
+    & .info-value {
+      font-size: 1.4rem;
+      font-weight: 500;
+    }
+  }
 }

@@ -252,11 +252,25 @@ export class MovieListService {
   }
 
   reviewMovie(movieId: string, review: -1 | 1) {
-    return addDoc(collection(this.firestore, CollectionEnum.REVIEWS), {
+    const batch = writeBatch(this.firestore);
+    const userRef = doc(
+      this.firestore,
+      `${CollectionEnum.USERS}/${this.userService.currentUser!.uid}`
+    );
+
+    batch.set(doc(collection(this.firestore, CollectionEnum.REVIEWS)), {
       review,
       user: this.userService.currentUser!.uid,
       movie: movieId,
     });
+
+    if (review === -1) {
+      batch.update(userRef, { dislikedMovies: increment(1) });
+    } else {
+      batch.update(userRef, { likedMovies: increment(1) });
+    }
+
+    return batch.commit();
   }
 
   movieStatus(id: number, listId?: string) {

@@ -1,6 +1,6 @@
 @let userInfo = this.userInfo$ | async;
 
-<ion-header class="transparent">
+<!-- <ion-header class="transparent">
   <ion-toolbar class="large">
     <ion-title>
       {{ "pages.profile.labels.profilo" | translate }}
@@ -11,9 +11,26 @@
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
-</ion-header>
+</ion-header> -->
 <ion-content>
-  <div class="container">
+  <div class="container py-2">
+    <div class="user-info">
+      <div class="icon-avatar">
+        <ion-icon name="person"></ion-icon>
+      </div>
+      <h6>{{ userInfo?.username }}</h6>
+      <p class="bio">Questa è la mia bio di prova.</p>
+    </div>
+    <div class="info-section">
+      <div>
+        <div class="info-label">
+          {{ "pages.profile.labels.voti" | translate }}
+        </div>
+        <div class="info-value">
+          {{ (userInfo?.likedMovies ?? 0) + (userInfo?.dislikedMovies ?? 0) }}
+        </div>
+      </div>
+    </div>
     <ion-list class="card-background" lines="none">
       <ion-item class="profile-item">
         <ion-label>{{ "pages.profile.labels.username" | translate }}</ion-label>
