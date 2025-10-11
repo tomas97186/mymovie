@@ -1,14 +1,6 @@
 export interface ReviewModel {
-    author: string
-    author_details: {
-        name: string
-        username: string
-        avatar_path: string
-        rating: string
-    }
-    content: string
-    created_at: string
-    id: string
-    updated_at: string
-    url: string
+  review: -1 | 1;
+  id: string;
+  user: string;
+  movie: { id: string; poster_path: string };
 }

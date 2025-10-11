@@ -100,7 +100,7 @@ export class TMDBService {
    * Ottieni dettagli di un film per ID
    */
   getMovieDetails(
-    movieId: number,
+    movieId: string,
     full: boolean = false
   ): Observable<MovieModel> {
     let params = this.getDefaultParams().set('movie_id', movieId.toString());

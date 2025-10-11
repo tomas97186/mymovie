@@ -1,7 +1,7 @@
 export interface SearchItemModel {
     backdrop_path: string
     genre_ids: number[]
-    id: number,
+    id: string,
     name: string,
     title: string,
     original_name: string,

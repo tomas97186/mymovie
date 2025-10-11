@@ -143,7 +143,7 @@ export class MovieListsDialogComponent {
       });
   }
 
-  movieIsWatched(movieId: number, listId: string) {
+  movieIsWatched(movieId: string, listId: string) {
     return this.listService.movieStatus(movieId, listId).pipe(
       map((res) => res === MovieStatusEnum.WATCHED),
       shareReplay()

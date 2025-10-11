@@ -1,5 +1,5 @@
 @let currentUser = this.authService.currentUser$ | async; @let details =
-this.details()!; @let members = this.members();
+this.details()!; @let members = this.members() | async;
 
 <ion-header class="transparent">
   <ion-toolbar class="large">
@@ -67,16 +67,16 @@ this.details()!; @let members = this.members();
       @for(member of members; let i = $index; track $index) {
       <ion-item>
         <div class="avatar" [ngClass]="`avatar-${i+1}`">
-          {{ member.user.username | slice : 0 : 1 | uppercase }}
+          {{ username.getUsername(member.uid) | slice : 0 : 1 | uppercase }}
         </div>
         <ion-label
           >{{
-            member.user.username ||
+            username.getUsername(member.uid) ||
               ("pages.listDetails.settings.labels.sconosciuto" | translate)
           }}
-          @if(member.user.uid === currentUser?.uid) { ({{
+          @if(member.uid === currentUser?.uid) { ({{
             "pages.listDetails.settings.labels.tu" | translate
-          }}) } @if(member.user.uid === details.createdBy) {
+          }}) } @if(member.uid === details.createdBy) {
           <p>
             {{ "pages.listDetails.settings.labels.proprietario" | translate }}
           </p>
@@ -84,7 +84,7 @@ this.details()!; @let members = this.members();
           <p>{{ "pages.listDetails.settings.labels.invitato" | translate }}</p>
           }
         </ion-label>
-        @if(currentUser?.uid === details.createdBy && member.user.uid !=
+        @if(currentUser?.uid === details.createdBy && member.uid !=
         currentUser?.uid) {
         <ion-button
           slot="end"
@@ -92,7 +92,7 @@ this.details()!; @let members = this.members();
           color="trash"
           size="medium"
           color="danger"
-          (click)="removeUser(member.user.uid!, member.user.username)"
+          (click)="removeUser(member.uid!)"
         >
           <ion-icon slot="icon-only" name="trash"></ion-icon>
         </ion-button>
@@ -109,6 +109,30 @@ this.details()!; @let members = this.members();
           {{ "pages.listDetails.settings.buttons.invita" | translate }}
         </ion-button>
       </div>
+    </ion-list>
+
+    <div class="text-description">
+      {{ "pages.listDetails.settings.labels.info" | translate }}
+    </div>
+    <ion-list>
+      <ion-item>
+        <ion-label>
+          {{ "pages.listDetails.settings.labels.creataDa" | translate }}
+        </ion-label>
+        <div class="metadata-end-wrapper" slot="end">
+          <ion-note color="medium">{{
+            username.getUsername(details.createdBy)
+          }}</ion-note>
+        </div>
+      </ion-item>
+      <ion-item>
+        <ion-label>
+          {{ "pages.listDetails.settings.labels.creataIl" | translate }}
+        </ion-label>
+        <div class="metadata-end-wrapper" slot="end">
+          <ion-note color="medium">{{ details.createdDate }}</ion-note>
+        </div>
+      </ion-item>
     </ion-list>
     <div class="actions">
       @if(currentUser?.uid === details.createdBy) {

@@ -6,6 +6,7 @@ import {
   inject,
   input,
   model,
+  signal,
 } from '@angular/core';
 import { rxResource, takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
@@ -39,6 +40,7 @@ import { MovieModel } from '../../models/movie.model';
 import { TimePipe } from '../../pipes/time.pipe';
 import { TMDBService } from '../../services/tmdb.service';
 import { MovieListService } from 'src/app/services/movie-list.service';
+import { ReviewModel } from 'src/app/models/review.model';
 
 @Component({
   selector: 'app-movie-details',
@@ -79,9 +81,10 @@ export class MovieDetailsComponent {
   tmdbService = inject(TMDBService);
   posterUrl = environment.posterUrl;
 
-  movieId = model<number | undefined>(undefined);
+  movieId = model<string | undefined>(undefined);
+  refresh = signal<boolean>(false);
   isInModal = input<boolean>(false);
-  movie = rxResource<MovieModel | undefined, { id: number | undefined }>({
+  movie = rxResource<MovieModel | undefined, { id: string | undefined }>({
     request: () => ({ id: this.movieId() }),
     loader: ({ request: { id } }) => {
       if (!id) return of(undefined);
@@ -90,12 +93,19 @@ export class MovieDetailsComponent {
   });
   reviews = rxResource<
     { likes: number; dislikes: number } | undefined,
-    { id: number | undefined }
+    { id: string | undefined; refresh: boolean }
   >({
-    request: () => ({ id: this.movieId() }),
+    request: () => ({ id: this.movieId(), refresh: this.refresh() }),
     loader: ({ request: { id } }) => {
       if (!id) return of(undefined);
       return from(this.listService.getMovieReviews(id));
+    },
+  });
+  yourReview = rxResource<ReviewModel | undefined, { id: string | undefined }>({
+    request: () => ({ id: this.movieId() }),
+    loader: ({ request: { id } }) => {
+      if (!id) return of(undefined);
+      return from(this.listService.getUserReview(id));
     },
   });
   recommendations = computed(() => this.movie.value()?.recommendations);
@@ -107,8 +117,8 @@ export class MovieDetailsComponent {
       );
     return trailer
       ? this._sanitizer.bypassSecurityTrustResourceUrl(
-        `https://www.youtube.com/embed/${trailer.key}?rel=0&modestbranding=1&showinfo=0`
-      )
+          `https://www.youtube.com/embed/${trailer.key}?rel=0&modestbranding=1&showinfo=0`
+        )
       : undefined;
   });
   cast = computed(() => this.movie.value()?.credits?.cast);
@@ -150,7 +160,7 @@ export class MovieDetailsComponent {
       .subscribe((params) => {
         const id = params.get('id');
         if (id) {
-          this.movieId.set(+id);
+          this.movieId.set(id);
         }
       });
   }
@@ -182,5 +192,12 @@ export class MovieDetailsComponent {
       expandToScroll: false,
     });
     dialogRef.present();
+  }
+
+  async reviewFilm(value: -1 | 1) {
+    this.listService.reviewMovie(this.movie.value()!, value).then((res) => {
+      this.refresh.set(!this.refresh());
+    });
+    console.log('OKK');
   }
 }

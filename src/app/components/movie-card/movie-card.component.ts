@@ -17,6 +17,7 @@ import { TMDBService } from '../../services/tmdb.service';
 import { MovieListsDialogComponent } from '../movie-lists-dialog/movie-lists-dialog.component';
 import { TranslateService } from '@ngx-translate/core';
 import { MovieReviewDialogComponent } from '../movie-review-dialog/movie-review-dialog.component';
+import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-movie-card',
@@ -110,11 +111,11 @@ export class MovieCardComponent {
   async setAsWatched(listId: string) {
     const role = await this.openReviewModal();
     if (role === 'confirm') {
-      this.OLD_setAsWatched(listId);
+      this.__setAsWatched(listId);
     }
   }
 
-  OLD_setAsWatched(listId: string): void {
+  __setAsWatched(listId: string): void {
     this.movieService
       .setMovieAsWatched(this.movie()!.id, listId)
       .then(() => {
@@ -137,9 +138,7 @@ export class MovieCardComponent {
   }
 
   onClick($event: Event) {
-    console.log(typeof this.settings.openFilmOnClick.value);
     if (this.settings.openFilmOnClick.value) {
-      console.log('Opening details: ', this.settings.openFilmOnClick.value);
       this.navigateToMovieDetails($event);
     } else {
       this.presentActionSheet();
@@ -149,6 +148,9 @@ export class MovieCardComponent {
   async presentActionSheet() {
     const movie = this.movie()!;
     const listId = this.route.snapshot.params['listId'];
+    const review = await firstValueFrom(
+      this.movieListService.getUserReview(movie.id)
+    );
     const buttons: ActionSheetButton[] = [];
     buttons.push(
       ...[
@@ -159,6 +161,22 @@ export class MovieCardComponent {
         },
       ]
     );
+    buttons.push({
+      text:
+        this.translate.instant(
+          this.BUTTON_LABELS + (review ? 'modificaVoto' : 'vota')
+        ) +
+        (review
+          ? ' (' +
+            this.translate.instant(
+              this.BUTTON_LABELS +
+                (review!.review === 1 ? 'consigliato' : 'nonConsigliato')
+            ) +
+            ')'
+          : ''),
+      icon: 'thumbs-up-sharp',
+      handler: () => this.openReviewModal().then((_) => true),
+    });
     if (listId) {
       if (!movie.watched) {
         buttons.push({

@@ -7,7 +7,8 @@ export interface InfoListModel {
     id: string,
     watchedMovies: number,
     moviesCount: number,
-    membersCount: number
+    membersCount: number,
+    createdDate: Date
 
 }
 

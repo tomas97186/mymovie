@@ -11,7 +11,7 @@ export interface MovieModel {
     name: string;
   }[];
   genre_ids: number[];
-  id: number;
+  id: string;
   imdb_id: string;
   origin_country: string[];
   original_language: string;

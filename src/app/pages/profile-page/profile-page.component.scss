@@ -52,7 +52,7 @@
   padding-top: 0.2rem;
 
   & ion-segment {
-    background: rgba(13, 13, 13, 0.56);
+    background: var(--button-color);
     box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
     backdrop-filter: blur(5px);
     -webkit-backdrop-filter: blur(5px);
@@ -124,7 +124,6 @@ ion-segment-content {
   overflow-y: hidden;
 }
 
-
 .actions {
   display: flex;
   justify-content: center;
@@ -132,14 +131,12 @@ ion-segment-content {
   margin-top: 1.2rem;
   margin-bottom: 1.2rem;
 
-  & div {
-    padding: 0;
+  padding: 0;
 
-    & ion-button {
-      --border-radius: 30px!important;
-      font-size: .8rem !important;
-      margin: 0px !important;
-      width: 100% !important;
-    }
+  & ion-button {
+    margin: 0px !important;
+    width: 100% !important;
+    max-width: 200px !important;
+    font-size: 0.7rem !important;
   }
 }

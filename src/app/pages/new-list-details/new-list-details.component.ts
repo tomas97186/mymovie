@@ -104,13 +104,6 @@ export class NewListDetailsComponent {
       return this.listService.getListMovies(request, false);
     },
   });
-  members = rxResource({
-    request: this.listId,
-    loader: ({ request }) => {
-      if (!request) return of(undefined);
-      return this.listService.getListMembers(request);
-    },
-  });
 
   async openSettings() {
     const alert = await this.dialog.create({
@@ -118,7 +111,6 @@ export class NewListDetailsComponent {
       initialBreakpoint: 1,
       componentProps: {
         details: this.listDetails.value()!,
-        members: this.members.value()!,
       },
     });
     await alert.present();

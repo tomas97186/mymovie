@@ -41,7 +41,7 @@ import { TranslateModule } from '@ngx-translate/core';
 export class MovieListDynamicComponent {
   location = inject(Location);
 
-  private currentIds = new Set<number>();
+  private currentIds = new Set<string>();
 
   currentList: SearchItemModel[] = [];
 
@@ -90,7 +90,7 @@ export class MovieListDynamicComponent {
   }
   private resetPage() {
     this.currentList = [];
-    this.currentIds = new Set<number>();
+    this.currentIds = new Set<string>();
     this.scrollToTop();
   }
   private updateCurrentList(results: SearchResultsModel) {
@@ -110,7 +110,7 @@ export class MovieListDynamicComponent {
     } else {
       console.log('RESET LIST 2');
       this.currentList = [];
-      this.currentIds = new Set<number>();
+      this.currentIds = new Set<string>();
       this.currentList = this.searchResult()!.results.filter((res) => {
         if (this.currentIds.has(res.id)) {
           return false;

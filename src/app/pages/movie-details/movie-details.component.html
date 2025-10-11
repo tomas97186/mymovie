@@ -1,5 +1,6 @@
 @let movie = this.movie.value(); @let isLoading = this.movie.isLoading(); @let
-reviews = this.reviews.value(); @if(isLoading) {
+reviews = this.reviews.value(); @let yourReview = this.yourReview.value();
+@if(isLoading) {
 <div class="loading-page">
   <ion-spinner style="width: 100px; height: 100px" name="bubbles"></ion-spinner>
 </div>
@@ -17,13 +18,20 @@ this.trailer();
 </ion-fab>
 <ion-content>
   <div class="movie-details-container">
-    <app-movie-hero [movie]="movie" [hideDetailsButton]="true" [hideDescription]="true"
-      [showPoster]="true"></app-movie-hero>
+    <app-movie-hero
+      [movie]="movie"
+      [hideDetailsButton]="true"
+      [hideDescription]="true"
+      [showPoster]="true"
+    ></app-movie-hero>
     <div class="movie-info-container">
       <div class="genre-container">
         @for(genre of movie.genres; track genre.id) {
         <div class="genre-tag">
-          <a routerLink="/discovery/movie" [queryParams]="{ with_genres: genre.id, title: genre.name }">
+          <a
+            routerLink="/discovery/movie"
+            [queryParams]="{ with_genres: genre.id, title: genre.name }"
+          >
             {{ genre.name }}
           </a>
         </div>
@@ -31,66 +39,85 @@ this.trailer();
       </div>
       @if(director(); as director) {
       <div class="director-container">
-        <span>{{
-          "pages.movieDetails.labels.direttoDa" | translate | titlecase
-          }}:</span>
-        <a [routerLink]="'/discovery/movie'" [queryParams]="{
+        <span
+          >{{
+            "pages.movieDetails.labels.direttoDa" | translate | titlecase
+          }}:</span
+        >
+        <a
+          [routerLink]="'/discovery/movie'"
+          [queryParams]="{
             with_crew: director.id,
             title: 'pages.movieDetails.labels.direttoDaSubject',
             subject: director.name
-          }">{{ director.name }}</a>
+          }"
+          >{{ director.name }}</a
+        >
       </div>
       } @if(!!movie.overview && movie.overview.length > 0) {
       <div class="movie-overview mt-3">
         <p>
           {{
-          isOverviewExpanded
-          ? movie.overview
-          : (movie.overview | slice : 0 : 200) +
-          (movie.overview.length > 200 ? "..." : "")
+            isOverviewExpanded
+              ? movie.overview
+              : (movie.overview | slice : 0 : 200) +
+                (movie.overview.length > 200 ? "..." : "")
           }}
         </p>
         @if(movie.overview.length > 200) {
-        <ion-button class="see-more-btn" (click)="isOverviewExpanded = !isOverviewExpanded" fill="clear" size="small">
+        <ion-button
+          class="see-more-btn"
+          (click)="isOverviewExpanded = !isOverviewExpanded"
+          fill="clear"
+          size="small"
+        >
           {{
-          (isOverviewExpanded
-          ? "pages.movieDetails.buttons.mostraMeno"
-          : "pages.movieDetails.buttons.mostraTutto"
-          ) | translate
+            (isOverviewExpanded
+              ? "pages.movieDetails.buttons.mostraMeno"
+              : "pages.movieDetails.buttons.mostraTutto"
+            ) | translate
           }}
         </ion-button>
         }
       </div>
       <hr class="mx-3" />
-      } @if(reviews) {
+      }
       <h4 class="p-2">
         {{ "pages.movieDetails.labels.amiciReviews" | translate }}
       </h4>
       <div class="review-list">
-        <ion-button color="light" size="small">
-          <ion-icon name="thumbs-down-outline" slot="start"></ion-icon>
-          {{
-          reviews.dislikes
-          }}
+        <ion-button
+          shape="round"
+          [color]="yourReview?.review === -1 ? undefined : 'light'"
+          size="small"
+          (click)="reviewFilm(-1)"
+        >
+          <ion-icon
+            [name]="
+              'thumbs-down-' + (yourReview?.review === -1 ? 'sharp' : 'outline')
+            "
+            slot="start"
+          ></ion-icon>
+          {{ reviews?.dislikes }}
         </ion-button>
-        <ion-button size="small">
-          <ion-icon name="thumbs-up-sharp" slot="start"></ion-icon>
-          {{
-          reviews.likes
-          }}
+        <ion-button
+          shape="round"
+          size="small"
+          [color]="yourReview?.review === 1 ? undefined : 'light'"
+          (click)="reviewFilm(1)"
+        >
+          <ion-icon
+            [name]="
+              'thumbs-up-' + (yourReview?.review === 1 ? 'sharp' : 'outline')
+            "
+            slot="start"
+          ></ion-icon>
+          {{ reviews?.likes }}
         </ion-button>
-        <!-- <div class="review">
-          <span> 👎 {{ reviews.dislikes }} </span>
-          <span class="label">
-            {{ "pages.movieDetails.labels.dislike" | translate }}
-          </span>
-        </div>
-        <div class="review">
-          <span> 👍 {{ reviews.likes }} </span>
-          <span class="label">
-            {{ "pages.movieDetails.labels.like" | translate }}
-          </span>
-        </div> -->
+      </div>
+      @if(reviews && (reviews.dislikes + reviews.likes) === 0) {
+      <div class="subtitle">
+        {{ "pages.movieDetails.labels.noReviews" | translate }}
       </div>
       } @if(trailer) {
       <div class="trailer-container mt-4">
@@ -98,9 +125,14 @@ this.trailer();
           {{ "pages.movieDetails.labels.trailer" | translate | titlecase }}
         </h4>
         <div class="text-center">
-          <iframe class="trailer" [src]="trailer" title="YouTube video player" frameborder="0"
+          <iframe
+            class="trailer"
+            [src]="trailer"
+            title="YouTube video player"
+            frameborder="0"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowfullscreen></iframe>
+            allowfullscreen
+          ></iframe>
         </div>
       </div>
       @if(providers(); as providers) { @if(providers.length > 0) {
@@ -114,9 +146,9 @@ this.trailer();
           <p class="watch-type">
             @for(type of p.type; track $index) {
             {{
-            "pages.movieDetails.labels.providerType." + type
-            | translate
-            | titlecase
+              "pages.movieDetails.labels.providerType." + type
+                | translate
+                | titlecase
             }}}
           </p>
         </div>
@@ -126,44 +158,66 @@ this.trailer();
       <div class="related-movies mt-4 p-2">
         <h4>
           {{
-          "pages.movieDetails.labels.filmRaccomandati" | translate | titlecase
+            "pages.movieDetails.labels.filmRaccomandati" | translate | titlecase
           }}
         </h4>
-        <app-movie-list [movies]="recommendations!.results" [total]="recommendations.results.length"
-          [isHorizontal]="true"></app-movie-list>
+        <app-movie-list
+          [movies]="recommendations!.results"
+          [total]="recommendations.results.length"
+          [isHorizontal]="true"
+        ></app-movie-list>
       </div>
       } @if(cast(); as cast) {
       <div class="cast-container mt-2 p-2">
         <h4>{{ "pages.movieDetails.labels.cast" | translate | titlecase }}</h4>
         <div class="cast-list mt-3">
-          @for (p of cast; let i = $index; track p.id) { @if(i < 6 || isCastExpanded) { <div class="cast-item"
-            routerLink="/discovery/movie" [queryParams]="{
+          @for (p of cast; let i = $index; track p.id) { @if(i < 6 ||
+          isCastExpanded) {
+          <div
+            class="cast-item"
+            routerLink="/discovery/movie"
+            [queryParams]="{
               with_cast: p.id,
               title: 'pages.movieDetails.labels.filmCon',
               subject: p.name
-            }">
+            }"
+          >
             @if(p.profile_path) {
-            <img [src]="posterUrl + p.profile_path" [alt]="p.name" class="profile-picture" />
+            <img
+              [src]="posterUrl + p.profile_path"
+              [alt]="p.name"
+              class="profile-picture"
+            />
             } @else {
             <div class="profile-picture-placeholder"></div>
             }
             <div class="actor-name">{{ p.name }}</div>
             <div class="actor-role">{{ p.character }}</div>
+          </div>
+          } }
         </div>
-        } }
+        @if(!isCastExpanded && cast.length > 6) {
+        <ion-button
+          size="small"
+          fill="clear"
+          (click)="isCastExpanded = true"
+          expand="full"
+        >
+          {{ "pages.movieDetails.buttons.mostraTutti" | translate | titlecase }}
+        </ion-button>
+        } @if(isCastExpanded) {
+        <ion-button
+          size="small"
+          fill="clear"
+          (click)="isCastExpanded = false"
+          expand="full"
+        >
+          {{ "pages.movieDetails.buttons.mostraMeno" | translate | titlecase }}
+        </ion-button>
+        }
       </div>
-      @if(!isCastExpanded && cast.length > 6) {
-      <ion-button size="small" fill="clear" (click)="isCastExpanded = true" expand="full">
-        {{ "pages.movieDetails.buttons.mostraTutti" | translate | titlecase }}
-      </ion-button>
-      } @if(isCastExpanded) {
-      <ion-button size="small" fill="clear" (click)="isCastExpanded = false" expand="full">
-        {{ "pages.movieDetails.buttons.mostraMeno" | translate | titlecase }}
-      </ion-button>
       }
     </div>
-    }
-  </div>
   </div>
 </ion-content>
 }

@@ -16,8 +16,7 @@ import {
   IonToolbar,
   IonButtons,
   IonBackButton,
-  IonTitle,
-} from '@ionic/angular/standalone';
+  IonTitle, IonToggle, IonNote } from '@ionic/angular/standalone';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { map } from 'rxjs';
 import { ToastService } from 'src/app/services/toast.service';
@@ -28,10 +27,11 @@ import { MovieListService } from '../../services/movie-list.service';
 import { UserService } from 'src/app/services/user.service';
 import { MembershipModel } from 'src/app/models/membership.model';
 import { MembershipEnum } from 'src/app/enum/membership.enum';
+import { UsernameService } from 'src/app/services/username.service';
 
 @Component({
   selector: 'app-list-page-settings',
-  imports: [
+  imports: [IonNote, IonToggle, 
     IonTitle,
     IonBackButton,
     IonButtons,
@@ -61,8 +61,9 @@ export class ListSettingsPageComponent {
   router = inject(Router);
   listService = inject(MovieListService);
   userService = inject(UserService);
+  username = inject(UsernameService);
   details = input.required<InfoListModel>();
-  members = input.required<MembershipModel[]>();
+  members = computed(() => this.listService.getListMembers(this.details().id));
 
   MembershipEnum = MembershipEnum;
 
@@ -208,13 +209,13 @@ export class ListSettingsPageComponent {
     }
   }
 
-  async removeUser(uid: string, username: string) {
+  async removeUser(uid: string) {
     const alert = await this.alertController.create({
       header: this.translate.instant(this.DIALOGS_LABELS + 'rimuovi.header', {
-        username,
+        username: this.username.getUsername(uid),
       }),
       message: this.translate.instant(this.DIALOGS_LABELS + 'rimuovi.message', {
-        username,
+        username: this.username.getUsername(uid),
       }),
       buttons: [
         {
@@ -225,7 +226,7 @@ export class ListSettingsPageComponent {
         {
           text: this.translate.instant(BUTTONS.CONFERMA),
           role: 'confirm',
-          handler: () => this.__removeUser(username, uid),
+          handler: () => this.__removeUser(uid),
         },
       ],
     });
@@ -233,24 +234,26 @@ export class ListSettingsPageComponent {
     await alert.present();
   }
 
-  private __removeUser(username: string, uid: string) {
+  private __removeUser(uid: string) {
     this.listService
       .removeUser(this.details().id, uid)
       .then(() =>
         this.snackBar.open(
           this.translate.instant(
             this.MESSAGE_LABELS + 'rimuoviUtente.successo',
-            { username }
+            { username: this.username.getUsername(uid) }
           )
         )
       )
       .catch((err) => {
         console.error(
-          "Errore! Non è stato possibile rimuovere l'utente " + username + '.'
+          "Errore! Non è stato possibile rimuovere l'utente " +
+            this.username.getUsername(uid) +
+            '.'
         );
         this.snackBar.open(
           this.translate.instant(this.MESSAGE_LABELS + 'rimuoviUtente.errore', {
-            username,
+            username: this.username.getUsername(uid),
           })
         );
       });

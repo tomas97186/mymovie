@@ -45,6 +45,10 @@
       },
       "buttons": {
         "visto": "Imposta come visto",
+        "vota": "Vota",
+        "modificaVoto": "Modifica voto",
+        "consigliato": "Consigliato",
+        "nonConsigliato": "Non Consigliato",
         "rimuovi": "Rimuovi dalla lista",
         "aggiungi": "Aggiungi ad una lista",
         "dettagli": "Visualizza Dettagli",
@@ -128,6 +132,7 @@
         "filmRaccomandati": "film raccomandati",
         "cast": "cast",
         "filmCon": "Film con {{subject}}",
+        "noReviews": "Nessuno dei tuoi amici ha ancora votato questo film.",
         "providerType": {
           "flatrate": "abbonamento",
           "rent": "noleggio",
@@ -190,6 +195,9 @@
           }
         },
         "labels": {
+          "info": "Dettagli Lista",
+          "creataDa": "Creata Da",
+          "creataIl": "Creata Il",
           "impostazioni": "Impostazioni Lista",
           "codice": "Codice Lista",
           "descrizioneCodice": "Condividi questo codice con i tuoi amici per unirsi alla lista.",
