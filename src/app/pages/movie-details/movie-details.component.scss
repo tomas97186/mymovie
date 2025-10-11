@@ -133,10 +133,16 @@ button.floating-button {
     display: flex;
     flex-direction: column;
     align-items: center;
+
     .label {
       font-size: .9rem;
       color: gray;
     }
+  }
+
+  & ion-button {
+    --padding-start: 1.2rem !important;
+    --padding-end: 1.2rem !important;
   }
 
   & ion-button:first-child {

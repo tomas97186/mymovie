@@ -81,6 +81,31 @@
     }
   },
   "pages": {
+    "community": {
+      "dialogs": {
+        "addFriend": {
+          "header": "Aggiungi amico"
+        }
+      },
+      "messages": {
+        "addFriend": {
+          "nonEsiste": "L'utente {{username}} non  esiste.",
+          "successo": "Richiesta di amicia inviata con successo.",
+          "errore": "Errore! Impossibile inviare la richiesta."
+        }
+      },
+      "labels": {
+        "title": "Community",
+        "richieste": "Richieste di amicizia",
+        "descrizioneRichieste": "Hai delle richieste di amicia in sospeso"
+      },
+      "buttons": {
+        "aggiungi": "Aggiungi un amico"
+      },
+      "placeholders": {
+        "search": "Aggiungi un amico..."
+      }
+    },
     "home": {
       "labels": {
         "diTendenza": "Di Tendenza",
@@ -304,7 +329,12 @@
       "buttons": {
         "username": "Modifica Username",
         "password": "Modifica Password",
-        "logout": "Logout"
+        "logout": "Logout",
+        "addFriend": "Aggiungi agli amici",
+        "removeFriend": "Rimuovi dagli amici",
+        "addToList": "Invita ad una lista",
+        "cancelRequest": "Annulla richiesta",
+        "acceptFriend": "Accetta richiesta"
       },
       "dialogs": {
         "username": {
@@ -321,6 +351,22 @@
         }
       },
       "messages": {
+        "addFriend": {
+          "success": "Richiesta di amicizia inviata.",
+          "errore": "Errore! Impossibile inviare la richiesta di amicizia."
+        },
+        "removeFriend": {
+          "success": "{{username}} rimosso dagli amici.",
+          "error": "Errore! Impossibile rimuovere {{username}} dagli amici."
+        },
+        "cancelRequest": {
+          "success": "Richiesta di amicizia annullata.",
+          "error": "Errore! Impossibile annullare la richiesta degli amici."
+        },
+        "acceptFriend": {
+          "success": "Richiesta di amicizia accettata.",
+          "error": "Errore! Impossibile accettare la richiesta di amicizia."
+        },
         "password": {
           "successo": "Password aggiornata con successo",
           "errore": {

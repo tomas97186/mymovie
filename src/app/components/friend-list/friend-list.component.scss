@@ -1,0 +1,11 @@
+ion-list {
+    background: transparent !important;
+}
+
+ion-item {
+    --background: transparent !important;
+
+    & ion-button {
+        --border-radius: 50% !important;
+    }
+}

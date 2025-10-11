@@ -8,4 +8,5 @@ export interface FriendshipModel {
   createdDate: Date;
   acceptedDate?: Date;
   id: string;
+  uid?: string;
 }

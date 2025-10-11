@@ -1,0 +1,23 @@
+<ion-list>
+  @for(friend of friendList(); track friend.uid) {
+  <!-- @let username = getUsername(friend.uid!) | async; -->
+  <ion-item button="true" [detail]="friend.status === FriendStatusEnum.ACCEPTED"
+    [routerLink]="['/community', friend.uid]">
+    <ion-avatar aria-hidden="true" slot="start">
+      <img alt="" src="https://ionicframework.com/docs/img/demos/avatar.svg" />
+    </ion-avatar>
+    <ion-label>
+      {{username.getUsername(friend.uid!)}}
+    </ion-label>
+    @if(friend.status === FriendStatusEnum.PENDING) {
+    <ion-button slot="end" size="small" fill="outline" color="danger" (click)="declineFriendRequest($event, friend)">
+      <ion-icon name="close" slot="icon-only"></ion-icon>
+    </ion-button>
+    <ion-button slot="end" color="success" fill="outline" size="small" (click)="acceptFriendRequest($event, friend)">
+      <ion-icon name="checkmark" slot="icon-only"></ion-icon>
+    </ion-button>
+
+    }
+  </ion-item>
+  }
+</ion-list>

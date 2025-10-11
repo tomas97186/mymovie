@@ -1,6 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import {
   addDoc,
+  and,
   arrayRemove,
   arrayUnion,
   collection,
@@ -8,19 +9,17 @@ import {
   deleteDoc,
   doc,
   Firestore,
+  getCountFromServer,
   or,
   query,
-  updateDoc,
   where,
-  writeBatch,
-  WriteBatch,
+  writeBatch
 } from '@angular/fire/firestore';
+import { map, Observable } from 'rxjs';
 import { CollectionEnum } from '../enum/collection.enum';
 import { FriendStatusEnum } from '../enum/friend-status.enum';
-import { UserPartialModel } from '../models/user.partial.model';
-import { UserService } from './user.service';
-import { Observable } from 'rxjs';
 import { FriendshipModel } from '../models/Friendship.model';
+import { UserService } from './user.service';
 
 @Injectable({
   providedIn: 'root',
@@ -37,8 +36,8 @@ export class FriendsService {
     }
 
     await addDoc(collection(this.firestore, CollectionEnum.FRIEDS), {
-      sender: this.userService.userInfo,
-      receiver: { uid: user.uid, username: user.username },
+      sender: { username: this.userService.userInfo?.username, uid: this.userService.userInfo?.uid },
+      receiver: { uid: user.uid, username: username },
       status: FriendStatusEnum.PENDING,
       createdDate: new Date().toISOString(),
     });
@@ -75,6 +74,7 @@ export class FriendsService {
   }
 
   removeFriend(friendship: FriendshipModel) {
+    console.log('Removing friend: ', friendship.id);
     const batch = writeBatch(this.firestore);
 
     batch.delete(
@@ -93,7 +93,7 @@ export class FriendsService {
   }
 
   getFriendList() {
-    collectionData(
+    return collectionData(
       query(
         collection(this.firestore, `${CollectionEnum.FRIEDS}`),
         or(
@@ -103,5 +103,42 @@ export class FriendsService {
       ),
       { idField: 'id' }
     ) as Observable<FriendshipModel[]>;
+  }
+
+  getFriendStatus(uid: string) {
+    return (collectionData(
+      query(
+        collection(this.firestore, `${CollectionEnum.FRIEDS}`),
+        or(
+          and(
+            where('sender.uid', '==', this.userService.currentUser!.uid),
+            where('receiver.uid', '==', uid),
+          ),
+          and(
+            where('receiver.uid', '==', this.userService.currentUser!.uid),
+            where('sender.uid', '==', uid)
+          )
+        )
+      ), { idField: 'id' }
+    ) as Observable<FriendshipModel[]>).pipe(
+      map(res => res.length > 0 ? res[0] : undefined)
+    );
+  }
+
+  countFriendRequests() {
+    return getCountFromServer(
+      query(
+        collection(this.firestore, `${CollectionEnum.FRIEDS}`),
+        and(
+          where(
+            'receiver.uid', '==', this.userService.currentUser?.uid
+          ),
+          where(
+            'status', '==', FriendStatusEnum.PENDING
+          ),
+        )
+      )
+    ).then(res => res.data().count);
+
   }
 }

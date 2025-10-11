@@ -35,6 +35,14 @@ export const routes: Routes = [
     canMatch: [authenticationGuard()],
   },
   {
+    path: 'community/:id',
+    loadComponent: () =>
+      import('./pages/profile-page/profile-page.component').then(
+        (m) => m.ProfilePageComponent
+      ),
+    canMatch: [authenticationGuard()],
+  },
+  {
     path: 'settings',
     loadComponent: () =>
       import('./pages/settings-page/settings-page.component').then(
@@ -89,6 +97,12 @@ export const routes: Routes = [
         (m) => m.MovieDetailsComponent
       ),
     canMatch: [authenticationGuard()],
+  },
+  {
+    path: 'community',
+    loadComponent: () => import('./pages/community-page/community-page.component').then(
+      m => m.CommunityPageComponent
+    )
   },
   {
     path: 'login',

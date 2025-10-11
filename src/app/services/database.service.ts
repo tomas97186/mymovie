@@ -76,6 +76,10 @@ export class DatabaseService {
 
   update(path: string, data: any) {
     const docRef = doc(this.firestore, path);
+
+    const ref = collection(this.firestore, path);
+
+    doc(ref, 'id');
     return from(updateDoc(docRef, data, { merge: true }));
   }
 

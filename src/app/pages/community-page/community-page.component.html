@@ -1,0 +1,42 @@
+@let friendList = friendList$ | async;
+@let requestList = requestList$ | async;
+
+<ion-header class="transparent">
+  <ion-toolbar class="large">
+    <ion-title>
+      {{'pages.community.labels.title' | translate}}
+    </ion-title>
+    <ion-buttons slot="end">
+      <ion-button>
+        <ion-icon slot="icon-only" name="people"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="container">
+    <ion-button class="w-100" (click)="openAddFriendDialog()">
+      <ion-icon slot="start" name="person-add-outline"></ion-icon>
+      {{'pages.community.buttons.aggiungi' | translate }}
+    </ion-button>
+    @if(requestList?.length?? 0 > 0) {
+    <div class="invitations-container">
+      <h3>
+        {{ "pages.community.labels.richieste" | translate }}
+      </h3>
+      <p class="subtitle">
+        {{ "pages.community.labels.descrizioneRichieste" | translate }}
+      </p>
+      <app-friend-list [friendList]="requestList!"></app-friend-list>
+    </div>
+    }
+    <!-- <form [formGroup]="queryForm" class="search-form">
+      <ion-input labelPlacement="stacked" class="search-field"
+        placeholder="{{'pages.community.placeholders.search' | translate}}" formControlName="query" [clearInput]="true">
+        <ion-icon slot="end" name="search"></ion-icon>
+      </ion-input>
+    </form> -->
+    <app-friend-list [friendList]="friendList!"></app-friend-list>
+  </div>
+</ion-content>

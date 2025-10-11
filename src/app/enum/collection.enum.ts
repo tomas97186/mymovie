@@ -4,5 +4,6 @@ export enum CollectionEnum {
     MEMBERSHIPS = 'memberships',
     LISTS = 'lists',
     REVIEWS = 'reviews',
-    FRIEDS = 'friends'
+    FRIEDS = 'friends',
+    USERNAMES = 'usernames'
 }

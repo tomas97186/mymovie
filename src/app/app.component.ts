@@ -12,7 +12,7 @@ import {
   IonTabButton,
   IonTabs,
   ModalController,
-  NavController
+  NavController, IonBadge
 } from '@ionic/angular/standalone';
 import { TranslateService } from '@ngx-translate/core';
 import { addIcons } from 'ionicons';
@@ -51,17 +51,23 @@ import {
   thumbsDownSharp,
   thumbsUpOutline,
   thumbsUpSharp,
-  trash
+  trash,
+  people,
+  personRemoveOutline
 } from 'ionicons/icons';
 import { AuthService } from './services/auth.service';
 import { SettingsService } from './services/settings.service';
 import { environment } from 'src/environments/environment';
+import { enableIndexedDbPersistence, Firestore } from '@angular/fire/firestore';
+import { FriendsService } from './services/friends.service';
+import { UserService } from './services/user.service';
+import { filter, switchMap } from 'rxjs';
 
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html',
   styleUrl: 'app.component.scss',
-  imports: [
+  imports: [IonBadge,
     CommonModule,
     IonApp,
     IonTabs,
@@ -80,6 +86,11 @@ export class AppComponent {
   private location = inject(NavController);
   private dialog = inject(ModalController);
   private alert = inject(AlertController);
+  private friendService = inject(FriendsService);
+  countFriendRequests = this.currentUser$.pipe(
+    filter(user => !!user),
+    switchMap(_ => this.friendService.countFriendRequests())
+  );
   title = 'MoviesMates';
   isDev = !environment.production;
 
@@ -141,7 +152,9 @@ export class AppComponent {
       thumbsDownSharp,
       thumbsDownOutline,
       thumbsUpSharp,
-      thumbsUpOutline
+      thumbsUpOutline,
+      people,
+      personRemoveOutline
     });
   }
 }

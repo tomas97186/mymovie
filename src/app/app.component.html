@@ -1,3 +1,5 @@
+@let countFriendRequests = this.countFriendRequests | async;
+
 <ion-app>
   @if(isDev) {
   <div class="dev-banner">
@@ -20,6 +22,13 @@
       <ion-tab-button tab="lists" layout="label-hide">
         <ion-icon aria-hidden="true" name="film-outline"></ion-icon>
         <ion-label>Liste</ion-label>
+      </ion-tab-button>
+
+      <ion-tab-button tab="community" layout="label-hide">
+        <ion-icon aria-hidden="true" name="people"></ion-icon>
+        @if(countFriendRequests && countFriendRequests > 0) {
+          <ion-badge color="danger">{{countFriendRequests}}</ion-badge>
+        }
       </ion-tab-button>
 
       <ion-tab-button tab="profile" layout="label-hide">

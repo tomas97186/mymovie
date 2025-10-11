@@ -107,8 +107,8 @@ export class MovieDetailsComponent {
       );
     return trailer
       ? this._sanitizer.bypassSecurityTrustResourceUrl(
-          `https://www.youtube.com/embed/${trailer.key}?rel=0&modestbranding=1&showinfo=0`
-        )
+        `https://www.youtube.com/embed/${trailer.key}?rel=0&modestbranding=1&showinfo=0`
+      )
       : undefined;
   });
   cast = computed(() => this.movie.value()?.credits?.cast);

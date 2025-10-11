@@ -4,6 +4,7 @@ import {
   doc,
   docData,
   Firestore,
+  getDoc,
   getDocs,
   query,
   setDoc,
@@ -18,6 +19,7 @@ import { AuthService } from './auth.service';
 import { UserModel } from '../models/user.model';
 import { User } from '@angular/fire/auth';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { UsernameService } from './username.service';
 
 @Injectable({
   providedIn: 'root',
@@ -28,6 +30,7 @@ export class UserService {
   private authService = inject(AuthService);
   private __currentUser?: User;
   private __userInfo = signal<UserModel | undefined>(undefined);
+  private usernameService = inject(UsernameService);
 
   constructor() {
     this.authService.currentUser$
@@ -41,7 +44,7 @@ export class UserService {
         switchMap((userInfo) => {
           if (!userInfo) {
             return from(this.setUserInfo(this.__currentUser!.uid)).pipe(
-              first()
+              first(),
             );
           }
           return of(userInfo);
@@ -79,6 +82,8 @@ export class UserService {
   }
 
   async setUserInfo(uid?: string) {
+    const batch = writeBatch(this.firestore);
+
     const username = 'User' + Math.floor(Math.random() * 999999);
     const userInfo: UserModel = {
       username: username,
@@ -89,10 +94,14 @@ export class UserService {
       friends: [],
     };
 
-    await setDoc(
+    batch.set(
       doc(this.firestore, `${CollectionEnum.USERS}/${uid}`),
       userInfo
     );
+
+    this.usernameService.setUsername(username, uid!, batch);
+
+    await batch.commit();
 
     return userInfo;
   }
@@ -104,48 +113,48 @@ export class UserService {
       username,
     });
 
-    (
-      await getDocs(
-        query(
-          collection(this.firestore, CollectionEnum.MEMBERSHIPS),
-          where('user.uid', '==', uid)
-        )
-      )
-    ).forEach((d) => batch.update(d.ref, { 'user.username': username }));
+    const oldUsername = await getDocs(query(collection(this.firestore, CollectionEnum.USERNAMES), where('uid', '==', uid)));
 
-    (
-      await getDocs(
-        query(
-          collection(this.firestore, CollectionEnum.FRIEDS),
-          where('sender.uid', '==', uid)
-        )
-      )
-    ).forEach((d) => batch.update(d.ref, { 'sender.username': username }));
+    if (!oldUsername.empty) {
+      batch.delete(oldUsername.docs[0].ref);
+    }
+    batch.set(doc(this.firestore, `${CollectionEnum.USERNAMES}/${username}`), { 'uid': uid });
 
-    (
-      await getDocs(
-        query(
-          collection(this.firestore, CollectionEnum.FRIEDS),
-          where('receiver.uid', '==', uid)
-        )
-      )
-    ).forEach((d) => batch.update(d.ref, { 'receiver.username': username }));
+    this.usernameService.setUsername(username, uid!, batch);
+
+    // (
+    //   await getDocs(
+    //     query(
+    //       collection(this.firestore, CollectionEnum.MEMBERSHIPS),
+    //       where('user.uid', '==', uid)
+    //     )
+    //   )
+    // ).forEach((d) => batch.update(d.ref, { 'user.username': username }));
+
+    // (
+    //   await getDocs(
+    //     query(
+    //       collection(this.firestore, CollectionEnum.FRIEDS),
+    //       where('sender.uid', '==', uid)
+    //     )
+    //   )
+    // ).forEach((d) => batch.update(d.ref, { 'sender.username': username }));
+
+    // (
+    //   await getDocs(
+    //     query(
+    //       collection(this.firestore, CollectionEnum.FRIEDS),
+    //       where('receiver.uid', '==', uid)
+    //     )
+    //   )
+    // ).forEach((d) => batch.update(d.ref, { 'receiver.username': username }));
 
     return batch.commit();
   }
 
-  public async userExists(username: string): Promise<UserModel | undefined> {
-    const user = await getDocs(
-      query(
-        collection(this.firestore, CollectionEnum.USERS),
-        where('username', '==', username)
-      )
-    );
+  public async userExists(username: string): Promise<{ uid: string } | undefined> {
+    const user = await getDoc(doc(this.firestore, `${CollectionEnum.USERNAMES}/${username}`));
 
-    if (user.empty) {
-      return; // L'utente non esiste
-    }
-
-    return user.docs[0].data() as UserModel;
+    return user.exists() ? user.data() as { uid: string } : undefined;
   }
 }

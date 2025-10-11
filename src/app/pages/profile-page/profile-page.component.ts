@@ -1,12 +1,12 @@
-import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { CommonModule, Location } from '@angular/common';
+import { Component, DestroyRef, inject } from '@angular/core';
 import {
   EmailAuthProvider,
   reauthenticateWithCredential,
   updatePassword,
   updateProfile,
 } from '@angular/fire/auth';
-import { Router, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import {
   AlertController,
   IonContent,
@@ -15,9 +15,10 @@ import {
   IonSegmentButton,
   IonSegmentView,
   IonSegmentContent,
-  ModalController, IonLabel, IonFab, IonFabButton } from '@ionic/angular/standalone';
+  ModalController, IonLabel, IonFab, IonFabButton, IonButton
+} from '@ionic/angular/standalone';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { catchError, filter, first, from, map, switchMap, tap } from 'rxjs';
+import { catchError, filter, first, from, map, of, share, switchMap, tap } from 'rxjs';
 import { MovieListComponent } from 'src/app/components/movie-list/movie-list.component';
 import { ToastService } from 'src/app/services/toast.service';
 import { UserService } from 'src/app/services/user.service';
@@ -25,10 +26,14 @@ import { BUTTONS } from 'src/app/variables';
 import { fieldValidations } from 'src/environments/fields.validation';
 import { AuthService } from '../../services/auth.service';
 import { MovieListService } from '../../services/movie-list.service';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { FriendsService } from 'src/app/services/friends.service';
+import { FriendStatusEnum } from 'src/app/enum/friend-status.enum';
+import { FriendshipModel } from 'src/app/models/Friendship.model';
 
 @Component({
   selector: 'app-profile-page',
-  imports: [IonFabButton, IonFab, IonLabel, 
+  imports: [IonButton, IonFabButton, IonFab, IonLabel,
     IonSegmentButton,
     IonSegment,
     CommonModule,
@@ -51,13 +56,30 @@ export class ProfilePageComponent {
   readonly dialog = inject(ModalController);
   readonly alertController = inject(AlertController);
   readonly router = inject(Router);
+  readonly route = inject(ActivatedRoute);
+  private readonly destroyRef = inject(DestroyRef);
   private readonly snackBar = inject(ToastService);
+  private readonly location = inject(Location);
   authService = inject(AuthService);
   userService = inject(UserService);
   listService = inject(MovieListService);
-  userInfo$ = this.userService.getUserInfo();
-  userLikes = this.listService.getUserReviews(undefined, true);
-  userDislikes = this.listService.getUserReviews(undefined, false);
+  private friendService = inject(FriendsService);
+  userInfo$ = this.route.params.pipe(
+    takeUntilDestroyed(this.destroyRef),
+    switchMap(data => {
+      let uid: string;
+      uid = 'id' in data ? data['id'] : this.userService.currentUser!.uid;
+
+      return this.userService.getUserInfo(uid);
+    }),
+    share()
+  );
+  userLikes = this.userInfo$.pipe(switchMap(u => this.listService.getUserReviews(u?.uid, true)));
+  userDislikes = this.userInfo$.pipe(switchMap(u => this.listService.getUserReviews(u?.uid, false)));
+  isYou = this.userInfo$.pipe(map(u => u?.uid === this.userService.currentUser?.uid));
+  friendshipStatus = this.userInfo$.pipe(switchMap(u => u?.uid === this.userService.currentUser?.uid ? of(undefined) : this.friendService.getFriendStatus(u!.uid)))
+
+  FriendStatusEnum = FriendStatusEnum;
 
   async changeName(uid: string) {
     const alert = await this.alertController.create({
@@ -117,7 +139,7 @@ export class ProfilePageComponent {
     const element = document.querySelector('.container');
     element?.scroll({ top: 0, behavior: 'smooth' });
   }
-  
+
   async changePassword() {
     const alert = await this.alertController.create({
       header: this.translate.instant(this.DIALOG_LABELS + 'password.header'),
@@ -272,5 +294,60 @@ export class ProfilePageComponent {
         )
         .subscribe();
     }
+  }
+
+  removeFriend(friendship: FriendshipModel, username: string) {
+    const messagePath = this.MESSAGE_LABELS + friendship.status === FriendStatusEnum.PENDING ? 'removeFriend.' : 'cancelRequest.';
+    this.friendService.removeFriend(friendship).then(
+      res => {
+        this.snackBar.open(this.translate.instant(messagePath + 'success', { username }));
+      }
+    ).catch(
+      err => {
+        console.error('ERROR DURING REMOVE FRIEND: ', err);
+        this.snackBar.open(this.translate.instant(messagePath + 'error', { username }), { color: 'danger', duration: 3000 });
+      }
+    )
+  }
+
+  acceptFriend(friendship: FriendshipModel, username: string) {
+    this.friendService.acceptFriendRequest(friendship).then(
+      res => {
+        this.snackBar.open(this.translate.instant(this.MESSAGE_LABELS + 'acceptFriend.success', { username }));
+      }
+    ).catch(
+      err => {
+        console.error('ERROR DURING REMOVE FRIEND: ', err);
+        this.snackBar.open(this.MESSAGE_LABELS + this.translate.instant('acceptFriend.error', { username }), { color: 'danger', duration: 3000 });
+      }
+    )
+  }
+
+  addFriend(username: string) {
+    if (username) {
+      this.friendService
+        .sendFriendRequest(username)
+        .then((res) => {
+          this.snackBar.open(
+            this.translate.instant(this.MESSAGE_LABELS + 'addFriend.success'),
+            {
+              duration: 3000,
+            }
+          );
+        })
+        .catch((error) => {
+          console.error('Error add friend:', error);
+          this.snackBar.open(
+            this.translate.instant(this.MESSAGE_LABELS + 'addFriend.errore'),
+            {
+              duration: 3000,
+            }
+          );
+        });
+    }
+  }
+
+  closePage() {
+    this.location.back();
   }
 }
