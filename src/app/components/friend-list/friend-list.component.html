@@ -4,10 +4,10 @@
   <ion-item button="true" [detail]="friend.status === FriendStatusEnum.ACCEPTED"
     [routerLink]="['/community', friend.uid]">
     <ion-avatar aria-hidden="true" slot="start">
-      <img alt="" src="https://ionicframework.com/docs/img/demos/avatar.svg" />
+      <img alt="" [src]="userData.getUserAvatar(friend.uid!)" />
     </ion-avatar>
     <ion-label>
-      {{username.getUsername(friend.uid!)}}
+      {{userData.getUsername(friend.uid!)}}
     </ion-label>
     @if(friend.status === FriendStatusEnum.PENDING) {
     <ion-button slot="end" size="small" fill="outline" color="danger" (click)="declineFriendRequest($event, friend)">

@@ -90,20 +90,19 @@ export class NewListDetailsComponent {
     },
   });
 
-  watchedMovies = rxResource({
-    request: this.listId,
-    loader: ({ request }) => {
-      if (!request) return of(undefined);
-      return this.listService.getListMovies(request, true);
-    },
-  });
-  moviesToWatch = rxResource({
-    request: this.listId,
-    loader: ({ request }) => {
-      if (!request) return of(undefined);
-      return this.listService.getListMovies(request, false);
-    },
-  });
+  selectedTab = signal<string>('like');
+  movies = rxResource(
+    {
+      request: () => ({ selectedTab: this.selectedTab(), listId: this.listId() }),
+      loader: ({ request: { selectedTab, listId } }) => {
+        return this.listService.getListMovies(listId!, selectedTab === 'watched');
+      }
+    }
+  );
+
+  onSegmentChange(event: CustomEvent) {
+    this.selectedTab.set(event.detail.value);
+  }
 
   async openSettings() {
     const alert = await this.dialog.create({

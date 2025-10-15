@@ -1,0 +1,50 @@
+.avatar-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+    gap: 1rem;
+    padding: 1rem;
+    padding-bottom: 160px;
+
+    & .avatar {
+        width: 100px;
+
+        &.selected img {
+            border: 7px solid whitesmoke;
+        }
+
+        & img {
+            border-radius: 20px;
+        }
+    }
+}
+
+.bottom-bar {
+    position: fixed;
+    bottom: 0px;
+    width: 100%;
+    background-color: var(--ion-background-color);
+    padding: .6rem;
+
+    .colors {
+        padding: .6rem;
+        display: flex;
+        gap: 1rem;
+        width: 100%;
+        overflow-x: auto;
+
+        & .color {
+            min-width: 40px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50px;
+        }
+    }
+
+    .actions {
+        display: flex;
+    }
+
+
+
+}

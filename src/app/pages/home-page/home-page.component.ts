@@ -15,10 +15,11 @@ import { SearchItemModel } from '../../models/search-item.model';
 import { HomeCategoryComponent } from "../../components/home-category/home-category.component";
 import { DiscoverMovieRequestModel } from '../../models/discover-movie-request.model';
 import { MovieHeroComponent } from "../../components/movie-hero/movie-hero.component";
+import { IonContent, IonHeader, IonFab, IonFabButton, IonIcon } from "@ionic/angular/standalone";
 
 @Component({
   selector: 'app-home-page',
-  imports: [CommonModule, ReactiveFormsModule, RouterModule, MatFormFieldModule, MatInputModule, MatIconModule, MatButtonModule, MovieListComponent, HomeCategoryComponent, MovieHeroComponent],
+  imports: [IonIcon, IonFabButton, IonFab, IonHeader, IonContent, CommonModule, ReactiveFormsModule, RouterModule, MatFormFieldModule, MatInputModule, MatIconModule, MatButtonModule, MovieListComponent, HomeCategoryComponent, MovieHeroComponent],
   templateUrl: './home-page.component.html',
   styleUrl: './home-page.component.scss'
 })

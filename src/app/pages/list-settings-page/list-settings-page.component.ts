@@ -16,7 +16,8 @@ import {
   IonToolbar,
   IonButtons,
   IonBackButton,
-  IonTitle, IonToggle, IonNote } from '@ionic/angular/standalone';
+  IonTitle, IonToggle, IonNote
+} from '@ionic/angular/standalone';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { map } from 'rxjs';
 import { ToastService } from 'src/app/services/toast.service';
@@ -27,11 +28,11 @@ import { MovieListService } from '../../services/movie-list.service';
 import { UserService } from 'src/app/services/user.service';
 import { MembershipModel } from 'src/app/models/membership.model';
 import { MembershipEnum } from 'src/app/enum/membership.enum';
-import { UsernameService } from 'src/app/services/username.service';
+import { UserDataService } from 'src/app/services/userdata.service';
 
 @Component({
   selector: 'app-list-page-settings',
-  imports: [IonNote, IonToggle, 
+  imports: [IonNote, IonToggle,
     IonTitle,
     IonBackButton,
     IonButtons,
@@ -61,7 +62,7 @@ export class ListSettingsPageComponent {
   router = inject(Router);
   listService = inject(MovieListService);
   userService = inject(UserService);
-  username = inject(UsernameService);
+  userDataService = inject(UserDataService);
   details = input.required<InfoListModel>();
   members = computed(() => this.listService.getListMembers(this.details().id));
 
@@ -212,10 +213,10 @@ export class ListSettingsPageComponent {
   async removeUser(uid: string) {
     const alert = await this.alertController.create({
       header: this.translate.instant(this.DIALOGS_LABELS + 'rimuovi.header', {
-        username: this.username.getUsername(uid),
+        username: this.userDataService.getUsername(uid),
       }),
       message: this.translate.instant(this.DIALOGS_LABELS + 'rimuovi.message', {
-        username: this.username.getUsername(uid),
+        username: this.userDataService.getUsername(uid),
       }),
       buttons: [
         {
@@ -241,19 +242,19 @@ export class ListSettingsPageComponent {
         this.snackBar.open(
           this.translate.instant(
             this.MESSAGE_LABELS + 'rimuoviUtente.successo',
-            { username: this.username.getUsername(uid) }
+            { username: this.userDataService.getUsername(uid) }
           )
         )
       )
       .catch((err) => {
         console.error(
           "Errore! Non è stato possibile rimuovere l'utente " +
-            this.username.getUsername(uid) +
-            '.'
+          this.userDataService.getUsername(uid) +
+          '.'
         );
         this.snackBar.open(
           this.translate.instant(this.MESSAGE_LABELS + 'rimuoviUtente.errore', {
-            username: this.username.getUsername(uid),
+            username: this.userDataService.getUsername(uid),
           })
         );
       });

@@ -6,7 +6,7 @@ import { FriendStatusEnum } from 'src/app/enum/friend-status.enum';
 import { FriendshipModel } from 'src/app/models/Friendship.model';
 import { FriendsService } from 'src/app/services/friends.service';
 import { ToastService } from 'src/app/services/toast.service';
-import { UsernameService } from 'src/app/services/username.service';
+import { UserDataService } from 'src/app/services/userdata.service';
 
 @Component({
   selector: 'app-friend-list',
@@ -17,7 +17,7 @@ import { UsernameService } from 'src/app/services/username.service';
 export class FriendListComponent implements OnInit {
   private snackbar = inject(ToastService);
   private friendService = inject(FriendsService);
-  username = inject(UsernameService);
+  userData = inject(UserDataService);
 
   friendList = input.required<FriendshipModel[]>()
 

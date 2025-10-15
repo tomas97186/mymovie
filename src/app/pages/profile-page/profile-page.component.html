@@ -1,16 +1,17 @@
-@let userInfo = this.userInfo$ | async; @let isYou = this.isYou | async; @let
-friendshipStatus = this.friendshipStatus | async; @if(!isYou) {
+@let userInfo = this.userInfo.value(); @let isYou = this.isYou(); @let
+friendshipStatus = this.friendshipStatus() | async; @if(!isYou) {
 <ion-fab slot="fixed" vertical="top" horizontal="start">
   <ion-fab-button class="back-button" (click)="closePage()">
     <ion-icon name="chevron-back" size="small"></ion-icon>
   </ion-fab-button>
 </ion-fab>
-}
+} @else {
 <ion-fab slot="fixed" vertical="top" horizontal="end">
   <ion-fab-button class="glass" routerLink="/settings">
     <ion-icon name="settings-outline"></ion-icon>
   </ion-fab-button>
 </ion-fab>
+}
 <div class="profile-page">
   <!-- <div class="image-background">
     <div class="movie-overlay"></div>
@@ -21,8 +22,8 @@ friendshipStatus = this.friendshipStatus | async; @if(!isYou) {
   </div> -->
   <div class="container py-2">
     <div class="user-info">
-      <div class="icon-avatar">
-        <ion-icon name="person"></ion-icon>
+      <div class="icon-avatar" (click)="openChangeAvatarModal()">
+        <img [src]="userInfo?.avatarUrl" alt="">
       </div>
       <h6>{{ userInfo?.username }}</h6>
       <p class="bio">{{ userInfo?.bio }}</p>
@@ -63,13 +64,8 @@ friendshipStatus = this.friendshipStatus | async; @if(!isYou) {
       </ion-button>
       @if(friendshipStatus) { @if(friendshipStatus.status ===
       FriendStatusEnum.ACCEPTED) {
-      <ion-button
-        shape="rounded"
-        size="small"
-        color="primary"
-        fill="outline"
-        (click)="removeFriend(friendshipStatus, userInfo!.username)"
-      >
+      <ion-button shape="rounded" size="small" color="primary" fill="outline"
+        (click)="removeFriend(friendshipStatus, userInfo!.username)">
         <ion-icon slot="start" name="person-remove-outline"></ion-icon>
         <ion-label>
           {{ "pages.profile.buttons.removeFriend" | translate }}
@@ -77,38 +73,23 @@ friendshipStatus = this.friendshipStatus | async; @if(!isYou) {
       </ion-button>
       } @else if(friendshipStatus.status === FriendStatusEnum.PENDING) {
       @if(userInfo?.uid === friendshipStatus.sender.uid) {
-      <ion-button
-        shape="rounded"
-        size="small"
-        color="primary"
-        fill="outline"
-        (click)="acceptFriend(friendshipStatus, userInfo!.username)"
-      >
+      <ion-button shape="rounded" size="small" color="primary" fill="outline"
+        (click)="acceptFriend(friendshipStatus, userInfo!.username)">
         <ion-icon slot="start" name="checkmark"></ion-icon>
         <ion-label>
           {{ "pages.profile.buttons.acceptFriend" | translate }}
         </ion-label>
       </ion-button>
       } @else {
-      <ion-button
-        shape="rounded"
-        size="small"
-        color="danger"
-        fill="outline"
-        (click)="removeFriend(friendshipStatus, userInfo!.username)"
-      >
+      <ion-button shape="rounded" size="small" color="danger" fill="outline"
+        (click)="removeFriend(friendshipStatus, userInfo!.username)">
         <ion-icon slot="start" name="close"></ion-icon>
         <ion-label>
           {{ "pages.profile.buttons.cancelRequest" | translate }}
         </ion-label>
       </ion-button>
       } } } @else {
-      <ion-button
-        size="small"
-        color="primary"
-        fill="outline"
-        (click)="addFriend(userInfo!.username)"
-      >
+      <ion-button size="small" color="primary" fill="outline" (click)="addFriend(userInfo!.username)">
         <ion-icon slot="start" name="person-add-outline"></ion-icon>
         <ion-label>
           {{ "pages.profile.buttons.addFriend" | translate }}
@@ -118,59 +99,31 @@ friendshipStatus = this.friendshipStatus | async; @if(!isYou) {
     </div>
     }
     <div class="review-filter">
-      <ion-segment value="like" mode="ios" (ionChange)="scrollToTop()">
-        <ion-segment-button value="like" content-id="like">
-          <ion-label
-            >{{ "pages.profile.labels.likes" | translate | titlecase }}
+      <ion-segment value="like" mode="ios" (ionChange)="onSegmentChange($event)">
+        <ion-segment-button value="like">
+          <ion-label>{{ "pages.profile.labels.likes" | translate | titlecase }}
             <!-- <span class="movie-count">{{ details.moviesCount - details.watchedMovies }}</span> -->
           </ion-label>
         </ion-segment-button>
-        <ion-segment-button value="dislike" content-id="dislike">
+        <ion-segment-button value="dislike">
           <ion-label>{{
             "pages.profile.labels.dislikes" | translate | titlecase
-          }}</ion-label>
+            }}</ion-label>
         </ion-segment-button>
       </ion-segment>
     </div>
-    <ion-segment-view>
-      <ion-segment-content id="like">
-        @let userLikes = this.userLikes | async; @if(userLikes &&
-        userLikes.length > 0) {
-        <app-movie-list
-          [movies]="userLikes"
-          [total]="userLikes!.length"
-        ></app-movie-list>
-        } @else {
-        <div class="no-movies-banner">
-          <ion-icon name="sentiment_dissatisfied"></ion-icon
-          ><span>{{
-            "pages.profile.labels.noFilm" | translate | titlecase
-          }}</span>
-          <span style="font-size: 0.7rem">{{
-            "pages.profile.labels.start" | translate | titlecase
-          }}</span>
-        </div>
-        }
-      </ion-segment-content>
-      <ion-segment-content id="dislike">
-        @let userDislikes = this.userDislikes | async; @if(userDislikes &&
-        userDislikes.length > 0) {
-        <app-movie-list
-          [movies]="userDislikes"
-          [total]="userDislikes!.length"
-        ></app-movie-list>
-        } @else {
-        <div class="no-movies-banner">
-          <ion-icon name="sentiment_dissatisfied"></ion-icon
-          ><span>{{
-            "pages.profile.labels.noFilm" | translate | titlecase
-          }}</span>
-          <span style="font-size: 0.7rem">{{
-            "pages.profile.labels.start" | translate | titlecase
-          }}</span>
-        </div>
-        }
-      </ion-segment-content>
-    </ion-segment-view>
+    @let movies = this.movies.value();
+    @if(movies && movies.length > 0) {
+    <app-movie-list [movies]="movies" [total]="movies!.length"></app-movie-list>
+    } @else {
+    <div class="no-movies-banner">
+      <ion-icon name="sentiment_dissatisfied"></ion-icon><span>{{
+        "pages.profile.labels.noFilm" | translate | titlecase
+        }}</span>
+      <span style="font-size: 0.7rem">{{
+        "pages.profile.labels.start" | translate | titlecase
+        }}</span>
+    </div>
+    }
   </div>
 </div>

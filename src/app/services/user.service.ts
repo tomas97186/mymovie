@@ -19,7 +19,7 @@ import { AuthService } from './auth.service';
 import { UserModel } from '../models/user.model';
 import { User } from '@angular/fire/auth';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { UsernameService } from './username.service';
+import { UserDataService } from './userdata.service';
 
 @Injectable({
   providedIn: 'root',
@@ -30,7 +30,7 @@ export class UserService {
   private authService = inject(AuthService);
   private __currentUser?: User;
   private __userInfo = signal<UserModel | undefined>(undefined);
-  private usernameService = inject(UsernameService);
+  private userDataService = inject(UserDataService);
 
   constructor() {
     this.authService.currentUser$
@@ -99,7 +99,7 @@ export class UserService {
       userInfo
     );
 
-    this.usernameService.setUsername(username, uid!, batch);
+    this.userDataService.setUsername(username, uid!, batch);
 
     await batch.commit();
 
@@ -120,34 +120,18 @@ export class UserService {
     }
     batch.set(doc(this.firestore, `${CollectionEnum.USERNAMES}/${username}`), { 'uid': uid });
 
-    this.usernameService.setUsername(username, uid!, batch);
+    this.userDataService.setUsername(username, uid!, batch);
 
-    // (
-    //   await getDocs(
-    //     query(
-    //       collection(this.firestore, CollectionEnum.MEMBERSHIPS),
-    //       where('user.uid', '==', uid)
-    //     )
-    //   )
-    // ).forEach((d) => batch.update(d.ref, { 'user.username': username }));
+    return batch.commit();
+  }
 
-    // (
-    //   await getDocs(
-    //     query(
-    //       collection(this.firestore, CollectionEnum.FRIEDS),
-    //       where('sender.uid', '==', uid)
-    //     )
-    //   )
-    // ).forEach((d) => batch.update(d.ref, { 'sender.username': username }));
+  async setAvatar(avatarUrl: string, uid?: string) {
+    const batch = writeBatch(this.firestore);
+    uid ??= this.currentUser?.uid;
 
-    // (
-    //   await getDocs(
-    //     query(
-    //       collection(this.firestore, CollectionEnum.FRIEDS),
-    //       where('receiver.uid', '==', uid)
-    //     )
-    //   )
-    // ).forEach((d) => batch.update(d.ref, { 'receiver.username': username }));
+    batch.update(doc(this.firestore, `${CollectionEnum.USERS}/${uid}`), { avatarUrl });
+
+    this.userDataService.setUserAvatar(avatarUrl, uid!, batch);
 
     return batch.commit();
   }

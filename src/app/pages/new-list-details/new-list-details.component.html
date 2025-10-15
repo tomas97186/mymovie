@@ -62,61 +62,33 @@ this.listDetails.isLoading(); @if(isLoading) {
     </div>
   </div>
   <div class="watched-filter">
-    <ion-segment value="toWatch" mode="ios" (ionChange)="scrollToTop()">
+    <ion-segment value="toWatch" mode="ios" (ionChange)="onSegmentChange($event)">
       <ion-segment-button value="toWatch" content-id="toWatch">
-        <ion-label
-          >{{ "pages.listDetails.labels.daVedere" | translate | titlecase }}
+        <ion-label>{{ "pages.listDetails.labels.daVedere" | translate | titlecase }}
           <!-- <span class="movie-count">{{ details.moviesCount - details.watchedMovies }}</span> -->
         </ion-label>
       </ion-segment-button>
       <ion-segment-button value="watched" content-id="watched">
         <ion-label>{{
           "pages.listDetails.labels.visti" | translate | titlecase
-        }}</ion-label>
+          }}</ion-label>
       </ion-segment-button>
     </ion-segment>
   </div>
 
-  <ion-segment-view>
-    <ion-segment-content id="toWatch">
-      @let moviesToWatch = this.moviesToWatch.value(); @if(moviesToWatch &&
-      moviesToWatch.length > 0) {
-      <app-movie-list
-        [movies]="moviesToWatch"
-        [total]="moviesToWatch!.length"
-      ></app-movie-list>
-      } @else {
-      <div class="no-movies-banner">
-        <ion-icon name="sentiment_dissatisfied"></ion-icon
-        ><span>{{
-          "pages.listDetails.labels.noFilm" | translate | titlecase
-        }}</span>
-        <span style="font-size: 0.9rem">{{
-          "pages.listDetails.labels.start" | translate | titlecase
-        }}</span>
-      </div>
-      }
-    </ion-segment-content>
-    <ion-segment-content id="watched">
-      @let watchedMovies = this.watchedMovies.value(); @if(watchedMovies &&
-      watchedMovies.length > 0) {
-      <app-movie-list
-        [movies]="watchedMovies"
-        [total]="watchedMovies!.length"
-      ></app-movie-list>
-      } @else {
-      <div class="no-movies-banner">
-        <ion-icon name="sentiment_dissatisfied"></ion-icon
-        ><span>{{
-          "pages.listDetails.labels.noFilm" | translate | titlecase
-        }}</span>
-        <span style="font-size: 0.9rem">{{
-          "pages.listDetails.labels.start" | translate | titlecase
-        }}</span>
-      </div>
-      }
-    </ion-segment-content>
-  </ion-segment-view>
+  @let movies = this.movies.value(); @if(movies &&
+  movies.length > 0) {
+  <app-movie-list [movies]="movies" [total]="movies!.length"></app-movie-list>
+  } @else {
+  <div class="no-movies-banner">
+    <ion-icon name="sentiment_dissatisfied"></ion-icon><span>{{
+      "pages.listDetails.labels.noFilm" | translate | titlecase
+      }}</span>
+    <span style="font-size: 0.9rem">{{
+      "pages.listDetails.labels.start" | translate | titlecase
+      }}</span>
+  </div>
+  }
 </div>
 
 } @else {

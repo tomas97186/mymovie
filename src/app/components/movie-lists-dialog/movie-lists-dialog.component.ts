@@ -79,15 +79,6 @@ export class MovieListsDialogComponent {
     movie.genre_ids = movie.genre_ids || movie.genres?.map((g) => g.id) || [];
     this.listService
       .addMovie((<unknown>movie) as SearchItemModel, listId)
-      .then(() => {
-        this._snackBar.open(
-          this.translate.instant(this.MESSAGE_LABELS + 'aggiungi.successo'),
-          {
-            duration: 3000,
-            icon: 'checkmark',
-          }
-        );
-      })
       .catch((error) => {
         this._snackBar.open(
           this.translate.instant(this.MESSAGE_LABELS + 'aggiungi.errore'),
@@ -102,14 +93,6 @@ export class MovieListsDialogComponent {
   removeMovieFromList(movie: MovieModel, listId: string): void {
     this.listService
       .removeMovie(movie.id, listId)
-      .then(() => {
-        this._snackBar.open(
-          this.translate.instant(this.MESSAGE_LABELS + 'rimuovi.successo'),
-          {
-            duration: 3000,
-          }
-        );
-      })
       .catch((error) => {
         this._snackBar.open(
           this.translate.instant(this.MESSAGE_LABELS + 'rimuovi.errore'),
@@ -124,14 +107,6 @@ export class MovieListsDialogComponent {
   setAsWatched(movie: MovieModel, listId: string): void {
     this.listService
       .setMovieAsWatched(movie.id, listId)
-      .then(() => {
-        this._snackBar.open(
-          this.translate.instant(this.MESSAGE_LABELS + 'visto.successo'),
-          {
-            duration: 3000,
-          }
-        );
-      })
       .catch((error) => {
         this._snackBar.open(
           this.translate.instant(this.MESSAGE_LABELS + 'visto.errore'),

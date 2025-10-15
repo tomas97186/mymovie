@@ -10,7 +10,7 @@ this.details()!; @let members = this.members() | async;
     </ion-buttons>
     <ion-title>{{
       "pages.listDetails.settings.labels.impostazioni" | translate
-    }}</ion-title>
+      }}</ion-title>
   </ion-toolbar>
 </ion-header>
 <ion-content>
@@ -22,11 +22,7 @@ this.details()!; @let members = this.members() | async;
       {{ details.id }}
       <div class="code-actions">
         <ion-button fill="clear" (click)="shareListCode(details.id)">
-          <ion-icon
-            slot="icon-only"
-            name="share-social-outline"
-            size="medium"
-          ></ion-icon>
+          <ion-icon slot="icon-only" name="share-social-outline" size="medium"></ion-icon>
         </ion-button>
       </div>
     </div>
@@ -40,24 +36,24 @@ this.details()!; @let members = this.members() | async;
       <div class="statistic-item">
         <span class="statistic-label">{{
           "pages.listDetails.settings.labels.totale" | translate
-        }}</span>
+          }}</span>
         <span class="statistic-value">{{ details.moviesCount }}</span>
       </div>
       <div class="statistic-item">
         <span class="statistic-label">{{
           "pages.listDetails.settings.labels.daVedere" | translate
-        }}</span>
+          }}</span>
         <span class="statistic-value" style="color: var(--ion-color-danger)">{{
           details.moviesCount - details.watchedMovies
-        }}</span>
+          }}</span>
       </div>
       <div class="statistic-item">
         <span class="statistic-label">{{
           "pages.listDetails.settings.labels.visti" | translate
-        }}</span>
+          }}</span>
         <span class="statistic-value" style="color: var(--ion-color-success)">{{
           details.watchedMovies
-        }}</span>
+          }}</span>
       </div>
     </div>
     <div class="text-description">
@@ -67,15 +63,14 @@ this.details()!; @let members = this.members() | async;
       @for(member of members; let i = $index; track $index) {
       <ion-item>
         <div class="avatar" [ngClass]="`avatar-${i+1}`">
-          {{ username.getUsername(member.uid) | slice : 0 : 1 | uppercase }}
+          {{ userDataService.getUsername(member.uid) | slice : 0 : 1 | uppercase }}
         </div>
-        <ion-label
-          >{{
-            username.getUsername(member.uid) ||
-              ("pages.listDetails.settings.labels.sconosciuto" | translate)
+        <ion-label>{{
+          userDataService.getUsername(member.uid) ||
+          ("pages.listDetails.settings.labels.sconosciuto" | translate)
           }}
           @if(member.uid === currentUser?.uid) { ({{
-            "pages.listDetails.settings.labels.tu" | translate
+          "pages.listDetails.settings.labels.tu" | translate
           }}) } @if(member.uid === details.createdBy) {
           <p>
             {{ "pages.listDetails.settings.labels.proprietario" | translate }}
@@ -86,25 +81,15 @@ this.details()!; @let members = this.members() | async;
         </ion-label>
         @if(currentUser?.uid === details.createdBy && member.uid !=
         currentUser?.uid) {
-        <ion-button
-          slot="end"
-          fill="clear"
-          color="trash"
-          size="medium"
-          color="danger"
-          (click)="removeUser(member.uid!)"
-        >
+        <ion-button slot="end" fill="clear" color="trash" size="medium" color="danger"
+          (click)="removeUser(member.uid!)">
           <ion-icon slot="icon-only" name="trash"></ion-icon>
         </ion-button>
         }
       </ion-item>
       }
       <div class="px-2 pt-2 pb-1">
-        <ion-button
-          class="w-100"
-          (click)="this.openInviteUserDialog()"
-          color="light"
-        >
+        <ion-button class="w-100" (click)="this.openInviteUserDialog()" color="light">
           <ion-icon name="person-add-outline" slot="start"></ion-icon>
           {{ "pages.listDetails.settings.buttons.invita" | translate }}
         </ion-button>
@@ -121,8 +106,8 @@ this.details()!; @let members = this.members() | async;
         </ion-label>
         <div class="metadata-end-wrapper" slot="end">
           <ion-note color="medium">{{
-            username.getUsername(details.createdBy)
-          }}</ion-note>
+            userDataService.getUsername(details.createdBy)
+            }}</ion-note>
         </div>
       </ion-item>
       <ion-item>
@@ -137,13 +122,12 @@ this.details()!; @let members = this.members() | async;
     <div class="actions">
       @if(currentUser?.uid === details.createdBy) {
       <ion-button class="w-100" (click)="deleteList()" color="danger">
-        <ion-icon name="trash" slot="start"></ion-icon
-        >{{ "pages.listDetails.settings.buttons.elimina" | translate }}
+        <ion-icon name="trash" slot="start"></ion-icon>{{ "pages.listDetails.settings.buttons.elimina" | translate }}
       </ion-button>
       } @else {
       <ion-button class="w-100" (click)="exitList()" color="danger">
-        <ion-icon name="log-out" slot="start"></ion-icon
-        >{{ "pages.listDetails.settings.buttons.abbandona" | translate }}
+        <ion-icon name="log-out" slot="start"></ion-icon>{{ "pages.listDetails.settings.buttons.abbandona" | translate
+        }}
       </ion-button>
       }
     </div>

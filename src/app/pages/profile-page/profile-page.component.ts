@@ -1,5 +1,5 @@
 import { CommonModule, Location } from '@angular/common';
-import { Component, DestroyRef, inject } from '@angular/core';
+import { Component, computed, DestroyRef, effect, inject, Signal, signal } from '@angular/core';
 import {
   EmailAuthProvider,
   reauthenticateWithCredential,
@@ -18,7 +18,7 @@ import {
   ModalController, IonLabel, IonFab, IonFabButton, IonButton
 } from '@ionic/angular/standalone';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { catchError, filter, first, from, map, of, share, switchMap, tap } from 'rxjs';
+import { catchError, filter, first, from, map, Observable, of, share, switchMap, tap } from 'rxjs';
 import { MovieListComponent } from 'src/app/components/movie-list/movie-list.component';
 import { ToastService } from 'src/app/services/toast.service';
 import { UserService } from 'src/app/services/user.service';
@@ -26,10 +26,12 @@ import { BUTTONS } from 'src/app/variables';
 import { fieldValidations } from 'src/environments/fields.validation';
 import { AuthService } from '../../services/auth.service';
 import { MovieListService } from '../../services/movie-list.service';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { rxResource, takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FriendsService } from 'src/app/services/friends.service';
 import { FriendStatusEnum } from 'src/app/enum/friend-status.enum';
 import { FriendshipModel } from 'src/app/models/Friendship.model';
+import { SearchItemModel } from 'src/app/models/search-item.model';
+import { SelectAvatarDialogComponent } from 'src/app/components/select-avatar-dialog/select-avatar-dialog.component';
 
 @Component({
   selector: 'app-profile-page',
@@ -64,22 +66,52 @@ export class ProfilePageComponent {
   userService = inject(UserService);
   listService = inject(MovieListService);
   private friendService = inject(FriendsService);
-  userInfo$ = this.route.params.pipe(
+  private currentUid = toSignal<string | undefined>(this.route.params.pipe(
     takeUntilDestroyed(this.destroyRef),
-    switchMap(data => {
-      let uid: string;
-      uid = 'id' in data ? data['id'] : this.userService.currentUser!.uid;
-
-      return this.userService.getUserInfo(uid);
-    }),
-    share()
+    map(data => {
+      const uid = 'id' in data ? data['id'] : this.userService.currentUser!.uid;
+      return uid as string;
+    })), { initialValue: undefined });
+  userInfo = rxResource(
+    {
+      request: () => this.currentUid(),
+      loader: ({ request }) => {
+        console.log('UID: ', request);
+        return this.userService.getUserInfo(request)
+      }
+    }
   );
-  userLikes = this.userInfo$.pipe(switchMap(u => this.listService.getUserReviews(u?.uid, true)));
-  userDislikes = this.userInfo$.pipe(switchMap(u => this.listService.getUserReviews(u?.uid, false)));
-  isYou = this.userInfo$.pipe(map(u => u?.uid === this.userService.currentUser?.uid));
-  friendshipStatus = this.userInfo$.pipe(switchMap(u => u?.uid === this.userService.currentUser?.uid ? of(undefined) : this.friendService.getFriendStatus(u!.uid)))
-
+  isYou = computed(() => this.currentUid() === this.userService.currentUser?.uid);
+  friendshipStatus = computed(() => this.currentUid() === this.userService.currentUser?.uid ? of(undefined) : this.friendService.getFriendStatus(this.currentUid()!))
   FriendStatusEnum = FriendStatusEnum;
+  selectedTab = signal<string>('like');
+  movies = rxResource(
+    {
+      request: () => ({ selectedTab: this.selectedTab(), uid: this.currentUid() }),
+      loader: ({ request: { selectedTab, uid } }) => {
+        return this.listService.getUserReviews(uid, selectedTab === 'like');
+      }
+    }
+  );
+
+  onSegmentChange(event: CustomEvent) {
+    this.selectedTab.set(event.detail.value);
+  }
+
+  async openChangeAvatarModal() {
+    const ref = await this.dialog.create({
+      component: SelectAvatarDialogComponent,
+      initialBreakpoint: 0.5,
+      expandToScroll: false,
+      componentProps: {
+      },
+    });
+    ref.present();
+    const { data } = await ref.onWillDismiss();
+    if(!!data) {
+      this.userService.setAvatar(data);
+    }
+  }
 
   async changeName(uid: string) {
     const alert = await this.alertController.create({

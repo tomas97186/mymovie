@@ -345,6 +345,11 @@
         "acceptFriend": "Accetta richiesta"
       },
       "dialogs": {
+        "selectAvatar": {
+          "labels": {
+            "title": "Seleziona l'immagine del profilo"
+          }
+        },
         "username": {
           "header": "Modifica Username"
         },

@@ -1,0 +1,34 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>
+      {{'pages.profile.dialogs.selectAvatar.labels.title' | translate}}
+    </ion-title>
+  </ion-toolbar>
+
+</ion-header>
+<ion-content>
+  <div class="avatar-list">
+    @for(avatar of avatars; track $index) {
+    <div class="avatar" (click)="selectAvatar(avatar.url)" [ngClass]="{'selected': avatar.url === selectedAvatar}">
+      <img [src]="avatar.url" [alt]="avatar.name">
+    </div>
+    }
+  </div>
+  <div class="bottom-bar">
+    <div class="colors">
+      @for(color of colors; track $index) {
+      <div (click)="selectColor(color)" class="color" [ngClass]="{'selected': selectedColor === color}"
+        [ngStyle]="{'background-color': color}">
+      </div>
+      }
+    </div>
+    <div class="actions">
+      <ion-button class="w-100" color="light" (click)="this.dialogRef.dismiss()">
+        {{'shared.buttons.annulla' | translate}}
+      </ion-button>
+      <ion-button class="w-100" [disabled]="!!!selectedAvatar" (click)="this.dialogRef.dismiss(this.selectedAvatar)">
+        {{'shared.buttons.conferma' | translate}}
+      </ion-button>
+    </div>
+  </div>
+</ion-content>
