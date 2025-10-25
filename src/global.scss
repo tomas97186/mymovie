@@ -325,3 +325,8 @@ ion-note {
   vertical-align: top;
   margin-right: 0.5rem;
 }
+
+.alert-wrapper[role=alertdialog] {
+  border-radius: 20px;
+  min-width: 300px;
+}

@@ -26,22 +26,22 @@ export const routes: Routes = [
     component: SearchPageComponent,
     canMatch: [authenticationGuard()],
   },
-  // {
-  //   path: 'profile',
-  //   loadComponent: () =>
-  //     import('./pages/profile-page/profile-page.component').then(
-  //       (m) => m.ProfilePageComponent
-  //     ),
-  //   canMatch: [authenticationGuard()],
-  // },
   {
     path: 'profile',
     loadComponent: () =>
-      import('./components/select-avatar-dialog/select-avatar-dialog.component').then(
-        (m) => m.SelectAvatarDialogComponent
+      import('./pages/profile-page/profile-page.component').then(
+        (m) => m.ProfilePageComponent
       ),
     canMatch: [authenticationGuard()],
   },
+  // {
+  //   path: 'profile',
+  //   loadComponent: () =>
+  //     import('./components/select-avatar-dialog/select-avatar-dialog.component').then(
+  //       (m) => m.SelectAvatarDialogComponent
+  //     ),
+  //   canMatch: [authenticationGuard()],
+  // },
   {
     path: 'community/:id',
     loadComponent: () =>

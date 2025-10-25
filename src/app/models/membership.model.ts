@@ -6,4 +6,5 @@ export interface MembershipModel {
   id: string;
   status: MembershipEnum;
   list: ListPartialModel;
+  sentBy?: string;
 }

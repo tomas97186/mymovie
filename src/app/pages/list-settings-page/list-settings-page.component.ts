@@ -2,33 +2,31 @@ import { ClipboardModule } from '@angular/cdk/clipboard';
 import { CommonModule } from '@angular/common';
 import { Component, computed, inject, input, output } from '@angular/core';
 import { Router } from '@angular/router';
-import { Share } from '@capacitor/share';
 import {
   AlertController,
+  IonBackButton,
   IonButton,
+  IonButtons,
+  IonContent,
+  IonHeader,
   IonIcon,
   IonItem,
   IonLabel,
   IonList,
-  ModalController,
-  IonHeader,
-  IonContent,
+  IonNote,
+  IonTitle, IonToggle,
   IonToolbar,
-  IonButtons,
-  IonBackButton,
-  IonTitle, IonToggle, IonNote
+  ModalController
 } from '@ionic/angular/standalone';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { map } from 'rxjs';
+import { MembershipEnum } from 'src/app/enum/membership.enum';
 import { ToastService } from 'src/app/services/toast.service';
+import { UserService } from 'src/app/services/user.service';
+import { UserDataService } from 'src/app/services/userdata.service';
 import { BUTTONS } from 'src/app/variables';
 import { InfoListModel } from '../../models/movie-list.model';
 import { AuthService } from '../../services/auth.service';
 import { MovieListService } from '../../services/movie-list.service';
-import { UserService } from 'src/app/services/user.service';
-import { MembershipModel } from 'src/app/models/membership.model';
-import { MembershipEnum } from 'src/app/enum/membership.enum';
-import { UserDataService } from 'src/app/services/userdata.service';
 
 @Component({
   selector: 'app-list-page-settings',
@@ -65,7 +63,8 @@ export class ListSettingsPageComponent {
   userDataService = inject(UserDataService);
   details = input.required<InfoListModel>();
   members = computed(() => this.listService.getListMembers(this.details().id));
-
+  inviteUser = input<() => void>();
+  shareList = input<() => void>();
   MembershipEnum = MembershipEnum;
 
   updateListNameFn = output<void>();
@@ -83,24 +82,6 @@ export class ListSettingsPageComponent {
     );
   }
 
-  async shareListCode(listId: string) {
-    if ((await Share.canShare()).value) {
-      // Share text only
-      await Share.share({
-        text: this.translate.instant(
-          this.MESSAGE_LABELS + 'condividi.messaggio',
-          {
-            listId,
-          }
-        ),
-      });
-    } else {
-      this.snackBar.open(
-        this.translate.instant(this.MESSAGE_LABELS + 'condivi.errore')
-      );
-    }
-  }
-
   async exitList() {
     const alert = await this.alertController.create({
       header: this.translate.instant(
@@ -116,7 +97,7 @@ export class ListSettingsPageComponent {
           cssClass: 'secondary',
         },
         {
-          text: this.translate.instant('shared.button.conferma'),
+          text: this.translate.instant('shared.buttons.conferma'),
           role: 'confirm',
           handler: () => this.__exitList(),
         },
@@ -130,7 +111,8 @@ export class ListSettingsPageComponent {
     const listId = this.details().id;
     if (listId) {
       this.listService.exitList(listId).then(() => {
-        this.router.navigate(['/lists']);
+        this.dialog.dismiss();
+        this.router.navigate(['/lists'], { queryParamsHandling: 'replace' });
         this.snackBar.open(
           this.translate.instant(this.MESSAGE_LABELS + 'exitList'),
           {
@@ -140,73 +122,6 @@ export class ListSettingsPageComponent {
       });
     } else {
       console.error('No list ID found in the route parameters');
-    }
-  }
-
-  async openInviteUserDialog() {
-    const alert = await this.alertController.create({
-      header: this.translate.instant(this.DIALOGS_LABELS + 'invita.header'),
-      inputs: [
-        {
-          id: 'username',
-          label: 'Username',
-          placeholder: 'Username',
-          name: 'username',
-          attributes: {
-            maxLength: 15,
-            minLength: 5,
-          },
-        },
-      ],
-      buttons: [
-        {
-          text: this.translate.instant(BUTTONS.ANNULLA),
-          role: 'cancel',
-          cssClass: 'secondary',
-        },
-        {
-          text: this.translate.instant(BUTTONS.CONFERMA),
-          role: 'confirm',
-          handler: this.__inviteUser.bind(this),
-        },
-      ],
-    });
-
-    await alert.present();
-  }
-
-  private __inviteUser(data: { username: string }) {
-    if (data && data.username) {
-      this.listService
-        .inviteToList(this.details().id!, data.username)
-        .then((res) => {
-          if (!res) {
-            this.snackBar.open(
-              this.translate.instant(this.MESSAGE_LABELS + 'invito.nonEsiste', {
-                username: data.username,
-              }),
-              {
-                duration: 3000,
-              }
-            );
-          } else {
-            this.snackBar.open(
-              this.translate.instant(this.MESSAGE_LABELS + 'invito.successo'),
-              {
-                duration: 3000,
-              }
-            );
-          }
-        })
-        .catch((error) => {
-          console.error('Error invite:', error);
-          this.snackBar.open(
-            this.translate.instant(this.MESSAGE_LABELS + 'errore'),
-            {
-              duration: 3000,
-            }
-          );
-        });
     }
   }
 

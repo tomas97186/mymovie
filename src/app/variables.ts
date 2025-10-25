@@ -8,7 +8,8 @@ export const INPUTS = {
   NOME: SHARED_INPUTS + 'nome',
   PASSWORD: SHARED_INPUTS + 'password',
   CODICE: SHARED_INPUTS + 'codice',
-  EMAIL: SHARED_INPUTS + 'email'
+  EMAIL: SHARED_INPUTS + 'email',
+  BIO: SHARED_INPUTS + 'bio'
 };
 
 export const PLACEHOLDERS = {

@@ -1,48 +1,45 @@
-@let list = this.membership().list;
+@let list = this.list.value();
+@let membership = this.membership();
 
-<div class="list-item" [routerLink]="invitation() ? undefined : list.id">
-  <div class="list-info">
-    <h6 class="mb-0">{{ list.name }}</h6>
-    <div class="list-meta">
-      <!-- <div class="list-meta-item">
-        <ion-icon size="small" name="film-outline"></ion-icon
-        ><span>{{ list.moviesCount }} film</span>
+@if(list) {
+  <div class="list-item" [routerLink]="invitation() ? undefined : list.id">
+    <div class="list-info">
+      <h6 class="mb-0">{{ list.name }}</h6>
+      <div class="list-meta">
+        @if(invitation() && membership.sentBy) {
+          <div class="list-meta-item">
+            {{'pages.userLists.labels.invitatoDa' | translate}} {{this.userDataService.getUsername(membership.sentBy)}}
+          </div>
+        } @else {
+          <div class="list-meta-item">
+            <ion-icon size="small" name="film-outline"></ion-icon><span>{{ list.moviesCount }} {{'pages.userLists.labels.film' | translate}}</span>
+          </div>
+          <div class="list-meta-item">
+            <ion-icon size="small" name="people-outline"></ion-icon>
+            {{ list.membersCount }} {{'pages.userLists.labels.membri' | translate}}
+          </div>
+        }
       </div>
-      <div class="list-meta-item">
-        <ion-icon size="small" name="people-outline"></ion-icon>
-        {{ list.membersCount }} membri
-      </div> -->
+    </div>
+    <div>
+      @if(invitation()) {
+      <ion-button class="me-2" size="small" fill="outline" color="danger" (click)="declineInvitation()">
+        <ion-icon name="close" slot="icon-only"></ion-icon>
+      </ion-button>
+      <ion-button color="success" fill="outline" size="small" (click)="acceptInvitation()">
+        <ion-icon name="checkmark" slot="icon-only"></ion-icon>
+      </ion-button>
+  
+      } @else {
+      <div class="actions">
+        <ion-button fill="clear" (click)="shareListCode($event)">
+          <ion-icon name="share-social-outline" slot="icon-only"></ion-icon>
+        </ion-button>
+        <ion-button fill="clear">
+          <ion-icon name="chevron-forward"></ion-icon>
+        </ion-button>
+      </div>
+      }
     </div>
   </div>
-  <div>
-    @if(invitation()) {
-    <ion-button
-      class="me-2"
-      size="small"
-      fill="outline"
-      color="danger"
-      (click)="declineInvitation()"
-    >
-      <ion-icon name="close" slot="icon-only"></ion-icon>
-    </ion-button>
-    <ion-button
-      color="success"
-      fill="outline"
-      size="small"
-      (click)="acceptInvitation()"
-    >
-      <ion-icon name="checkmark" slot="icon-only"></ion-icon>
-    </ion-button>
-
-    } @else {
-    <div class="actions">
-      <ion-button fill="clear" (click)="shareListCode($event)">
-        <ion-icon name="share-social-outline" slot="icon-only"></ion-icon>
-      </ion-button>
-      <ion-button fill="clear">
-        <ion-icon name="chevron-forward"></ion-icon>
-      </ion-button>
-    </div>
-    }
-  </div>
-</div>
+}

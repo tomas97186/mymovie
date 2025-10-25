@@ -21,7 +21,7 @@ this.details()!; @let members = this.members() | async;
     <div class="code-list-container">
       {{ details.id }}
       <div class="code-actions">
-        <ion-button fill="clear" (click)="shareListCode(details.id)">
+        <ion-button fill="clear" (click)="this.shareList()!()">
           <ion-icon slot="icon-only" name="share-social-outline" size="medium"></ion-icon>
         </ion-button>
       </div>
@@ -89,7 +89,7 @@ this.details()!; @let members = this.members() | async;
       </ion-item>
       }
       <div class="px-2 pt-2 pb-1">
-        <ion-button class="w-100" (click)="this.openInviteUserDialog()" color="light">
+        <ion-button class="w-100" (click)="this.inviteUser()!()" color="light">
           <ion-icon name="person-add-outline" slot="start"></ion-icon>
           {{ "pages.listDetails.settings.buttons.invita" | translate }}
         </ion-button>

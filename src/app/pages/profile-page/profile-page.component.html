@@ -22,7 +22,7 @@ friendshipStatus = this.friendshipStatus() | async; @if(!isYou) {
   </div> -->
   <div class="container py-2">
     <div class="user-info">
-      <div class="icon-avatar" (click)="openChangeAvatarModal()">
+      <div class="icon-avatar" (click)="isYou? openChangeAvatarModal() : undefined">
         <img [src]="userInfo?.avatarUrl" alt="">
       </div>
       <h6>{{ userInfo?.username }}</h6>
@@ -56,7 +56,7 @@ friendshipStatus = this.friendshipStatus() | async; @if(!isYou) {
     </div>
     @if(!isYou) {
     <div class="actions w-100">
-      <ion-button size="small" color="ligth">
+      <ion-button size="small" color="medium">
         <ion-icon slot="start" name="add"></ion-icon>
         <ion-label>
           {{ "pages.profile.buttons.addToList" | translate }}
@@ -64,16 +64,16 @@ friendshipStatus = this.friendshipStatus() | async; @if(!isYou) {
       </ion-button>
       @if(friendshipStatus) { @if(friendshipStatus.status ===
       FriendStatusEnum.ACCEPTED) {
-      <ion-button shape="rounded" size="small" color="primary" fill="outline"
+      <ion-button shape="rounded" size="small" color="medium"
         (click)="removeFriend(friendshipStatus, userInfo!.username)">
         <ion-icon slot="start" name="person-remove-outline"></ion-icon>
-        <ion-label>
+        <ion-label>          
           {{ "pages.profile.buttons.removeFriend" | translate }}
         </ion-label>
       </ion-button>
       } @else if(friendshipStatus.status === FriendStatusEnum.PENDING) {
       @if(userInfo?.uid === friendshipStatus.sender.uid) {
-      <ion-button shape="rounded" size="small" color="primary" fill="outline"
+      <ion-button shape="rounded" size="small" color="medium"
         (click)="acceptFriend(friendshipStatus, userInfo!.username)">
         <ion-icon slot="start" name="checkmark"></ion-icon>
         <ion-label>
@@ -81,7 +81,7 @@ friendshipStatus = this.friendshipStatus() | async; @if(!isYou) {
         </ion-label>
       </ion-button>
       } @else {
-      <ion-button shape="rounded" size="small" color="danger" fill="outline"
+      <ion-button shape="rounded" size="small" color="medium"
         (click)="removeFriend(friendshipStatus, userInfo!.username)">
         <ion-icon slot="start" name="close"></ion-icon>
         <ion-label>
@@ -89,7 +89,7 @@ friendshipStatus = this.friendshipStatus() | async; @if(!isYou) {
         </ion-label>
       </ion-button>
       } } } @else {
-      <ion-button size="small" color="primary" fill="outline" (click)="addFriend(userInfo!.username)">
+      <ion-button size="small" color="medium" (click)="addFriend(userInfo!.username)">
         <ion-icon slot="start" name="person-add-outline"></ion-icon>
         <ion-label>
           {{ "pages.profile.buttons.addFriend" | translate }}

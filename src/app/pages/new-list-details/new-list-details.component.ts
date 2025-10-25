@@ -34,6 +34,8 @@ import { SearchItemModel } from '../../models/search-item.model';
 import { AuthService } from '../../services/auth.service';
 import { MovieListService } from '../../services/movie-list.service';
 import { ListSettingsPageComponent } from '../list-settings-page/list-settings-page.component';
+import { InvitationResponseEnum } from 'src/app/enum/invitation.response.enum';
+import { InviteUserPageComponent } from '../invite-user-page/invite-user-page.component';
 
 @Component({
   selector: 'app-list-details',
@@ -110,6 +112,19 @@ export class NewListDetailsComponent {
       initialBreakpoint: 1,
       componentProps: {
         details: this.listDetails.value()!,
+        inviteUser: this.openInviteUserDialog.bind(this),
+        shareList: this.shareListCode.bind(this)
+      },
+    });
+    await alert.present();
+  }
+
+  async openInvite() {
+    const alert = await this.dialog.create({
+      component: InviteUserPageComponent,
+      initialBreakpoint: 1,
+      componentProps: {
+        details: this.listDetails.value()!,
       },
     });
     await alert.present();
@@ -178,6 +193,88 @@ export class NewListDetailsComponent {
     }
   }
 
+  async openInviteUserDialog() {
+    const alert = await this.alertController.create({
+      header: this.translate.instant('pages.listDetails.settings.dialogs.invita.header'),
+      inputs: [
+        {
+          id: 'username',
+          label: 'Username',
+          placeholder: 'Username',
+          name: 'username',
+          attributes: {
+            maxLength: 15,
+            minLength: 5,
+          },
+        },
+      ],
+      buttons: [
+        {
+          text: this.translate.instant(BUTTONS.ANNULLA),
+          role: 'cancel',
+          cssClass: 'secondary',
+        },
+        {
+          text: this.translate.instant(BUTTONS.CONFERMA),
+          role: 'confirm',
+          handler: this.__inviteUser.bind(this),
+        },
+      ],
+    });
+
+    await alert.present();
+  }
+  private __inviteUser(data: { username: string }) {
+    if (data && data.username) {
+      this.listService
+        .inviteToList(this.listId()!, data.username)
+        .then((res) => {
+          switch (res) {
+            case (InvitationResponseEnum.USERNAME_NOT_EXISTS): {
+              this.snackBar.open(
+                this.translate.instant(this.MESSAGE_LABELS + 'invito.nonEsiste', {
+                  username: data.username,
+                }),
+                {
+                  duration: 3000,
+                }
+              );
+              break;
+            }
+            case (InvitationResponseEnum.USER_IN_LIST): {
+              this.snackBar.open(
+                this.translate.instant(this.MESSAGE_LABELS + 'invito.utenteInList', {
+                  username: data.username,
+                }),
+                {
+                  duration: 3000,
+                }
+              );
+              break;
+            }
+            default: {
+              this.snackBar.open(
+                this.translate.instant(this.MESSAGE_LABELS + 'invito.successo'),
+                {
+                  duration: 3000,
+                }
+              );
+
+            }
+          }
+        })
+        .catch((error) => {
+          console.error('Error invite:', error);
+          this.snackBar.open(
+            this.translate.instant(this.MESSAGE_LABELS + 'errore'),
+            {
+              duration: 3000,
+            }
+          );
+        });
+    }
+  }
+
   private __updateName(data: { name: string }) {
     if (data && data.name) {
       console.log(data);
@@ -216,6 +313,15 @@ export class NewListDetailsComponent {
   scrollToTop() {
     const element = document.querySelector('.container');
     element?.scroll({ top: 0, behavior: 'smooth' });
+  }
+
+  copyToClipboardNotification() {
+    this.snackBar.open(
+      this.translate.instant(this.MESSAGE_LABELS + 'copiaCodice'),
+      {
+        duration: 3000,
+      }
+    );
   }
 
   ngOnInit() {

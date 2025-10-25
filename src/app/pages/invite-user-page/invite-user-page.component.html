@@ -1,0 +1,27 @@
+@let friendList = friendList$ | async;
+
+<ion-header class="transparent">
+
+  <ion-toolbar class="large">
+    <ion-buttons slot="start">
+      <ion-button fill="clear" (click)="this.dialog.dismiss()">
+        <ion-icon name="chevron-back" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>{{
+      "pages.listDetails.inviteUser.labels.header" | translate
+      }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="container">
+    <!-- <form [formGroup]="queryForm" class="search-form">
+      <ion-input labelPlacement="stacked" class="search-field"
+        placeholder="{{'pages.community.placeholders.search' | translate}}" formControlName="query" [clearInput]="true">
+        <ion-icon slot="end" name="search"></ion-icon>
+      </ion-input>
+    </form> -->
+    <app-invite-user-list [friendList]="friendList!"></app-invite-user-list>
+  </div>
+</ion-content>

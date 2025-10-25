@@ -13,6 +13,7 @@
   --ion-item-background: #1a1d22 !important;
   --card-background-color: #1a1d22;
   --button-color: #222428;
+  --warning-container-color: rgb(159, 171, 246);
   --container-background-color: #0d0d0d;
   --card-primary-color: #ffc9c9;
   --background-color: #0d0d0d;
@@ -20,6 +21,11 @@
   --ion-tab-bar-border-color: none !important;
   --highlight-color-invalid: darkred !important;
   --bs-heading-color: whitesmoke !important;
+}
+
+.ion-color-medium {
+  --ion-color-base: var(--button-color) !important;
+  --ion-color-contrast: whitesmoke !important;
 }
 
 .ion-color-light {

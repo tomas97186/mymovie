@@ -1,0 +1,17 @@
+<ion-list>
+  @for(friend of friendList(); track friend.uid) {
+  <!-- @let username = getUsername(friend.uid!) | async; -->
+  <ion-item>
+    <ion-avatar aria-hidden="true" slot="start">
+      <img alt="" [src]="userData.getUserAvatar(friend.uid!)" />
+    </ion-avatar>
+    <ion-label>
+      {{userData.getUsername(friend.uid!)}}
+    </ion-label>
+    <ion-button slot="end" size="medium" fill="clear" color="primary" (click)="declineFriendRequest($event, friend)">
+      <ion-icon name="add" slot="icon-only"></ion-icon>
+    </ion-button>
+
+  </ion-item>
+  }
+</ion-list>

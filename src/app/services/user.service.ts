@@ -61,7 +61,6 @@ export class UserService {
   }
 
   public get userInfo(): UserModel | undefined {
-    console.log(this.__userInfo());
     return this.__userInfo();
   }
 
@@ -123,6 +122,12 @@ export class UserService {
     this.userDataService.setUsername(username, uid!, batch);
 
     return batch.commit();
+  }
+
+  async setBio(bio: string, uid?: string) {
+
+    return setDoc(doc(this.firestore, `${CollectionEnum.USERS}/${uid}`), { 'bio': bio });
+
   }
 
   async setAvatar(avatarUrl: string, uid?: string) {

@@ -18,7 +18,8 @@
       "nome": "Nome",
       "codice": "Codice Lista",
       "email": "Email",
-      "password": "Password"
+      "password": "Password",
+      "bio": "Bio"
     },
     "placeholders": {
       "password": "Minimo {{minLength}} caratteri."
@@ -174,6 +175,12 @@
       "dialogs": {
         "modificaNome": {
           "header": "Modifica Nome Lista"
+        }
+      },
+      "inviteUser": {
+        "labels": {
+          "header": "Invita utente",
+          "descrizione": "Seleziona un amico dalla tua lista per invitarlo a questa lista di film."
         }
       },
       "settings": {
@@ -355,11 +362,22 @@
         },
         "password": {
           "header": "Modifica Password",
-          "message": "La password deve contenere almeno: una lettera maiuscola, una lettera minuscola, un numero.",
+          "message": "La nuova password deve contenere almeno:",
+          "rules": {
+            "letteraMaiuscola": "Una lettera maiuscola",
+            "letteraMinuscola": "Una lettera minuscola",
+            "numero": "Un numero"
+          },
+          "buttons": {
+            "conferma": "Aggiorna Password"
+          },
           "inputs": {
             "passwordAttuale": "Password Attuale",
             "nuovaPassword": "Nuova Password",
             "ripetiPassword": "Ripeti la Password"
+          },
+          "errors": {
+            "nonCoincide": "Le password inserite non coincidono."
           }
         }
       },
@@ -405,6 +423,20 @@
       }
     },
     "settings": {
+      "dialogs": {
+        "updateUsername": {
+          "title": "Modifica Username",
+          "messages": {
+            "avvisoAttesa": "Modificando il nome utente non potrai modificarlo per i prossimi 7 giorni."
+          },
+          "errors": {
+            "simbolo": "Il nome utente può conentenere solo il simbolo _"
+          },
+          "buttons": {
+            "conferma": "Modifica Username"
+          }
+        }
+      },
       "labels": {
         "account": {
           "title": "Account",
@@ -440,7 +472,10 @@
         "liste": "Liste Film",
         "descrizione": "Gestisci le liste di cui fai parte oppure aggiungine di nuove!",
         "inviti": "Inviti",
-        "descrizioneInviti": "Hai degli inviti in sospeso, scegli se accettare o declinare gli inviti alle liste."
+        "descrizioneInviti": "Hai degli inviti in sospeso, scegli se accettare o declinare gli inviti alle liste.",
+        "film": "film",
+        "membri": "membri",
+        "invitatoDa": "Invitato da"
       },
       "buttons": {
         "joinLista": "Unisciti ad una lista",

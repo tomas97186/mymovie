@@ -1,35 +1,41 @@
 import { ClipboardModule } from '@angular/cdk/clipboard';
 import { CommonModule } from '@angular/common';
-import { Component, inject, input } from '@angular/core';
+import { Component, computed, inject, input } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { Share } from '@capacitor/share';
 import { IonButton, IonIcon } from '@ionic/angular/standalone';
-import { ToastService } from 'src/app/services/toast.service';
-import { InfoListModel } from '../../models/movie-list.model';
-import { MovieListService } from '../../services/movie-list.service';
-import { TranslateService } from '@ngx-translate/core';
-import { ListPartialModel } from 'src/app/models/list.partial.model';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MembershipModel } from 'src/app/models/membership.model';
+import { ToastService } from 'src/app/services/toast.service';
+import { MovieListService } from '../../services/movie-list.service';
+import { rxResource } from '@angular/core/rxjs-interop';
+import { UserDataService } from 'src/app/services/userdata.service';
 
 @Component({
   selector: 'app-user-list-item',
-  imports: [IonButton, IonIcon, CommonModule, RouterModule, ClipboardModule],
+  imports: [TranslateModule, IonButton, IonIcon, CommonModule, RouterModule, ClipboardModule],
   templateUrl: './user-list-item.component.html',
   styleUrl: './user-list-item.component.scss',
 })
 export class UserListItemComponent {
   private readonly MESSAGE_LABELS = 'pages.userLists.messages.';
-
+  
+  userDataService = inject(UserDataService);
+  
   private listService = inject(MovieListService);
   private snackbar = inject(ToastService);
   private translate = inject(TranslateService);
 
   membership = input.required<MembershipModel>();
+  list = rxResource({
+    request: () => this.membership(),
+    loader: ({ request }) => this.listService.getListInfo(request.list.id)
+  });
   invitation = input<boolean>(false);
 
   acceptInvitation() {
     this.listService
-      .acceptListInvitation(this.membership().id)
+      .acceptListInvitation(this.membership())
       .then((res) => {
         this.snackbar.open(
           this.translate.instant(

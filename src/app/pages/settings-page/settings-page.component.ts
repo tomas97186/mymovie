@@ -16,7 +16,8 @@ import {
   IonSelectOption,
   IonTitle,
   IonToggle,
-  IonToolbar
+  IonToolbar,
+  ModalController
 } from '@ionic/angular/standalone';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { AuthService } from 'src/app/services/auth.service';
@@ -24,6 +25,8 @@ import { SettingsService } from 'src/app/services/settings.service';
 import { UserService } from 'src/app/services/user.service';
 import packageJson from '../../../../package.json';
 import { Router } from '@angular/router';
+import { UpdateUsernameComponent } from 'src/app/components/update-username/update-username.component';
+import { UpdatePasswordComponent } from 'src/app/components/update-password/update-password.component';
 
 @Component({
   selector: 'app-settings-page',
@@ -31,7 +34,7 @@ import { Router } from '@angular/router';
   styleUrls: ['./settings-page.component.scss'],
   imports: [
     CommonModule,
-    IonNote, IonItemDivider, 
+    IonNote, IonItemDivider,
     TranslateModule,
     IonLabel,
     IonToggle,
@@ -58,9 +61,10 @@ export class SettingsPageComponent {
   userInfo$ = this.userService.getUserInfo();
   private readonly router = inject(Router);
   private readonly translate = inject(TranslateService);
+  private readonly modal = inject(ModalController);
   languages = this.translate.getLangs();
   public version: string = packageJson.version;
-  constructor() {}
+  constructor() { }
 
   changeLanguage(event: Event) {
     const value = (event.target! as HTMLIonSelectElement).value;
@@ -70,5 +74,21 @@ export class SettingsPageComponent {
 
   signout() {
     this.authService.signOut().then(() => this.router.navigate(['/']));
+  }
+
+  async openUpdateUsername() {
+    const dialogRef = await this.modal.create({
+      component: UpdateUsernameComponent
+    });
+
+    dialogRef.present();
+  }
+
+  async openUpdatePassword() {
+    const dialogRef = await this.modal.create({
+      component: UpdatePasswordComponent
+    });
+
+    dialogRef.present();
   }
 }

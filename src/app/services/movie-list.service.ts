@@ -3,7 +3,6 @@ import {
   and,
   collection,
   collectionData,
-  count,
   deleteDoc,
   deleteField,
   doc,
@@ -18,19 +17,20 @@ import {
   updateDoc,
   where,
   writeBatch,
-  WriteBatch,
+  WriteBatch
 } from '@angular/fire/firestore';
 import { firstValueFrom, map, Observable, tap } from 'rxjs';
 import { CollectionEnum } from '../enum/collection.enum';
+import { InvitationResponseEnum } from '../enum/invitation.response.enum';
 import { MembershipEnum } from '../enum/membership.enum';
 import { MovieStatusEnum } from '../enum/movie-status.enum';
 import { MembershipModel } from '../models/membership.model';
 import { InfoListModel } from '../models/movie-list.model';
+import { ReviewModel } from '../models/review.model';
 import { SearchItemModel } from '../models/search-item.model';
 import { UserPartialModel } from '../models/user.partial.model';
 import { AuthService } from './auth.service';
 import { UserService } from './user.service';
-import { ReviewModel } from '../models/review.model';
 
 @Injectable({
   providedIn: 'root',
@@ -166,8 +166,7 @@ export class MovieListService {
       batch.set(
         doc(
           this.firestore,
-          `${CollectionEnum.LISTS}/${listRef.id}/members/${
-            this.userService.currentUser!.uid
+          `${CollectionEnum.LISTS}/${listRef.id}/members/${this.userService.currentUser!.uid
           }`
         ),
         {
@@ -198,9 +197,6 @@ export class MovieListService {
     const batch = writeBatch(this.firestore);
 
     await this.removeUserList(listId, batch, userUid);
-    batch.update(doc(this.firestore, `${CollectionEnum.LISTS}/${listId}`), {
-      membersCount: increment(-1),
-    });
     return batch.commit();
   }
 
@@ -307,12 +303,12 @@ export class MovieListService {
       map<{ [key: string]: string }, SearchItemModel[]>((res) =>
         res
           ? Object.entries(res).map<SearchItemModel>(
-              ([id, poster_path]) =>
-                ({
-                  id: +id,
-                  poster_path,
-                } as unknown as SearchItemModel)
-            )
+            ([id, poster_path]) =>
+            ({
+              id: +id,
+              poster_path,
+            } as unknown as SearchItemModel)
+          )
           : []
       )
     );
@@ -369,8 +365,7 @@ export class MovieListService {
       batch.set(
         doc(
           this.firestore,
-          `${CollectionEnum.USERS}/${
-            this.userService.currentUser!.uid
+          `${CollectionEnum.USERS}/${this.userService.currentUser!.uid
           }/dislikes/1`
         ),
         { [review.movie.id]: deleteField() },
@@ -418,8 +413,7 @@ export class MovieListService {
       batch.set(
         doc(
           this.firestore,
-          `${CollectionEnum.USERS}/${
-            this.userService.currentUser!.uid
+          `${CollectionEnum.USERS}/${this.userService.currentUser!.uid
           }/dislikes/1`
         ),
         { [oldReview.movie.id]: oldReview.movie.poster_path },
@@ -448,8 +442,7 @@ export class MovieListService {
       batch.set(
         doc(
           this.firestore,
-          `${CollectionEnum.USERS}/${
-            this.userService.currentUser!.uid
+          `${CollectionEnum.USERS}/${this.userService.currentUser!.uid
           }/dislikes/1`
         ),
         { [oldReview.movie.id]: deleteField() },
@@ -491,8 +484,7 @@ export class MovieListService {
       batch.set(
         doc(
           this.firestore,
-          `${CollectionEnum.USERS}/${
-            this.userService.currentUser!.uid
+          `${CollectionEnum.USERS}/${this.userService.currentUser!.uid
           }/dislikes/1`
         ),
         { [movie.id]: movie.poster_path },
@@ -540,8 +532,7 @@ export class MovieListService {
       docData(
         doc(
           this.firestore,
-          `${CollectionEnum.LISTS}/${listId}/${CollectionEnum.MOVIES}/${
-            watched ? 'watched' : 'toWatch'
+          `${CollectionEnum.LISTS}/${listId}/${CollectionEnum.MOVIES}/${watched ? 'watched' : 'toWatch'
           }`
         )
       ) as Observable<{ [key: string]: string }>
@@ -549,13 +540,13 @@ export class MovieListService {
       map<{ [key: string]: string }, SearchItemModel[]>((res) =>
         res
           ? Object.entries(res).map<SearchItemModel>(
-              ([id, poster_path]) =>
-                ({
-                  id: +id,
-                  poster_path,
-                  watched: watched,
-                } as unknown as SearchItemModel)
-            )
+            ([id, poster_path]) =>
+            ({
+              id: +id,
+              poster_path,
+              watched: watched,
+            } as unknown as SearchItemModel)
+          )
           : []
       )
     );
@@ -576,15 +567,16 @@ export class MovieListService {
   // /**
   //  * Aggiunge l'utente autenticato come membro a una lista esistente
   //  */
-  async inviteToList(listId: string, username: string): Promise<boolean> {
+  async inviteToList(listId: string, username: string): Promise<InvitationResponseEnum> {
     const user = await this.userService.userExists(username);
     if (!user) {
-      return false;
+      return InvitationResponseEnum.USERNAME_NOT_EXISTS;
     }
+    console.log(user);
     const uid = user.uid;
 
     if (await this.userInList(listId, uid)) {
-      return false; // L'utente è già in lista.
+      return InvitationResponseEnum.USER_IN_LIST; // L'utente è già in lista.
     }
 
     const list = await firstValueFrom(this.getListInfo(listId));
@@ -595,23 +587,24 @@ export class MovieListService {
       MembershipEnum.PENDING
     );
 
-    return true;
+    return InvitationResponseEnum.INVITATION_SENT;
   }
 
-  async acceptListInvitation(invitationId: string) {
-    return updateDoc(
-      doc(this.firestore, `${CollectionEnum.MEMBERSHIPS}/${invitationId}`),
+  async acceptListInvitation(invitation: MembershipModel) {
+    const batch = writeBatch(this.firestore);
+
+    batch.update(
+      doc(this.firestore, `${CollectionEnum.MEMBERSHIPS}/${invitation.id}`),
       { status: 'accepted' }
     );
+    batch.update(doc(this.firestore, `${CollectionEnum.LISTS}/${invitation.list.id}`), { membersCount: increment(1) });
+
+    return batch.commit();
   }
 
-  async declineListInvitation(listId: string): Promise<void> {
+  async declineListInvitation(membershipId: string): Promise<void> {
     if (this.userService.isLoggedIn()) {
-      return await this.removeUserList(
-        listId,
-        undefined,
-        this.userService.currentUser!.uid
-      );
+      await deleteDoc(doc(this.firestore, `${CollectionEnum.MEMBERSHIPS}/${membershipId}`));
     }
   }
 
@@ -650,16 +643,21 @@ export class MovieListService {
     batch?: WriteBatch
   ) {
     const m = doc(collection(this.firestore, CollectionEnum.MEMBERSHIPS));
+    let membership: Partial<MembershipModel> = { list, uid: user.uid, status };
+    if (status === MembershipEnum.PENDING) {
+      membership.sentBy = this.userService.currentUser?.uid;
+    }
     if (batch) {
       if (status == MembershipEnum.ACCEPTED) {
         batch.update(
           doc(this.firestore, `${CollectionEnum.USERS}/${user.uid}`),
           { listCount: increment(1) }
         );
+        batch.update(doc(this.firestore, `${CollectionEnum.LISTS}/${list.id}`), { membersCount: increment(1) });
       }
-      return batch.set(m, { list, uid: user.uid, status });
+      return batch.set(m, membership);
     } else {
-      return setDoc(m, { list, uid: user.uid, status });
+      return setDoc(m, membership);
     }
   }
 
@@ -681,22 +679,23 @@ export class MovieListService {
     batch?: WriteBatch,
     uid?: string
   ) {
+    batch ??= writeBatch(this.firestore);
     const q = uid
       ? query(
-          collection(this.firestore, CollectionEnum.MEMBERSHIPS),
-          and(where('list.id', '==', listId), where('uid', '==', uid))
-        )
+        collection(this.firestore, CollectionEnum.MEMBERSHIPS),
+        and(where('list.id', '==', listId), where('uid', '==', uid))
+      )
       : query(
-          collection(this.firestore, CollectionEnum.MEMBERSHIPS),
-          where('list.id', '==', listId)
-        );
+        collection(this.firestore, CollectionEnum.MEMBERSHIPS),
+        where('list.id', '==', listId)
+      );
     (await getDocs(q)).forEach(async (d) =>
-      batch ? batch.delete(d.ref) : await deleteDoc(d.ref)
+      batch.delete(d.ref)
     );
-    if (batch) {
-      batch.update(doc(this.firestore, `${CollectionEnum.USERS}/${uid}`), {
-        listCount: increment(-1),
-      });
+    if (uid) {
+      batch.update(doc(this.firestore, `${CollectionEnum.LISTS}/${listId}`), { membersCount: increment(-1) });
     }
+
+    return batch;
   }
 }

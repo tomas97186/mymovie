@@ -51,11 +51,11 @@ this.listDetails.isLoading(); @if(isLoading) {
     </div>
 
     <div class="actions">
-      <ion-button class="w-100" color="medium" fill="clear" size="small" (click)="shareListCode()">
+      <ion-button class="w-100" color="white" fill="clear" size="small" (click)="shareListCode()">
         <ion-icon name="share-social-outline" slot="start"></ion-icon>
         {{ "pages.listDetails.buttons.condividi" | translate }}
       </ion-button>
-      <ion-button class="w-100" color="light" size="small">
+      <ion-button class="w-100" color="white" fill="clear" size="small" (click)="openInvite()">
         <ion-icon name="person-add-outline" slot="start"></ion-icon>
         {{ "pages.listDetails.settings.buttons.invita" | translate }}
       </ion-button>
@@ -63,12 +63,12 @@ this.listDetails.isLoading(); @if(isLoading) {
   </div>
   <div class="watched-filter">
     <ion-segment value="toWatch" mode="ios" (ionChange)="onSegmentChange($event)">
-      <ion-segment-button value="toWatch" content-id="toWatch">
+      <ion-segment-button value="toWatch">
         <ion-label>{{ "pages.listDetails.labels.daVedere" | translate | titlecase }}
           <!-- <span class="movie-count">{{ details.moviesCount - details.watchedMovies }}</span> -->
         </ion-label>
       </ion-segment-button>
-      <ion-segment-button value="watched" content-id="watched">
+      <ion-segment-button value="watched">
         <ion-label>{{
           "pages.listDetails.labels.visti" | translate | titlecase
           }}</ion-label>

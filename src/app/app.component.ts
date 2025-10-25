@@ -53,7 +53,8 @@ import {
   thumbsUpSharp,
   trash,
   people,
-  personRemoveOutline
+  personRemoveOutline,
+  warning
 } from 'ionicons/icons';
 import { AuthService } from './services/auth.service';
 import { SettingsService } from './services/settings.service';
@@ -154,7 +155,8 @@ export class AppComponent {
       thumbsUpSharp,
       thumbsUpOutline,
       people,
-      personRemoveOutline
+      personRemoveOutline,
+      warning
     });
   }
 }

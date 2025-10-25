@@ -1,0 +1,35 @@
+@let userInfo = this.userService.userInfo;
+
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button fill="clear" (click)="this.dialog.dismiss()">
+        <ion-icon name="chevron-back" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>
+      {{'pages.settings.dialogs.updateUsername.title' | translate }}
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+
+  <div class="container">
+    <div class="warning">
+      <ion-icon name="warning" size="large" class="pe-2"></ion-icon>
+      {{'pages.settings.dialogs.updateUsername.messages.avvisoAttesa' | translate}}
+    </div>
+    <form [formGroup]="form" class="form" (ngSubmit)="submit()">
+      <ion-input maxlength="40" labelPlacement="stacked" label="{{ INPUTS.USERNAME | translate }}"
+        formControlName="username"
+        errorText="{{form.get('username')?.hasError('pattern')? ('pages.settings.dialogs.updateUsername.errors.simbolo' | translate) : undefined}}"
+        #username>
+      </ion-input>
+      <ion-button type="submit" [disabled]="!form.valid || username.value === currentUsername" class="w-100">
+        {{'pages.settings.dialogs.updateUsername.buttons.conferma' | translate}}
+      </ion-button>
+    </form>
+  </div>
+
+</ion-content>

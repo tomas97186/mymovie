@@ -9,7 +9,7 @@
     </ion-buttons>
     <ion-title>{{
       "pages.settings.labels.impostazioni" | translate
-    }}</ion-title>
+      }}</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -21,38 +21,28 @@
     <div class="card-background">
       <ion-list>
         <ion-item>
-          <ion-select
-            label="{{ 'pages.settings.labels.lingua' | translate }}"
-            [value]="this.settings.language.value"
-            interface="popover"
-            (ionChange)="changeLanguage($event)"
-          >
+          <ion-select label="{{ 'pages.settings.labels.lingua' | translate }}" [value]="this.settings.language.value"
+            interface="popover" (ionChange)="changeLanguage($event)">
             @for(l of languages; track $index) {
             <ion-select-option [value]="l">{{
               "lingue." + l | translate
-            }}</ion-select-option>
+              }}</ion-select-option>
             }
           </ion-select>
         </ion-item>
         <ion-item>
-          <ion-toggle
-            [checked]="settings.openFilmOnClick.value"
-            (ionChange)="
+          <ion-toggle [checked]="settings.openFilmOnClick.value" (ionChange)="
               this.settings.openFilmOnClick.value =
                 !settings.openFilmOnClick.value
-            "
-          >
+            ">
             {{ "pages.settings.labels.click" | translate }}
           </ion-toggle>
         </ion-item>
         <ion-item>
-          <ion-toggle
-            [checked]="settings.voteWhenWatched.value"
-            (ionChange)="
+          <ion-toggle [checked]="settings.voteWhenWatched.value" (ionChange)="
               this.settings.voteWhenWatched.value =
                 !settings.voteWhenWatched.value
-            "
-          >
+            ">
             {{ "pages.settings.labels.voto" | translate }}
           </ion-toggle>
         </ion-item>
@@ -63,13 +53,13 @@
     </div>
     <div class="card-background">
       <ion-list>
-        <ion-item button="true" detail="false">
+        <ion-item button="true" detail="false" (click)="openUpdateUsername()">
           <ion-label>
             {{ "pages.settings.labels.account.username" | translate }}
           </ion-label>
           <div class="metadata-end-wrapper" slot="end">
-            <ion-note color="medium">{{ userInfo?.username }}</ion-note>
-            <ion-icon color="medium" name="chevron-forward"></ion-icon>
+            <ion-note color="gray">{{ userInfo?.username }}</ion-note>
+            <ion-icon color="gray" name="chevron-forward"></ion-icon>
           </div>
         </ion-item>
         <ion-item button="true" detail="false">
@@ -77,15 +67,15 @@
             {{ "pages.settings.labels.account.bio" | translate }}
           </ion-label>
           <div class="metadata-end-wrapper" slot="end">
-            <ion-icon color="medium" name="chevron-forward"></ion-icon>
+            <ion-icon color="gray" name="chevron-forward"></ion-icon>
           </div>
         </ion-item>
-        <ion-item button="true" detail="false">
+        <ion-item button="true" detail="false" (click)="openUpdatePassword()">
           <ion-label>
             {{ "pages.settings.labels.account.password" | translate }}
           </ion-label>
           <div class="metadata-end-wrapper" slot="end">
-            <ion-icon color="medium" name="chevron-forward"></ion-icon>
+            <ion-icon color="gray" name="chevron-forward"></ion-icon>
           </div>
         </ion-item>
         <ion-item>
@@ -93,7 +83,7 @@
             {{ "pages.settings.labels.account.email" | translate }}
           </ion-label>
           <div class="metadata-end-wrapper" slot="end">
-            <ion-note color="medium">{{ account?.email }}</ion-note>
+            <ion-note color="gray">{{ account?.email }}</ion-note>
           </div>
         </ion-item>
         <ion-item>
@@ -101,7 +91,7 @@
             {{ "pages.settings.labels.account.liste" | translate }}
           </ion-label>
           <div class="metadata-end-wrapper" slot="end">
-            <ion-note color="medium">{{ userInfo?.listCount }}</ion-note>
+            <ion-note color="gray">{{ userInfo?.listCount }}</ion-note>
           </div>
         </ion-item>
       </ion-list>
@@ -118,8 +108,7 @@
       </p>
     </div>
     <ion-button class="w-100 mt-3" (click)="signout()" color="danger">
-      <ion-icon name="log-out" slot="start" class="me-2"></ion-icon
-      >{{ "pages.profile.buttons.logout" | translate }}
+      <ion-icon name="log-out" slot="start" class="me-2"></ion-icon>{{ "pages.profile.buttons.logout" | translate }}
     </ion-button>
     <div class="app-details-container">
       <p>
