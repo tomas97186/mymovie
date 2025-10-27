@@ -26,9 +26,9 @@
             <ion-button
               size="small"
               fill="outline"
-              [routerLink]="['/movies', movie.id]"
               color="white"
               class="details-button ms-2"
+              (click)="navigateToMovieDetails(movie)"
               >{{ "shared.buttons.dettagli" | translate }}
               <ion-icon name="chevron-forward" slot="end"></ion-icon
             ></ion-button>

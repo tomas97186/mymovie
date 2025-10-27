@@ -1,24 +1,21 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, input } from '@angular/core';
+import { Component, computed, inject, input } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { IonIcon } from '@ionic/angular/standalone';
+import { ModalController, IonIcon, IonButton } from '@ionic/angular/standalone';
 import { TranslateModule } from '@ngx-translate/core';
-import { isObservable, Observable, of } from 'rxjs';
+import { firstValueFrom, isObservable, Observable, of } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { MovieModel } from '../../models/movie.model';
+import { MovieDetailsComponent } from 'src/app/pages/movie-details/movie-details.component';
 
 @Component({
   selector: 'app-movie-hero',
-  imports: [
-    IonIcon,
-    CommonModule,
-    TranslateModule,
-    RouterModule,
-  ],
+  imports: [IonButton, IonIcon, CommonModule, TranslateModule, RouterModule],
   templateUrl: './movie-hero.component.html',
   styleUrl: './movie-hero.component.scss',
 })
 export class MovieHeroComponent {
+  private dialog = inject(ModalController);
   _movie = input.required<Observable<MovieModel> | MovieModel>({
     alias: 'movie',
   });
@@ -33,4 +30,21 @@ export class MovieHeroComponent {
   imageUrl = environment.posterUrl;
 
   heroLoaded = false;
+
+  async navigateToMovieDetails(movie: MovieModel) {
+    if (await this.dialog.getTop()) {
+      this.dialog.dismiss();
+    }
+    if (event) {
+      (event!.target! as HTMLElement).blur();
+    }
+    const dialogRef = await this.dialog.create({
+      component: MovieDetailsComponent,
+      componentProps: { movieId: movie.id, isInModal: true },
+      initialBreakpoint: 1,
+      backdropDismiss: false,
+    });
+    dialogRef.present();
+    // this.router.navigate(['movies', this.movie()!.id]);
+  }
 }

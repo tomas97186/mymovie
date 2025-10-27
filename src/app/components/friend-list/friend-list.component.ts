@@ -1,7 +1,14 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, input, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { IonList, IonItem, IonAvatar, IonLabel, IonButton, IonIcon } from "@ionic/angular/standalone";
+import {
+  IonList,
+  IonItem,
+  IonAvatar,
+  IonLabel,
+  IonButton,
+  IonIcon,
+} from '@ionic/angular/standalone';
 import { FriendStatusEnum } from 'src/app/enum/friend-status.enum';
 import { FriendshipModel } from 'src/app/models/Friendship.model';
 import { FriendsService } from 'src/app/services/friends.service';
@@ -12,47 +19,53 @@ import { UserDataService } from 'src/app/services/userdata.service';
   selector: 'app-friend-list',
   templateUrl: './friend-list.component.html',
   styleUrls: ['./friend-list.component.scss'],
-  imports: [CommonModule, RouterModule, IonIcon, IonButton, IonLabel, IonAvatar, IonList, IonItem],
+  imports: [
+    CommonModule,
+    RouterModule,
+    IonIcon,
+    IonButton,
+    IonLabel,
+    IonAvatar,
+    IonList,
+    IonItem,
+  ],
 })
 export class FriendListComponent implements OnInit {
   private snackbar = inject(ToastService);
   private friendService = inject(FriendsService);
   userData = inject(UserDataService);
 
-  friendList = input.required<FriendshipModel[]>()
+  friendList = input.required<FriendshipModel[]>();
 
   FriendStatusEnum = FriendStatusEnum;
 
   acceptFriendRequest(event: Event, request: FriendshipModel) {
     event.stopPropagation();
-    this.friendService.acceptFriendRequest(request).then(
-      res => {
-        this.snackbar.open('pages.community.messages.acceptFriend.success')
-      }
-    ).catch(
-      err => {
+    this.friendService
+      .acceptFriendRequest(request.user)
+      .then((res) => {
+        this.snackbar.open('pages.community.messages.acceptFriend.success');
+      })
+      .catch((err) => {
         console.error(err);
-        this.snackbar.open('pages.community.messages.acceptFriend.error')
-      }
-    )
+        this.snackbar.open('pages.community.messages.acceptFriend.error');
+      });
   }
 
   declineFriendRequest(event: Event, request: FriendshipModel) {
     event.stopPropagation();
-    this.friendService.declineFriendRequest(request).then(
-      res => {
-        this.snackbar.open('pages.community.messages.acceptFriend.success')
-      }
-    ).catch(
-      err => {
+    this.friendService
+      .declineFriendRequest(request.user.uid)
+      .then((res) => {
+        this.snackbar.open('pages.community.messages.acceptFriend.success');
+      })
+      .catch((err) => {
         console.error(err);
-        this.snackbar.open('pages.community.messages.acceptFriend.error')
-      }
-    )
+        this.snackbar.open('pages.community.messages.acceptFriend.error');
+      });
   }
 
-  constructor() { }
+  constructor() {}
 
-  ngOnInit() { }
-
+  ngOnInit() {}
 }

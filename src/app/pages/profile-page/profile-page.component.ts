@@ -1,5 +1,13 @@
 import { CommonModule, Location } from '@angular/common';
-import { Component, computed, DestroyRef, effect, inject, Signal, signal } from '@angular/core';
+import {
+  Component,
+  computed,
+  DestroyRef,
+  effect,
+  inject,
+  Signal,
+  signal,
+} from '@angular/core';
 import {
   EmailAuthProvider,
   reauthenticateWithCredential,
@@ -15,10 +23,25 @@ import {
   IonSegmentButton,
   IonSegmentView,
   IonSegmentContent,
-  ModalController, IonLabel, IonFab, IonFabButton, IonButton
+  ModalController,
+  IonLabel,
+  IonFab,
+  IonFabButton,
+  IonButton,
 } from '@ionic/angular/standalone';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { catchError, filter, first, from, map, Observable, of, share, switchMap, tap } from 'rxjs';
+import {
+  catchError,
+  filter,
+  first,
+  from,
+  map,
+  Observable,
+  of,
+  share,
+  switchMap,
+  tap,
+} from 'rxjs';
 import { MovieListComponent } from 'src/app/components/movie-list/movie-list.component';
 import { ToastService } from 'src/app/services/toast.service';
 import { UserService } from 'src/app/services/user.service';
@@ -26,7 +49,11 @@ import { BUTTONS } from 'src/app/variables';
 import { fieldValidations } from 'src/environments/fields.validation';
 import { AuthService } from '../../services/auth.service';
 import { MovieListService } from '../../services/movie-list.service';
-import { rxResource, takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import {
+  rxResource,
+  takeUntilDestroyed,
+  toSignal,
+} from '@angular/core/rxjs-interop';
 import { FriendsService } from 'src/app/services/friends.service';
 import { FriendStatusEnum } from 'src/app/enum/friend-status.enum';
 import { FriendshipModel } from 'src/app/models/Friendship.model';
@@ -35,7 +62,11 @@ import { SelectAvatarDialogComponent } from 'src/app/components/select-avatar-di
 
 @Component({
   selector: 'app-profile-page',
-  imports: [IonButton, IonFabButton, IonFab, IonLabel,
+  imports: [
+    IonButton,
+    IonFabButton,
+    IonFab,
+    IonLabel,
     IonSegmentButton,
     IonSegment,
     CommonModule,
@@ -66,33 +97,43 @@ export class ProfilePageComponent {
   userService = inject(UserService);
   listService = inject(MovieListService);
   private friendService = inject(FriendsService);
-  private currentUid = toSignal<string | undefined>(this.route.params.pipe(
-    takeUntilDestroyed(this.destroyRef),
-    map(data => {
-      const uid = 'id' in data ? data['id'] : this.userService.currentUser!.uid;
-      return uid as string;
-    })), { initialValue: undefined });
-  userInfo = rxResource(
-    {
-      request: () => this.currentUid(),
-      loader: ({ request }) => {
-        console.log('UID: ', request);
-        return this.userService.getUserInfo(request)
-      }
-    }
+  private currentUid = toSignal<string | undefined>(
+    this.route.params.pipe(
+      takeUntilDestroyed(this.destroyRef),
+      map((data) => {
+        const uid =
+          'id' in data ? data['id'] : this.userService.currentUser!.uid;
+        return uid as string;
+      })
+    ),
+    { initialValue: undefined }
   );
-  isYou = computed(() => this.currentUid() === this.userService.currentUser?.uid);
-  friendshipStatus = computed(() => this.currentUid() === this.userService.currentUser?.uid ? of(undefined) : this.friendService.getFriendStatus(this.currentUid()!))
+  userInfo = rxResource({
+    request: () => this.currentUid(),
+    loader: ({ request }) => {
+      console.log('UID: ', request);
+      return this.userService.getUserInfo(request);
+    },
+  });
+  isYou = computed(
+    () => this.currentUid() === this.userService.currentUser?.uid
+  );
+  friendshipStatus = computed(() =>
+    this.currentUid() === this.userService.currentUser?.uid
+      ? of(undefined)
+      : this.friendService.getFriendStatus(this.currentUid()!)
+  );
   FriendStatusEnum = FriendStatusEnum;
   selectedTab = signal<string>('like');
-  movies = rxResource(
-    {
-      request: () => ({ selectedTab: this.selectedTab(), uid: this.currentUid() }),
-      loader: ({ request: { selectedTab, uid } }) => {
-        return this.listService.getUserReviews(uid, selectedTab === 'like');
-      }
-    }
-  );
+  movies = rxResource({
+    request: () => ({
+      selectedTab: this.selectedTab(),
+      uid: this.currentUid(),
+    }),
+    loader: ({ request: { selectedTab, uid } }) => {
+      return this.listService.getUserReviews(uid, selectedTab === 'like');
+    },
+  });
 
   onSegmentChange(event: CustomEvent) {
     this.selectedTab.set(event.detail.value);
@@ -103,8 +144,7 @@ export class ProfilePageComponent {
       component: SelectAvatarDialogComponent,
       initialBreakpoint: 0.5,
       expandToScroll: false,
-      componentProps: {
-      },
+      componentProps: {},
     });
     ref.present();
     const { data } = await ref.onWillDismiss();
@@ -118,31 +158,43 @@ export class ProfilePageComponent {
     element?.scroll({ top: 0, behavior: 'smooth' });
   }
 
-  removeFriend(friendship: FriendshipModel, username: string) {
-    const messagePath = this.MESSAGE_LABELS + friendship.status === FriendStatusEnum.PENDING ? 'removeFriend.' : 'cancelRequest.';
-    this.friendService.removeFriend(friendship).then(
-      res => {
-        this.snackBar.open(this.translate.instant(messagePath + 'success', { username }));
-      }
-    ).catch(
-      err => {
+  removeFriend(uid: string, username: string, request: boolean = false) {
+    const messagePath =
+      this.MESSAGE_LABELS + request ? 'removeFriend.' : 'cancelRequest.';
+    this.friendService
+      .removeFriend(uid)
+      .then((res) => {
+        this.snackBar.open(
+          this.translate.instant(messagePath + 'success', { username })
+        );
+      })
+      .catch((err) => {
         console.error('ERROR DURING REMOVE FRIEND: ', err);
-        this.snackBar.open(this.translate.instant(messagePath + 'error', { username }), { color: 'danger', duration: 3000 });
-      }
-    )
+        this.snackBar.open(
+          this.translate.instant(messagePath + 'error', { username }),
+          { color: 'danger', duration: 3000 }
+        );
+      });
   }
 
-  acceptFriend(friendship: FriendshipModel, username: string) {
-    this.friendService.acceptFriendRequest(friendship).then(
-      res => {
-        this.snackBar.open(this.translate.instant(this.MESSAGE_LABELS + 'acceptFriend.success', { username }));
-      }
-    ).catch(
-      err => {
+  acceptFriend(uid: string, username: string) {
+    this.friendService
+      .acceptFriendRequest({ uid, username })
+      .then((res) => {
+        this.snackBar.open(
+          this.translate.instant(this.MESSAGE_LABELS + 'acceptFriend.success', {
+            username,
+          })
+        );
+      })
+      .catch((err) => {
         console.error('ERROR DURING REMOVE FRIEND: ', err);
-        this.snackBar.open(this.MESSAGE_LABELS + this.translate.instant('acceptFriend.error', { username }), { color: 'danger', duration: 3000 });
-      }
-    )
+        this.snackBar.open(
+          this.MESSAGE_LABELS +
+            this.translate.instant('acceptFriend.error', { username }),
+          { color: 'danger', duration: 3000 }
+        );
+      });
   }
 
   addFriend(username: string) {

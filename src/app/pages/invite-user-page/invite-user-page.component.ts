@@ -14,7 +14,7 @@ import {
   IonList,
   IonTitle,
   IonToolbar,
-  ModalController
+  ModalController,
 } from '@ionic/angular/standalone';
 import { TranslateModule } from '@ngx-translate/core';
 import { map } from 'rxjs';
@@ -57,19 +57,13 @@ export class InviteUserPageComponent implements OnInit {
   private user = inject(UserService);
   details = input.required<InfoListModel>();
 
-  private __friendList = this.friendService.getFriendList().pipe(
+  friendList$ = this.friendService.getFriendList().pipe(
     map((res) =>
-      res.map((f) => ({
-        uid:
-          f.receiver.uid === this.user.currentUser?.uid
-            ? f.sender.uid
-            : f.receiver.uid,
+      res?.map((f) => ({
+        uid: f.user.uid,
         ...f,
       }))
     )
-  );
-  friendList$ = this.__friendList.pipe(
-    map((res) => res.filter((f) => f.status === FriendStatusEnum.ACCEPTED))
   );
 
   constructor() {}
