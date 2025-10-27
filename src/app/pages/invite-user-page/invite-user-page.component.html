@@ -1,7 +1,6 @@
 @let friendList = friendList$ | async;
 
 <ion-header class="transparent">
-
   <ion-toolbar class="large">
     <ion-buttons slot="start">
       <ion-button fill="clear" (click)="this.dialog.dismiss()">
@@ -10,7 +9,7 @@
     </ion-buttons>
     <ion-title>{{
       "pages.listDetails.inviteUser.labels.header" | translate
-      }}</ion-title>
+    }}</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -22,6 +21,9 @@
         <ion-icon slot="end" name="search"></ion-icon>
       </ion-input>
     </form> -->
-    <app-invite-user-list [friendList]="friendList!"></app-invite-user-list>
+    <app-invite-user-list
+      [friendList]="friendList!"
+      [listId]="this.details().id"
+    ></app-invite-user-list>
   </div>
 </ion-content>

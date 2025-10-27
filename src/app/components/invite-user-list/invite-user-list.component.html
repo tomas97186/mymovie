@@ -1,3 +1,5 @@
+@let members = (this.members() | async)!;
+
 <ion-list>
   @for(friend of friendList(); track friend.uid) {
   <!-- @let username = getUsername(friend.uid!) | async; -->
@@ -6,12 +8,42 @@
       <img alt="" [src]="userData.getUserAvatar(friend.uid!)" />
     </ion-avatar>
     <ion-label>
-      {{userData.getUsername(friend.uid!)}}
+      {{ userData.getUsername(friend.uid!) }}
     </ion-label>
-    <ion-button slot="end" size="medium" fill="clear" color="primary" (click)="declineFriendRequest($event, friend)">
-      <ion-icon name="add" slot="icon-only"></ion-icon>
+
+    @if(isInList(friend.uid!)) { @if(members[friend.uid!] ===
+    MembershipEnum.ACCEPTED) {
+    <ion-button
+      color="success"
+      size="small"
+      shape="round"
+      (click)="inviteUser(friend.uid!)"
+    >
+      <ion-icon slot="icon-only" name="check"></ion-icon>
+    </ion-button>
+    } @else {
+    <ion-button
+      color="danger"
+      size="small"
+      shape="round"
+      (click)="inviteUser(friend.uid!)"
+    >
+      <ion-icon slot="start" name="close"></ion-icon>
+      {{
+        "pages.listDetails.dialogs.inviteUser.buttons.cancelInvitation"
+          | translate
+      }}
     </ion-button>
 
+    } }
+    <ion-button
+      color="medium"
+      size="small"
+      shape="round"
+      (click)="inviteUser(friend.uid!)"
+    >
+      <ion-icon slot="icon-only" name="add"></ion-icon>
+    </ion-button>
   </ion-item>
   }
 </ion-list>
