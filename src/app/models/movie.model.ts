@@ -31,6 +31,8 @@ export interface MovieModel {
   vote_count: number;
   watched: boolean;
   watchedDate: Date;
+  addedDate?: Date;
+  page?: number;
   personal_rating: number;
   recommendations?: SearchResultsModel;
   videos?: { results: VideoModel[] };

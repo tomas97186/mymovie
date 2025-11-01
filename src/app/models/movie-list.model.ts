@@ -8,7 +8,9 @@ export interface InfoListModel {
     watchedMovies: number,
     moviesCount: number,
     membersCount: number,
-    createdDate: Date
+    createdDate: Date,
+    watchedPages: number,
+    toWatchPages: number
 
 }
 

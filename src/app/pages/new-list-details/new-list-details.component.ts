@@ -26,7 +26,7 @@ import {
   IonSegmentButton,
 } from '@ionic/angular/standalone';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { of, Subscription, tap } from 'rxjs';
+import { map, of, Subject, Subscription, tap } from 'rxjs';
 import { ToastService } from 'src/app/services/toast.service';
 import { BUTTONS, INPUTS } from 'src/app/variables';
 import { MovieListComponent } from '../../components/movie-list/movie-list.component';
@@ -36,6 +36,8 @@ import { MovieListService } from '../../services/movie-list.service';
 import { ListSettingsPageComponent } from '../list-settings-page/list-settings-page.component';
 import { InvitationResponseEnum } from 'src/app/enum/invitation.response.enum';
 import { InviteUserPageComponent } from '../invite-user-page/invite-user-page.component';
+import { MovieListDynamicComponent } from 'src/app/components/movie-list-dynamic/movie-list-dynamic.component';
+import { SearchResultsModel } from 'src/app/models/search-results.model';
 
 @Component({
   selector: 'app-list-details',
@@ -64,6 +66,7 @@ import { InviteUserPageComponent } from '../invite-user-page/invite-user-page.co
     IonTitle,
     IonSegmentContent,
     IonSegmentView,
+    MovieListDynamicComponent,
   ],
   templateUrl: './new-list-details.component.html',
   styleUrl: './new-list-details.component.scss',
@@ -84,6 +87,7 @@ export class NewListDetailsComponent {
   private dialog = inject(ModalController);
   selectedFilter = signal<'toWatch' | 'watched'>('toWatch');
   location = inject(Location);
+  currentPage = signal<number>(1);
   listDetails = rxResource({
     request: this.listId,
     loader: ({ request }) => {
@@ -91,15 +95,44 @@ export class NewListDetailsComponent {
       return this.listService.getListInfo(request);
     },
   });
-
   selectedTab = signal<string>('like');
-  movies = rxResource(
-    {
-      request: () => ({ selectedTab: this.selectedTab(), listId: this.listId() }),
-      loader: ({ request: { selectedTab, listId } }) => {
-        return this.listService.getListMovies(listId!, selectedTab === 'watched');
-      }
-    }
+  movies = rxResource({
+    request: () => ({
+      selectedTab: this.selectedTab(),
+      listDetails: this.listDetails.value(),
+      page: this.currentPage(),
+    }),
+    loader: ({ request: { selectedTab, listDetails, page } }) => {
+      return this.listService
+        .getListMovies(listDetails?.id!, selectedTab === 'watched', page)
+        .pipe(
+          map(
+            (movies) =>
+              ({
+                results: movies,
+                current_page: page,
+                total_results:
+                  selectedTab === 'watched'
+                    ? this.listDetails!.value()!.watchedMovies
+                    : this.listDetails!.value()!.moviesCount -
+                      this.listDetails!.value()!.watchedMovies,
+                total_pages:
+                  selectedTab === 'watched'
+                    ? listDetails!.watchedPages
+                    : listDetails!.toWatchPages,
+              } as SearchResultsModel)
+          ),
+          tap(console.log)
+        );
+    },
+  });
+  total = computed(() =>
+    !this.listDetails.hasValue()
+      ? undefined
+      : this.selectedTab() === 'watched'
+      ? this.listDetails!.value()!.watchedMovies
+      : this.listDetails!.value()!.moviesCount -
+        this.listDetails!.value()!.watchedMovies
   );
 
   onSegmentChange(event: CustomEvent) {
@@ -113,7 +146,7 @@ export class NewListDetailsComponent {
       componentProps: {
         details: this.listDetails.value()!,
         inviteUser: this.openInviteUserDialog.bind(this),
-        shareList: this.shareListCode.bind(this)
+        shareList: this.shareListCode.bind(this),
       },
     });
     await alert.present();
@@ -195,7 +228,9 @@ export class NewListDetailsComponent {
 
   async openInviteUserDialog() {
     const alert = await this.alertController.create({
-      header: this.translate.instant('pages.listDetails.settings.dialogs.invita.header'),
+      header: this.translate.instant(
+        'pages.listDetails.settings.dialogs.invita.header'
+      ),
       inputs: [
         {
           id: 'username',
@@ -230,22 +265,28 @@ export class NewListDetailsComponent {
         .inviteToList(this.listId()!, data.username)
         .then((res) => {
           switch (res) {
-            case (InvitationResponseEnum.USERNAME_NOT_EXISTS): {
+            case InvitationResponseEnum.USERNAME_NOT_EXISTS: {
               this.snackBar.open(
-                this.translate.instant(this.MESSAGE_LABELS + 'invito.nonEsiste', {
-                  username: data.username,
-                }),
+                this.translate.instant(
+                  this.MESSAGE_LABELS + 'invito.nonEsiste',
+                  {
+                    username: data.username,
+                  }
+                ),
                 {
                   duration: 3000,
                 }
               );
               break;
             }
-            case (InvitationResponseEnum.USER_IN_LIST): {
+            case InvitationResponseEnum.USER_IN_LIST: {
               this.snackBar.open(
-                this.translate.instant(this.MESSAGE_LABELS + 'invito.utenteInList', {
-                  username: data.username,
-                }),
+                this.translate.instant(
+                  this.MESSAGE_LABELS + 'invito.utenteInList',
+                  {
+                    username: data.username,
+                  }
+                ),
                 {
                   duration: 3000,
                 }
@@ -259,7 +300,6 @@ export class NewListDetailsComponent {
                   duration: 3000,
                 }
               );
-
             }
           }
         })

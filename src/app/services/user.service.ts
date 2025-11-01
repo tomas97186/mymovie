@@ -1,4 +1,11 @@
-import { DestroyRef, inject, Injectable, Injector, Signal, signal } from '@angular/core';
+import {
+  DestroyRef,
+  inject,
+  Injectable,
+  Injector,
+  Signal,
+  signal,
+} from '@angular/core';
 import {
   collection,
   doc,
@@ -35,7 +42,6 @@ export class UserService {
   private __currentUser?: User;
   private __userInfo = signal<UserModel | undefined>(undefined);
   private userDataService = inject(UserDataService);
-  private settings = inject(AppSettingsService).settings;
 
   constructor() {
     this.authService.currentUser$
@@ -49,7 +55,7 @@ export class UserService {
         switchMap((userInfo) => {
           if (!userInfo) {
             return from(this.setUserInfo(this.__currentUser!.uid)).pipe(
-              first(),
+              first()
             );
           }
           return of(userInfo);
@@ -98,10 +104,7 @@ export class UserService {
       friends: [],
     };
 
-    batch.set(
-      doc(this.firestore, `${CollectionEnum.USERS}/${uid}`),
-      userInfo
-    );
+    batch.set(doc(this.firestore, `${CollectionEnum.USERS}/${uid}`), userInfo);
 
     this.userDataService.setUsername(username, uid!, batch);
 
@@ -110,9 +113,18 @@ export class UserService {
     return userInfo;
   }
 
-  async setUsername(username: string, uid?: string, lastUsernameChange?: string) {
-    if (this.daysFromLastChange(lastUsernameChange) < this.settings!.changeUsernameDaysInterval) {
-      throw new Error('Non puoi cambiare username prima di 7 giorni dall\'ultima modifica.');
+  async setUsername(
+    username: string,
+    uid?: string,
+    lastUsernameChange?: string
+  ) {
+    const settings = this.injector.get(AppSettingsService).settings;
+    const days = this.daysFromLastChange(lastUsernameChange);
+
+    if (days! && days < settings!.changeUsernameDaysInterval) {
+      throw new Error(
+        "Non puoi cambiare username prima di 7 giorni dall'ultima modifica."
+      );
     }
 
     const batch = writeBatch(this.firestore);
@@ -122,12 +134,19 @@ export class UserService {
       lastUsernameChange: new Date().toISOString(),
     });
 
-    const oldUsername = await getDocs(query(collection(this.firestore, CollectionEnum.USERNAMES), where('uid', '==', uid)));
+    const oldUsername = await getDocs(
+      query(
+        collection(this.firestore, CollectionEnum.USERNAMES),
+        where('uid', '==', uid)
+      )
+    );
 
     if (!oldUsername.empty) {
       batch.delete(oldUsername.docs[0].ref);
     }
-    batch.set(doc(this.firestore, `${CollectionEnum.USERNAMES}/${username}`), { 'uid': uid });
+    batch.set(doc(this.firestore, `${CollectionEnum.USERNAMES}/${username}`), {
+      uid: uid,
+    });
 
     this.userDataService.setUsername(username, uid!, batch);
     await this.injector.get(FriendsService).setUsername(username, batch);
@@ -136,36 +155,42 @@ export class UserService {
   }
 
   async setBio(bio: string, uid?: string) {
-
-    return setDoc(doc(this.firestore, `${CollectionEnum.USERS}/${uid}`), { 'bio': bio });
-
+    return setDoc(doc(this.firestore, `${CollectionEnum.USERS}/${uid}`), {
+      bio: bio,
+    });
   }
 
   async setAvatar(avatarUrl: string, uid?: string) {
     const batch = writeBatch(this.firestore);
     uid ??= this.currentUser?.uid;
 
-    batch.update(doc(this.firestore, `${CollectionEnum.USERS}/${uid}`), { avatarUrl });
+    batch.update(doc(this.firestore, `${CollectionEnum.USERS}/${uid}`), {
+      avatarUrl,
+    });
 
     this.userDataService.setUserAvatar(avatarUrl, uid!, batch);
 
     return batch.commit();
   }
 
-  public async userExists(username: string): Promise<{ uid: string } | undefined> {
-    const user = await getDoc(doc(this.firestore, `${CollectionEnum.USERNAMES}/${username}`));
+  public async userExists(
+    username: string
+  ): Promise<{ uid: string } | undefined> {
+    const user = await getDoc(
+      doc(this.firestore, `${CollectionEnum.USERNAMES}/${username}`)
+    );
 
-    return user.exists() ? user.data() as { uid: string } : undefined;
+    return user.exists() ? (user.data() as { uid: string }) : undefined;
   }
 
-  private daysFromLastChange(lastUsernameChange?: string): number {
+  private daysFromLastChange(lastUsernameChange?: string): number | undefined {
     if (!lastUsernameChange) {
-      return 0;
+      return undefined;
     }
     const lastChangeDate = new Date(lastUsernameChange);
     const now = new Date();
     const diffInMs = now.getTime() - lastChangeDate.getTime();
-    const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
+    const diffInDays = Math.ceil(diffInMs / (1000 * 60 * 60 * 24));
 
     return diffInDays;
   }

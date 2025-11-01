@@ -17,7 +17,7 @@
 <ion-content>
 
   <div class="container">
-    @if(daysFromLastChange >= this.settings!.changeUsernameDaysInterval) {
+    @if(!daysFromLastChange || daysFromLastChange! >= this.appSettings.settings!.changeUsernameDaysInterval) {
     <div class="warning">
       <ion-icon name="warning" size="large" class="pe-2"></ion-icon>
       {{'pages.settings.dialogs.updateUsername.messages.avvisoAttesa' | translate}}
@@ -26,7 +26,7 @@
     <div class="warning">
       <ion-icon name="warning" size="large" class="pe-2"></ion-icon>
       {{'pages.settings.dialogs.updateUsername.messages.troppoPresto' | translate : {days:
-      this.settings!.changeUsernameDaysInterval - daysFromLastChange} }}
+      this.appSettings.settings!.changeUsernameDaysInterval - daysFromLastChange} }}
     </div>
     }
 

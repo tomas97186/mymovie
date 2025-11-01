@@ -19,7 +19,7 @@ import {
   updateDoc,
   where,
   writeBatch,
-  WriteBatch
+  WriteBatch,
 } from '@angular/fire/firestore';
 import { firstValueFrom, map, Observable, tap } from 'rxjs';
 import { CollectionEnum } from '../enum/collection.enum';
@@ -27,13 +27,16 @@ import { InvitationResponseEnum } from '../enum/invitation.response.enum';
 import { MembershipEnum } from '../enum/membership.enum';
 import { MovieStatusEnum } from '../enum/movie-status.enum';
 import { MembershipModel } from '../models/membership.model';
-import { InfoListModel } from '../models/movie-list.model';
+import { InfoListModel, MovieListModel } from '../models/movie-list.model';
 import { ReviewModel } from '../models/review.model';
 import { SearchItemModel } from '../models/search-item.model';
 import { UserPartialModel } from '../models/user.partial.model';
 import { AuthService } from './auth.service';
 import { UserService } from './user.service';
 import { FriendsService } from './friends.service';
+import { onAuthStateChanged } from '@angular/fire/auth';
+import { AppSettingsService } from './app-settings.service';
+import { MovieModel } from '../models/movie.model';
 
 @Injectable({
   providedIn: 'root',
@@ -43,6 +46,7 @@ export class MovieListService {
   private authService = inject(AuthService);
   private userService = inject(UserService);
   private friendService = inject(FriendsService);
+  private appSettings = inject(AppSettingsService);
   private destroyRef = inject(DestroyRef);
 
   /**
@@ -59,6 +63,8 @@ export class MovieListService {
         createdBy: this.userService.currentUser!.uid,
         watchedMovies: 0,
         moviesCount: 0,
+        toWatchPages: 0,
+        watchedPages: 0,
         membersCount: 1,
         createdDate: new Date().toISOString(),
       });
@@ -115,8 +121,16 @@ export class MovieListService {
       const batch = writeBatch(this.firestore);
       // const movieRef = doc(this.firestore, `${CollectionEnum.MOVIES}/${newMovie.id}`);
       const listRef = doc(this.firestore, `${CollectionEnum.LISTS}/${listId}`);
+      const listInfo = await firstValueFrom(
+        docData(listRef) as Observable<InfoListModel>
+      );
 
-      // batch.set(movieRef, newMovie);
+      const page = Math.ceil(
+        (listInfo.moviesCount + 1 - listInfo.watchedMovies) /
+          this.appSettings.settings!.pageSize
+      );
+      console.log('page:', page);
+      console.log('Settings: ', this.appSettings.settings);
       batch.set(
         doc(
           this.firestore,
@@ -129,20 +143,28 @@ export class MovieListService {
             title: newMovie.title,
             poster_path: newMovie.poster_path,
           },
+          page: page,
           addedDate: new Date().toISOString(),
           addedBy: this.userService.currentUser!.uid,
           watched: false,
         }
       );
+      // Aggiungo il film alla pagina
       batch.set(
         doc(
           this.firestore,
-          `${CollectionEnum.LISTS}/${listId}/${CollectionEnum.MOVIES}/toWatch`
+          `${CollectionEnum.LISTS}/${listId}/${CollectionEnum.TO_WATCH}/${page}`
         ),
-        { [newMovie.id]: { poster_path: newMovie.poster_path, title: newMovie.title } },
+        {
+          [newMovie.id]: {
+            poster_path: newMovie.poster_path,
+            addedDate: new Date().toISOString(),
+            title: newMovie.title,
+          },
+        },
         { merge: true }
       );
-      batch.update(listRef, { moviesCount: increment(1) });
+      batch.update(listRef, { moviesCount: increment(1), toWatchPages: page });
       // batch.set(doc(this.firestore, `${CollectionEnum.MOVIES}/${newMovie.id}/${CollectionEnum.LISTS}/${listId}`), { list: listRef });
       await batch.commit();
     }
@@ -170,7 +192,8 @@ export class MovieListService {
       batch.set(
         doc(
           this.firestore,
-          `${CollectionEnum.LISTS}/${listRef.id}/members/${this.userService.currentUser!.uid
+          `${CollectionEnum.LISTS}/${listRef.id}/members/${
+            this.userService.currentUser!.uid
           }`
         ),
         {
@@ -197,7 +220,11 @@ export class MovieListService {
     }
   }
 
-  async removeUser(listId: string, userUid: string, invited = false): Promise<void> {
+  async removeUser(
+    listId: string,
+    userUid: string,
+    invited = false
+  ): Promise<void> {
     const batch = writeBatch(this.firestore);
 
     await this.removeUserList(listId, batch, userUid, invited);
@@ -215,13 +242,13 @@ export class MovieListService {
       `${CollectionEnum.LISTS}/${listId}/${CollectionEnum.MOVIES}/${id}`
     );
 
-    const movie = await getDoc(movieRef);
+    const movie = (await getDoc(movieRef)).data() as MovieModel;
 
-    if (movie.get('watched')) {
+    if (movie.watched) {
       batch.update(
         doc(
           this.firestore,
-          `${CollectionEnum.LISTS}/${listId}/${CollectionEnum.MOVIES}/watched`
+          `${CollectionEnum.LISTS}/${listId}/${CollectionEnum.WATCHED}/${movie.page}`
         ),
         { [id]: deleteField() }
       );
@@ -229,7 +256,7 @@ export class MovieListService {
       batch.update(
         doc(
           this.firestore,
-          `${CollectionEnum.LISTS}/${listId}/${CollectionEnum.MOVIES}/toWatch`
+          `${CollectionEnum.LISTS}/${listId}/${CollectionEnum.TO_WATCH}/${movie.page}`
         ),
         { [id]: deleteField() }
       );
@@ -238,7 +265,7 @@ export class MovieListService {
     batch.delete(movieRef);
     batch.update(doc(this.firestore, `${CollectionEnum.LISTS}/${listId}`), {
       moviesCount: increment(-1),
-      watchedMovies: increment(movie.get('watched') ? -1 : 0),
+      watchedMovies: increment(movie.watched ? -1 : 0),
     });
 
     return batch.commit();
@@ -254,8 +281,16 @@ export class MovieListService {
       this.firestore,
       `${CollectionEnum.LISTS}/${listId}/${CollectionEnum.MOVIES}/${id}`
     );
+    const listRef = doc(this.firestore, `${CollectionEnum.LISTS}/${listId}`);
+    const listInfo = await firstValueFrom(
+      docData(listRef) as Observable<InfoListModel>
+    );
 
-    const movie = await getDoc(movieRef);
+    const page = Math.ceil(
+      (listInfo.watchedMovies + 1) / this.appSettings.settings!.pageSize
+    );
+
+    const movie = (await getDoc(movieRef)).data() as MovieModel;
 
     batch.update(movieRef, {
       watched: true,
@@ -263,20 +298,28 @@ export class MovieListService {
     });
     batch.update(doc(this.firestore, `${CollectionEnum.LISTS}/${listId}`), {
       watchedMovies: increment(1),
+      watchedPage: page,
     });
     batch.update(
       doc(
         this.firestore,
-        `${CollectionEnum.LISTS}/${listId}/${CollectionEnum.MOVIES}/toWatch`
+        `${CollectionEnum.LISTS}/${listId}/${
+          CollectionEnum.TO_WATCH
+        }/${movie.page!}`
       ),
       { [id]: deleteField() }
     );
     batch.set(
       doc(
         this.firestore,
-        `${CollectionEnum.LISTS}/${listId}/${CollectionEnum.MOVIES}/watched`
+        `${CollectionEnum.LISTS}/${listId}/${CollectionEnum.WATCHED}/${page}`
       ),
-      { [id]: movie.get('movie.poster_path') },
+      {
+        [id]: {
+          ...movie,
+          watchedDate: new Date().toISOString(),
+        },
+      },
       { merge: true }
     );
     return batch.commit();
@@ -302,18 +345,21 @@ export class MovieListService {
           this.firestore,
           `${CollectionEnum.USERS}/${uid}/${like ? 'likes' : 'dislikes'}/1`
         )
-      ) as Observable<{ [key: string]: { poster_path: string, title: string } }>
+      ) as Observable<{ [key: string]: { poster_path: string; title: string } }>
     ).pipe(
-      map<{ [key: string]: { poster_path: string, title: string } }, SearchItemModel[]>((res) =>
+      map<
+        { [key: string]: { poster_path: string; title: string } },
+        SearchItemModel[]
+      >((res) =>
         res
           ? Object.entries(res).map<SearchItemModel>(
-            ([id, { poster_path, title }]) =>
-            ({
-              id: +id,
-              poster_path,
-              title,
-            } as unknown as SearchItemModel)
-          )
+              ([id, { poster_path, title }]) =>
+                ({
+                  id: +id,
+                  poster_path,
+                  title,
+                } as unknown as SearchItemModel)
+            )
           : []
       )
     );
@@ -338,14 +384,28 @@ export class MovieListService {
   ): Promise<{ likes: number; dislikes: number }> {
     const collRef = collection(this.firestore, CollectionEnum.REVIEWS);
     return {
-      likes: this.friendService.friendsUids ?
-        await this.getReviewFromFriends(movieId, 1, this.friendService.friendsUids) : 0,
-      dislikes: this.friendService.friendsUids ?
-        await this.getReviewFromFriends(movieId, -1, this.friendService.friendsUids) : 0,
+      likes: this.friendService.friendsUids
+        ? await this.getReviewFromFriends(
+            movieId,
+            1,
+            this.friendService.friendsUids
+          )
+        : 0,
+      dislikes: this.friendService.friendsUids
+        ? await this.getReviewFromFriends(
+            movieId,
+            -1,
+            this.friendService.friendsUids
+          )
+        : 0,
     };
   }
 
-  private async getReviewFromFriends(movieId: string, review: -1 | 1, friendsUids: string[]) {
+  private async getReviewFromFriends(
+    movieId: string,
+    review: -1 | 1,
+    friendsUids: string[]
+  ) {
     // Funzione helper per suddividere l’array in blocchi da 10
     const chunkArray = <T>(arr: T[], size: number): T[][] => {
       const result: T[][] = [];
@@ -360,27 +420,40 @@ export class MovieListService {
 
     // Esegui tutte le query in parallelo
     const counts = await Promise.all(
-      chunks.map(chunk => this.getCountQuery(movieId, review, chunk))
+      chunks.map((chunk) => this.getCountQuery(movieId, review, chunk))
     );
 
     // Somma i risultati
     return counts.reduce((sum, c) => sum + c, 0);
   }
 
-  private async getCountQuery(movieId: string, review: -1 | 1, friendsUids: string[]) {
+  private async getCountQuery(
+    movieId: string,
+    review: -1 | 1,
+    friendsUids: string[]
+  ) {
     const collRef = collection(this.firestore, CollectionEnum.REVIEWS);
 
-    return (await getCountFromServer(
-      query(
-        collRef,
-        and(where('movie.id', '==', movieId), where('review', '==', review), where('user', 'in', friendsUids))
+    return (
+      await getCountFromServer(
+        query(
+          collRef,
+          and(
+            where('movie.id', '==', movieId),
+            where('review', '==', review),
+            where('user', 'in', friendsUids)
+          )
+        )
       )
-    )).data().count;
+    ).data().count;
   }
 
-
   async getRecommendedMovies() {
-    const friendsUids = await firstValueFrom(this.friendService.getFriendList().pipe(map(friends => this.friendService.friendsUids)));
+    const friendsUids = await firstValueFrom(
+      this.friendService
+        .getFriendList()
+        .pipe(map((friends) => this.friendService.friendsUids))
+    );
     if (!friendsUids || friendsUids.length === 0) {
       return [];
     }
@@ -400,7 +473,9 @@ export class MovieListService {
     const chunks = chunkArray(friendsUids, 30);
     const recommended: SearchItemModel[] = [];
     for (const chunk of chunks) {
-      recommended.push(...await this.__getRecommendedMovies(chunk, 10 - recommended.length));
+      recommended.push(
+        ...(await this.__getRecommendedMovies(chunk, 10 - recommended.length))
+      );
       if (recommended.length >= 10) {
         break;
       }
@@ -409,15 +484,24 @@ export class MovieListService {
     return recommended;
   }
 
-  private async __getRecommendedMovies(friendsUid: string[], maxResults = 10): Promise<SearchItemModel[]> {
+  private async __getRecommendedMovies(
+    friendsUid: string[],
+    maxResults = 10
+  ): Promise<SearchItemModel[]> {
     const collRef = collection(this.firestore, CollectionEnum.REVIEWS);
 
-    return firstValueFrom((collectionData(query(
-      collRef,
-      and(where('user', 'in', friendsUid)),
-      orderBy('createdDate', 'desc'),
-      limit(maxResults)
-    )) as Observable<ReviewModel[]>).pipe(map(reviews => reviews.map(m => m.movie as SearchItemModel))));;
+    return firstValueFrom(
+      (
+        collectionData(
+          query(
+            collRef,
+            and(where('user', 'in', friendsUid)),
+            orderBy('createdDate', 'desc'),
+            limit(maxResults)
+          )
+        ) as Observable<ReviewModel[]>
+      ).pipe(map((reviews) => reviews.map((m) => m.movie as SearchItemModel)))
+    );
   }
 
   async removeReview(review: ReviewModel) {
@@ -433,7 +517,8 @@ export class MovieListService {
       batch.set(
         doc(
           this.firestore,
-          `${CollectionEnum.USERS}/${this.userService.currentUser!.uid
+          `${CollectionEnum.USERS}/${
+            this.userService.currentUser!.uid
           }/dislikes/1`
         ),
         { [review.movie.id]: deleteField() },
@@ -478,7 +563,8 @@ export class MovieListService {
       batch.set(
         doc(
           this.firestore,
-          `${CollectionEnum.USERS}/${this.userService.currentUser!.uid
+          `${CollectionEnum.USERS}/${
+            this.userService.currentUser!.uid
           }/dislikes/1`
         ),
         { [oldReview.movie.id]: deleteField() },
@@ -488,7 +574,7 @@ export class MovieListService {
   }
 
   async reviewMovie(
-    movie: { id: string; poster_path: string, title: string },
+    movie: { id: string; poster_path: string; title: string },
     review: -1 | 1
   ) {
     const batch = writeBatch(this.firestore);
@@ -511,15 +597,26 @@ export class MovieListService {
     batch.set(reviewRef, {
       review,
       user: this.userService.currentUser!.uid,
-      movie: { id: movie.id, poster_path: movie.poster_path, title: movie.title },
-      createdDate: new Date().toISOString()
+      movie: {
+        id: movie.id,
+        poster_path: movie.poster_path,
+        title: movie.title,
+      },
+      createdDate: new Date().toISOString(),
     });
 
-    batch.update(userRef, review === -1 ? { dislikedMovies: increment(1) } : { likedMovies: increment(1) });
+    batch.update(
+      userRef,
+      review === -1
+        ? { dislikedMovies: increment(1) }
+        : { likedMovies: increment(1) }
+    );
     batch.set(
       doc(
         this.firestore,
-        `${CollectionEnum.USERS}/${this.userService.currentUser!.uid}/${review === -1 ? 'dislikes' : 'likes'}/1`
+        `${CollectionEnum.USERS}/${this.userService.currentUser!.uid}/${
+          review === -1 ? 'dislikes' : 'likes'
+        }/1`
       ),
       { [movie.id]: { poster_path: movie.poster_path, title: movie.title } },
       { merge: true }
@@ -550,27 +647,31 @@ export class MovieListService {
   // /**
   //  * Legge i film di una lista (solo se l'utente è membro)
   //  */
-  getListMovies(listId: string, watched = false) {
+  getListMovies(listId: string, watched = false, page: number = 1) {
     return (
       docData(
         doc(
           this.firestore,
-          `${CollectionEnum.LISTS}/${listId}/${CollectionEnum.MOVIES}/${watched ? 'watched' : 'toWatch'
-          }`
+          `${CollectionEnum.LISTS}/${listId}/${
+            watched ? CollectionEnum.WATCHED : CollectionEnum.TO_WATCH
+          }/${page}`
         )
-      ) as Observable<{ [key: string]: { poster_path: string, title: string } }>
+      ) as Observable<{ [key: string]: { poster_path: string; title: string } }>
     ).pipe(
-      map<{ [key: string]: { poster_path: string, title: string } }, SearchItemModel[]>((res) =>
+      map<
+        { [key: string]: { poster_path: string; title: string } },
+        SearchItemModel[]
+      >((res) =>
         res
           ? Object.entries(res).map<SearchItemModel>(
-            ([id, { poster_path, title }]) =>
-            ({
-              id: +id,
-              poster_path,
-              title,
-              watched: watched,
-            } as unknown as SearchItemModel)
-          )
+              ([id, { poster_path, title }]) =>
+                ({
+                  id: +id,
+                  poster_path,
+                  title,
+                  watched: watched,
+                } as unknown as SearchItemModel)
+            )
           : []
       )
     );
@@ -591,7 +692,10 @@ export class MovieListService {
   // /**
   //  * Aggiunge l'utente autenticato come membro a una lista esistente
   //  */
-  async inviteToList(listId: string, username: string): Promise<InvitationResponseEnum> {
+  async inviteToList(
+    listId: string,
+    username: string
+  ): Promise<InvitationResponseEnum> {
     const user = await this.userService.userExists(username);
     if (!user) {
       return InvitationResponseEnum.USERNAME_NOT_EXISTS;
@@ -621,14 +725,19 @@ export class MovieListService {
       doc(this.firestore, `${CollectionEnum.MEMBERSHIPS}/${invitation.id}`),
       { status: 'accepted' }
     );
-    batch.update(doc(this.firestore, `${CollectionEnum.LISTS}/${invitation.list.id}`), { membersCount: increment(1) });
+    batch.update(
+      doc(this.firestore, `${CollectionEnum.LISTS}/${invitation.list.id}`),
+      { membersCount: increment(1) }
+    );
 
     return batch.commit();
   }
 
   async declineListInvitation(membershipId: string): Promise<void> {
     if (this.userService.isLoggedIn()) {
-      await deleteDoc(doc(this.firestore, `${CollectionEnum.MEMBERSHIPS}/${membershipId}`));
+      await deleteDoc(
+        doc(this.firestore, `${CollectionEnum.MEMBERSHIPS}/${membershipId}`)
+      );
     }
   }
 
@@ -673,7 +782,10 @@ export class MovieListService {
     }
     if (batch) {
       if (status == MembershipEnum.ACCEPTED) {
-        batch.update(doc(this.firestore, `${CollectionEnum.LISTS}/${list.id}`), { membersCount: increment(1) });
+        batch.update(
+          doc(this.firestore, `${CollectionEnum.LISTS}/${list.id}`),
+          { membersCount: increment(1) }
+        );
       }
       return batch.set(m, membership);
     } else {
@@ -703,18 +815,18 @@ export class MovieListService {
     batch ??= writeBatch(this.firestore);
     const q = uid
       ? query(
-        collection(this.firestore, CollectionEnum.MEMBERSHIPS),
-        and(where('list.id', '==', listId), where('uid', '==', uid))
-      )
+          collection(this.firestore, CollectionEnum.MEMBERSHIPS),
+          and(where('list.id', '==', listId), where('uid', '==', uid))
+        )
       : query(
-        collection(this.firestore, CollectionEnum.MEMBERSHIPS),
-        where('list.id', '==', listId)
-      );
-    (await getDocs(q)).forEach(async (d) =>
-      batch.delete(d.ref)
-    );
+          collection(this.firestore, CollectionEnum.MEMBERSHIPS),
+          where('list.id', '==', listId)
+        );
+    (await getDocs(q)).forEach(async (d) => batch.delete(d.ref));
     if (uid && !invited) {
-      batch.update(doc(this.firestore, `${CollectionEnum.LISTS}/${listId}`), { membersCount: increment(-1) });
+      batch.update(doc(this.firestore, `${CollectionEnum.LISTS}/${listId}`), {
+        membersCount: increment(-1),
+      });
     }
 
     return batch;

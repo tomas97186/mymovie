@@ -51,42 +51,65 @@ this.listDetails.isLoading(); @if(isLoading) {
     </div>
 
     <div class="actions">
-      <ion-button class="w-100" color="white" fill="clear" size="small" (click)="shareListCode()">
+      <ion-button
+        class="w-100"
+        color="white"
+        fill="clear"
+        size="small"
+        (click)="shareListCode()"
+      >
         <ion-icon name="share-social-outline" slot="start"></ion-icon>
         {{ "pages.listDetails.buttons.condividi" | translate }}
       </ion-button>
-      <ion-button class="w-100" color="white" fill="clear" size="small" (click)="openInvite()">
+      <ion-button
+        class="w-100"
+        color="white"
+        fill="clear"
+        size="small"
+        (click)="openInvite()"
+      >
         <ion-icon name="person-add-outline" slot="start"></ion-icon>
         {{ "pages.listDetails.settings.buttons.invita" | translate }}
       </ion-button>
     </div>
   </div>
   <div class="watched-filter">
-    <ion-segment value="toWatch" mode="ios" (ionChange)="onSegmentChange($event)">
+    <ion-segment
+      value="toWatch"
+      mode="ios"
+      (ionChange)="onSegmentChange($event)"
+    >
       <ion-segment-button value="toWatch">
-        <ion-label>{{ "pages.listDetails.labels.daVedere" | translate | titlecase }}
+        <ion-label
+          >{{ "pages.listDetails.labels.daVedere" | translate | titlecase }}
           <!-- <span class="movie-count">{{ details.moviesCount - details.watchedMovies }}</span> -->
         </ion-label>
       </ion-segment-button>
       <ion-segment-button value="watched">
         <ion-label>{{
           "pages.listDetails.labels.visti" | translate | titlecase
-          }}</ion-label>
+        }}</ion-label>
       </ion-segment-button>
     </ion-segment>
   </div>
 
-  @let movies = this.movies.value(); @if(movies &&
-  movies.length > 0) {
-  <app-movie-list [movies]="movies" [total]="movies!.length"></app-movie-list>
+  @if(this.movies.isLoading() || (this.movies.value() &&
+  this.movies.value()!.total_results > 0)) {
+  <app-movie-list-dynamic
+    [(currentPage)]="currentPage"
+    [searchResult]="this.movies.value()!"
+    [paddingTop]="100"
+    [isLoading]="this.movies.isLoading()"
+  ></app-movie-list-dynamic>
   } @else {
   <div class="no-movies-banner">
-    <ion-icon name="sentiment_dissatisfied"></ion-icon><span>{{
+    <ion-icon name="sentiment_dissatisfied"></ion-icon
+    ><span>{{
       "pages.listDetails.labels.noFilm" | translate | titlecase
-      }}</span>
+    }}</span>
     <span style="font-size: 0.9rem">{{
       "pages.listDetails.labels.start" | translate | titlecase
-      }}</span>
+    }}</span>
   </div>
   }
 </div>

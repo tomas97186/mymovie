@@ -79,8 +79,6 @@ export class SearchPageComponent {
     page: this.currentPage(),
   }));
 
-  private resultCriteriEff = effect(() => console.log(this.resultCriteria()));
-
   result = rxResource({
     request: this.resultCriteria,
     loader: ({ request: query }) => {
