@@ -156,7 +156,7 @@ export class AppComponent {
       thumbsUpOutline,
       people,
       personRemoveOutline,
-      warning
+      warning,
     });
   }
 }

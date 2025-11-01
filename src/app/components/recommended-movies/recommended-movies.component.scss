@@ -1,0 +1,45 @@
+.recommended-movies-container {
+    background: var(--card-background-color);
+    padding-bottom: .6rem;
+    padding-top: .01rem;
+    margin: 1rem;
+    border-radius: 20px;
+}
+
+.title {
+    font-size: 2rem;
+    font-weight: 500;
+    margin-top: 1.2rem;
+    margin-bottom: 1.2rem;
+    text-align: center;
+    padding: 1.2rem;
+
+    & .title-1 {
+        font-size: 2.4rem;
+        color: #9D60FF;
+        font-weight: 600;
+    }
+}
+
+
+.section-header {
+    display: flex;
+    gap: 1rem;
+    padding-right: 1.2rem;
+    padding-left: 1.2rem;
+    margin-top: 1.2rem;
+    padding-bottom: .6rem;
+    align-items: center;
+
+    & h4 {
+        padding: 0px;
+        margin: 0px;
+    }
+
+    & a {
+        text-align: center;
+        text-decoration: none;
+        color: #B88CFF;
+        font-weight: 500;
+    }
+}

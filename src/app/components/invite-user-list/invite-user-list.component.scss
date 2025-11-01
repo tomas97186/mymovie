@@ -5,7 +5,7 @@ ion-list {
 ion-item {
     --background: transparent !important;
 
-    & ion-button {
+    & ion-button[shape="round"] {
         --border-radius: 50% !important;
     }
 }

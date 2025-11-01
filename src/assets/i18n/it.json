@@ -113,6 +113,7 @@
     },
     "home": {
       "labels": {
+        "consigliatiPerTe": "I tuoi amici consigliano",
         "diTendenza": "Di Tendenza",
         "ultimeUscite": "Ultime Uscite",
         "popolari": "Popolari",
@@ -178,9 +179,13 @@
         }
       },
       "inviteUser": {
+        "buttons": {
+          "cancelInvitation": "Annulla Invito"
+        },
         "labels": {
           "header": "Invita utente",
-          "descrizione": "Seleziona un amico dalla tua lista per invitarlo a questa lista di film."
+          "descrizione": "Seleziona un amico dalla tua lista per invitarlo a questa lista di film.",
+          "invitationPending": "Invitato"
         }
       },
       "settings": {
@@ -427,7 +432,8 @@
         "updateUsername": {
           "title": "Modifica Username",
           "messages": {
-            "avvisoAttesa": "Modificando il nome utente non potrai modificarlo per i prossimi 7 giorni."
+            "avvisoAttesa": "Modificando il nome utente non potrai modificarlo per i prossimi 7 giorni.",
+            "troppoPresto": "Hai modificato recentemente il tuo username. Devi aspettare altri {{days}} giorni per poterlo cambiare di nuovo."
           },
           "errors": {
             "simbolo": "Il nome utente può conentenere solo il simbolo _"

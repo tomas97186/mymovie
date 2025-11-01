@@ -1,4 +1,4 @@
-@let members = (this.members() | async)!;
+@let members = this.members.value();
 
 <ion-list>
   @for(friend of friendList(); track friend.uid) {
@@ -8,42 +8,36 @@
       <img alt="" [src]="userData.getUserAvatar(friend.uid!)" />
     </ion-avatar>
     <ion-label>
-      {{ userData.getUsername(friend.uid!) }}
+      <h4>
+        {{ friend.user.username }}
+      </h4>
+      @if(isInList(friend.user.uid!) && members && members[friend.uid!] === MembershipEnum.PENDING) {
+      <p>
+        {{ "pages.listDetails.inviteUser.labels.invitationPending"
+        | translate }}
+      </p>
+      }
     </ion-label>
 
-    @if(isInList(friend.uid!)) { @if(members[friend.uid!] ===
+    @if(isInList(friend.user.uid!) && members) { @if(members[friend.uid!] ===
     MembershipEnum.ACCEPTED) {
-    <ion-button
-      color="success"
-      size="small"
-      shape="round"
-      (click)="inviteUser(friend.uid!)"
-    >
-      <ion-icon slot="icon-only" name="check"></ion-icon>
+    <ion-button color="success" size="small" shape="round" (click)="removeUser(friend.user)">
+      <ion-icon slot="icon-only" name="checkmark"></ion-icon>
     </ion-button>
     } @else {
-    <ion-button
-      color="danger"
-      size="small"
-      shape="round"
-      (click)="inviteUser(friend.uid!)"
-    >
+    <ion-button color="danger" size="small" (click)="removeUser(friend.user, true)">
       <ion-icon slot="start" name="close"></ion-icon>
       {{
-        "pages.listDetails.dialogs.inviteUser.buttons.cancelInvitation"
-          | translate
+      "pages.listDetails.inviteUser.buttons.cancelInvitation"
+      | translate
       }}
     </ion-button>
 
-    } }
-    <ion-button
-      color="medium"
-      size="small"
-      shape="round"
-      (click)="inviteUser(friend.uid!)"
-    >
+    } } @else {
+    <ion-button color="medium" size="small" shape="round" (click)="inviteUser(friend.user.uid!)">
       <ion-icon slot="icon-only" name="add"></ion-icon>
     </ion-button>
+    }
   </ion-item>
   }
 </ion-list>

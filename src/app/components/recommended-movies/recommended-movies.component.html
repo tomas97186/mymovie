@@ -1,0 +1,11 @@
+@let recommendedMovies = this.recommendedMovies | async;
+@if(recommendedMovies && recommendedMovies.length > 0) {
+<div class="recommended-movies-container">
+  <div class="section-header">
+    <ion-icon name="star" size="large"></ion-icon>
+    <h4>{{ 'pages.home.labels.consigliatiPerTe' | translate | titlecase }}</h4>
+  </div>
+  <app-movie-list [movies]="recommendedMovies" [isHorizontal]="true"
+    [total]="recommendedMovies.length"></app-movie-list>
+</div>
+}

@@ -10,22 +10,25 @@ import { MovieListComponent } from "../../components/movie-list/movie-list.compo
 import { MovieModel } from '../../models/movie.model';
 import { TMDBService } from '../../services/tmdb.service';
 import { CommonModule } from '@angular/common';
-import { first, map, switchMap, take } from 'rxjs';
+import { first, from, map, switchMap, take } from 'rxjs';
 import { SearchItemModel } from '../../models/search-item.model';
 import { HomeCategoryComponent } from "../../components/home-category/home-category.component";
 import { DiscoverMovieRequestModel } from '../../models/discover-movie-request.model';
 import { MovieHeroComponent } from "../../components/movie-hero/movie-hero.component";
 import { IonContent, IonHeader, IonFab, IonFabButton, IonIcon } from "@ionic/angular/standalone";
+import { MovieListService } from 'src/app/services/movie-list.service';
+import { RecommendedMoviesComponent } from "src/app/components/recommended-movies/recommended-movies.component";
 
 @Component({
   selector: 'app-home-page',
-  imports: [IonIcon, IonFabButton, IonFab, IonHeader, IonContent, CommonModule, ReactiveFormsModule, RouterModule, MatFormFieldModule, MatInputModule, MatIconModule, MatButtonModule, MovieListComponent, HomeCategoryComponent, MovieHeroComponent],
+  imports: [IonIcon, IonFabButton, IonFab, IonHeader, IonContent, CommonModule, ReactiveFormsModule, RouterModule, MatFormFieldModule, MatInputModule, MatIconModule, MatButtonModule, MovieListComponent, HomeCategoryComponent, MovieHeroComponent, RecommendedMoviesComponent],
   templateUrl: './home-page.component.html',
   styleUrl: './home-page.component.scss'
 })
 export class HomePageComponent {
   tmdbService = inject(TMDBService);
   private router = inject(Router);
+  private listService = inject(MovieListService);
   private currentList: MovieModel[] = [];
   nowPlayingMovies$ = this.getMovieCollection('now_playing');
   movieToWatch$ = this.nowPlayingMovies$.pipe(switchMap(res => this.tmdbService.getMovieDetails(res.results[Math.floor(Math.random() * Math.min(10, res.results.length))].id)))
@@ -36,6 +39,7 @@ export class HomePageComponent {
   airingTodayTvShows$ = this.getTvShowCollection('airing_today');
   popularTvShows$ = this.getTvShowCollection('popular');
   topRatedTvShows$ = this.getTvShowCollection('top_rated');
+  recommendedMovies$ = from(this.listService.getRecommendedMovies()).pipe(map(movies => ({ results: movies, current_page: 1, total_pages: 1, total_results: movies.length } as any)));
   queryForm = new FormGroup({ query: new FormControl('') });
 
   get customMovieFilter(): DiscoverMovieRequestModel {

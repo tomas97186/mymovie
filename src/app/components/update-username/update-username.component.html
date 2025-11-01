@@ -1,4 +1,5 @@
 @let userInfo = this.userService.userInfo;
+@let daysFromLastChange = this.daysFromLastChange(userInfo!);
 
 <ion-header>
   <ion-toolbar>
@@ -16,10 +17,19 @@
 <ion-content>
 
   <div class="container">
+    @if(daysFromLastChange >= this.settings!.changeUsernameDaysInterval) {
     <div class="warning">
       <ion-icon name="warning" size="large" class="pe-2"></ion-icon>
       {{'pages.settings.dialogs.updateUsername.messages.avvisoAttesa' | translate}}
     </div>
+    } @else {
+    <div class="warning">
+      <ion-icon name="warning" size="large" class="pe-2"></ion-icon>
+      {{'pages.settings.dialogs.updateUsername.messages.troppoPresto' | translate : {days:
+      this.settings!.changeUsernameDaysInterval - daysFromLastChange} }}
+    </div>
+    }
+
     <form [formGroup]="form" class="form" (ngSubmit)="submit()">
       <ion-input maxlength="40" labelPlacement="stacked" label="{{ INPUTS.USERNAME | translate }}"
         formControlName="username"

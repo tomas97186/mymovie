@@ -7,4 +7,5 @@ export interface UserModel {
   likedMovies: number;
   dislikedMovies: number;
   friends?: string[];
+  lastUsernameChange?: string;
 }

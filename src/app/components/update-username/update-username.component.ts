@@ -1,11 +1,10 @@
-import { Location } from '@angular/common';
-import { Component, inject, OnInit } from '@angular/core';
+import { CommonModule, Location } from '@angular/common';
+import { Component, inject } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { updateProfile } from '@firebase/auth';
-import { ModalController, IonContent, IonHeader, IonInput, IonTitle, IonToolbar, IonButton, IonButtons, IonIcon } from "@ionic/angular/standalone";
+import { IonButton, IonButtons, IonContent, IonHeader, IonIcon, IonInput, IonTitle, IonToolbar, ModalController } from "@ionic/angular/standalone";
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { filter, first, tap } from 'rxjs';
-import { AuthService } from 'src/app/services/auth.service';
+import { UserModel } from 'src/app/models/user.model';
+import { AppSettingsService } from 'src/app/services/app-settings.service';
 import { ToastService } from 'src/app/services/toast.service';
 import { UserService } from 'src/app/services/user.service';
 import { INPUTS } from 'src/app/variables';
@@ -14,19 +13,18 @@ import { INPUTS } from 'src/app/variables';
   selector: 'app-update-username',
   templateUrl: './update-username.component.html',
   styleUrls: ['./update-username.component.scss'],
-  imports: [IonIcon, IonButtons, IonButton, ReactiveFormsModule, IonInput, IonContent, TranslateModule, IonTitle, IonToolbar, IonHeader],
+  imports: [CommonModule, IonIcon, IonButtons, IonButton, ReactiveFormsModule, IonInput, IonContent, TranslateModule, IonTitle, IonToolbar, IonHeader],
 })
 export class UpdateUsernameComponent {
   private readonly MESSAGE_LABELS = 'pages.profile.messages.';
-  private readonly DIALOG_LABELS = 'pages.profile.dialogs.';
 
-  private authService = inject(AuthService);
   private snackBar = inject(ToastService);
   private translate = inject(TranslateService);
+  settings = inject(AppSettingsService).settings;
+  userService = inject(UserService);
 
   location = inject(Location);
   INPUTS = INPUTS;
-  userService = inject(UserService);
   currentUsername = this.userService.userInfo?.username;
   dialog = inject(ModalController);
   form = new FormGroup({
@@ -57,6 +55,24 @@ export class UpdateUsernameComponent {
         });
     }
 
+  }
+
+  daysFromLastChange(userInfo: UserModel): number {
+    const lastUsernameChange = userInfo?.lastUsernameChange;
+    if (!lastUsernameChange) {
+      return 0;
+    }
+    const lastChangeDate = new Date(lastUsernameChange);
+    const now = new Date();
+    const diffInMs = now.getTime() - lastChangeDate.getTime();
+    const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
+    const res = diffInDays >= this.settings!.changeUsernameDaysInterval;
+
+    if (!res) {
+      this.form.get('username')?.disable();
+    }
+
+    return diffInDays;
   }
 
 }

@@ -1,29 +1,25 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Injectable, OnInit } from '@angular/core';
 import {
-  addDoc,
   and,
-  arrayRemove,
-  arrayUnion,
   collection,
-  collectionData,
-  deleteDoc,
   deleteField,
   doc,
   docData,
   Firestore,
   getCountFromServer,
-  or,
   query,
   where,
-  writeBatch,
+  WriteBatch,
+  writeBatch
 } from '@angular/fire/firestore';
-import { firstValueFrom, map, Observable } from 'rxjs';
+import { filter, first, firstValueFrom, map, Observable, switchMap, tap } from 'rxjs';
 import { CollectionEnum } from '../enum/collection.enum';
 import { FriendStatusEnum } from '../enum/friend-status.enum';
 import { FriendshipModel } from '../models/Friendship.model';
-import { UserService } from './user.service';
 import { UserModel } from '../models/user.model';
 import { UserPartialModel } from '../models/user.partial.model';
+import { UserService } from './user.service';
+import { AuthService } from './auth.service';
 
 @Injectable({
   providedIn: 'root',
@@ -31,6 +27,20 @@ import { UserPartialModel } from '../models/user.partial.model';
 export class FriendsService {
   private firestore = inject(Firestore);
   private userService = inject(UserService);
+  private friendsUid?: string[];
+  private authService = inject(AuthService);
+
+  get friendsUids() {
+    return this.friendsUid;
+  }
+
+  constructor() {
+    this.authService.currentUser$.pipe(
+      filter(u => !!u),
+      first(),
+      switchMap(u => this.getFriendList()),
+    ).subscribe();
+  }
 
   async sendFriendRequest(username: string) {
     const batch = writeBatch(this.firestore);
@@ -43,7 +53,7 @@ export class FriendsService {
     batch.set(
       doc(
         this.firestore,
-        `${CollectionEnum.FRIEDS}/${this.userService.currentUser?.uid}/sentFriendRequests`
+        `${CollectionEnum.USERS}/${this.userService.currentUser?.uid}/friends/sentRequests`
       ),
       {
         [user.uid]: {
@@ -62,7 +72,7 @@ export class FriendsService {
     batch.set(
       doc(
         this.firestore,
-        `${CollectionEnum.FRIEDS}/${user.uid}/friendRequests`
+        `${CollectionEnum.USERS}/${user.uid}/friends/requests`
       ),
       {
         [this.userService.currentUser!.uid]: {
@@ -89,7 +99,7 @@ export class FriendsService {
     batch.set(
       doc(
         this.firestore,
-        `${CollectionEnum.FRIEDS}/${user.uid}/sentFriendRequests`
+        `${CollectionEnum.USERS}/${user.uid}/friends/sentRequests`
       ),
       {
         [this.userService.currentUser!.uid]: deleteField(),
@@ -100,7 +110,7 @@ export class FriendsService {
     batch.set(
       doc(
         this.firestore,
-        `${CollectionEnum.FRIEDS}/${this.userService.currentUser?.uid}/friendRequests`
+        `${CollectionEnum.USERS}/${this.userService.currentUser?.uid}/friends/requests`
       ),
       {
         [user.uid]: deleteField(),
@@ -111,7 +121,7 @@ export class FriendsService {
     batch.set(
       doc(
         this.firestore,
-        `${CollectionEnum.FRIEDS}/${this.userService.currentUser?.uid}/friends`
+        `${CollectionEnum.USERS}/${this.userService.currentUser?.uid}/friends/all`
       ),
       {
         [user.uid]: {
@@ -125,7 +135,7 @@ export class FriendsService {
     );
 
     batch.set(
-      doc(this.firestore, `${CollectionEnum.FRIEDS}/${user.uid}/friends`),
+      doc(this.firestore, `${CollectionEnum.USERS}/${user.uid}/friends/all`),
       {
         [this.userService.currentUser!.uid]: {
           // user: { username: this.userService.userInfo?.username, uid: this.userService.userInfo?.uid },
@@ -147,7 +157,7 @@ export class FriendsService {
     const batch = writeBatch(this.firestore);
 
     batch.set(
-      doc(this.firestore, `${CollectionEnum.FRIEDS}/${uid}/sentFriendRequests`),
+      doc(this.firestore, `${CollectionEnum.USERS}/${uid}/friends/sentRequests`),
       {
         [this.userService.currentUser!.uid]: deleteField(),
       },
@@ -157,7 +167,7 @@ export class FriendsService {
     batch.set(
       doc(
         this.firestore,
-        `${CollectionEnum.FRIEDS}/${this.userService.currentUser?.uid}/friendRequests`
+        `${CollectionEnum.USERS}/${this.userService.currentUser?.uid}/friends/requests`
       ),
       {
         [uid]: deleteField(),
@@ -175,7 +185,7 @@ export class FriendsService {
     batch.set(
       doc(
         this.firestore,
-        `${CollectionEnum.FRIEDS}/${this.userService.currentUser?.uid}/friends`
+        `${CollectionEnum.USERS}/${this.userService.currentUser?.uid}/friends/all`
       ),
       {
         [uid]: deleteField(),
@@ -184,7 +194,7 @@ export class FriendsService {
     );
 
     batch.set(
-      doc(this.firestore, `${CollectionEnum.FRIEDS}/${uid}/friends`),
+      doc(this.firestore, `${CollectionEnum.USERS}/${uid}/friends/all`),
       {
         [this.userService.currentUser!.uid]: deleteField(),
       },
@@ -195,39 +205,83 @@ export class FriendsService {
   }
 
   getFriendList() {
-    return this.getFriendMap('friends').pipe(
+    return (this.getFriendMap('all').pipe(
       map((res) =>
         res
           ? Object.values(res).map((f) => ({
-              ...f,
-              status: FriendStatusEnum.ACCEPTED,
-            }))
+            ...f,
+            status: FriendStatusEnum.ACCEPTED,
+          }))
           : undefined
       )
-    ) as Observable<FriendshipModel[]>;
+    ) as Observable<FriendshipModel[]>)
+      .pipe(
+        tap(res => this.friendsUid = res.map(f => f.user.uid)),
+      );
   }
 
   getRequestsList() {
-    return this.getFriendMap('friendRequests').pipe(
+    return this.getFriendMap('requests').pipe(
+      tap(console.log),
       map((res) =>
         res
           ? Object.values(res).map((f) => ({
-              ...f,
-              status: FriendStatusEnum.PENDING,
-            }))
+            ...f!,
+            status: FriendStatusEnum.PENDING,
+          }))
           : undefined
       )
     ) as Observable<FriendshipModel[]>;
   }
 
+  async setUsername(username: string, batch: WriteBatch) {
+    await this.__setUsername(username, FriendStatusEnum.ACCEPTED, batch);
+    await this.__setUsername(username, FriendStatusEnum.PENDING, batch);
+    await this.__setUsername(username, FriendStatusEnum.SENT, batch);
+  }
+
+  private async __setUsername(username: string, friendType: FriendStatusEnum, batch: WriteBatch) {
+    let friends;
+    let listToUpdate;
+    switch (friendType) {
+      case FriendStatusEnum.PENDING:
+        friends = await firstValueFrom(this.getRequestsList());
+        listToUpdate = 'sentRequests';
+        break;
+      case FriendStatusEnum.SENT:
+        friends = await firstValueFrom(this.getSentRequestsList());
+        listToUpdate = 'requests';
+        break;
+      case FriendStatusEnum.ACCEPTED:
+        friends = await firstValueFrom(this.getFriendList());
+        listToUpdate = 'all';
+        break;
+    }
+
+
+    for (const friend of friends!) {
+      console.log('Updating friend username for ', friend.user.username);
+      batch.update(
+        doc(
+          this.firestore,
+          `${CollectionEnum.USERS}/${friend.user.uid}/friends/${listToUpdate}`
+        ),
+        {
+          [`${this.userService.currentUser!.uid}.user.username`]: username
+        }
+      );
+    }
+
+  }
+
   getSentRequestsList() {
-    return this.getFriendMap('sentFriendRequests').pipe(
+    return this.getFriendMap('sentRequests').pipe(
       map((res) =>
         res
           ? Object.values(res).map((f) => ({
-              ...f,
-              status: FriendStatusEnum.PENDING,
-            }))
+            ...f,
+            status: FriendStatusEnum.PENDING,
+          }))
           : undefined
       )
     ) as Observable<FriendshipModel[]>;
@@ -239,26 +293,25 @@ export class FriendsService {
     }>(
       doc(
         this.firestore,
-        `${CollectionEnum.FRIEDS}/${
-          this.userService.currentUser!.uid
-        }/${friendshipType}`
+        `${CollectionEnum.USERS}/${this.userService.currentUser!.uid
+        }/friends/${friendshipType}`
       )
     );
   }
 
   async getFriendStatus(uid: string) {
-    const friends = await firstValueFrom(this.getFriendMap('friends'));
+    const friends = await firstValueFrom(this.getFriendMap('all'));
     if (friends && uid in friends) {
       return FriendStatusEnum.ACCEPTED;
     }
 
-    const requests = await firstValueFrom(this.getFriendMap('friendRequests'));
+    const requests = await firstValueFrom(this.getFriendMap('requests'));
     if (requests && uid in requests) {
       return FriendStatusEnum.PENDING;
     }
 
     const sentRequests = await firstValueFrom(
-      this.getFriendMap('sentFriendRequests')
+      this.getFriendMap('sentRequests')
     );
     if (sentRequests && uid in sentRequests) {
       return FriendStatusEnum.SENT;
@@ -270,7 +323,7 @@ export class FriendsService {
   countFriendRequests() {
     return getCountFromServer(
       query(
-        collection(this.firestore, `${CollectionEnum.FRIEDS}`),
+        collection(this.firestore, `${CollectionEnum.USERS}`),
         and(
           where('receiver.uid', '==', this.userService.currentUser?.uid),
           where('status', '==', FriendStatusEnum.PENDING)

@@ -34,6 +34,8 @@ import { environment } from '../environments/environment';
 import { routes } from './app.routes';
 import { ProxyInterceptor } from './interceptors/proxy.interceptor';
 import { SettingsService } from './services/settings.service';
+import { USER_SERVICE } from './tokens';
+import { UserService } from './services/user.service';
 
 export function appInitializerFactory() {
   return async () => {
@@ -71,5 +73,6 @@ export const appConfig: ApplicationConfig = {
     provideFirestore(() => getFirestore()),
     provideAuth(() => getAuth()),
     provideAppInitializer(async () => await inject(SettingsService).init()),
+    { provide: USER_SERVICE, useExisting: UserService },
   ],
 };

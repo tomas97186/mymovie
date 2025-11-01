@@ -1,11 +1,14 @@
 <ion-content>
     <div class="home-container">
         <app-movie-hero [movie]="movieToWatch$"></app-movie-hero>
+        <app-recommended-movies></app-recommended-movies>
         <app-home-category
             [settings]="{title: 'pages.home.labels.diTendenza', filter: customMovieFilter, data$: upcomingMovies$}"></app-home-category>
         <app-home-category
             [settings]="{title: 'pages.home.labels.ultimeUscite', url: 'now_playing', data$: nowPlayingMovies$}"></app-home-category>
-        <app-home-category [settings]="{title: 'pages.home.labels.popolari', url: 'popular', data$: popularMovies$}"></app-home-category>
-        <app-home-category [settings]="{title: 'pages.home.labels.piuVotati', url: 'top_rated', data$: topRatedMovies$}"></app-home-category>
+        <app-home-category
+            [settings]="{title: 'pages.home.labels.popolari', url: 'popular', data$: popularMovies$}"></app-home-category>
+        <app-home-category
+            [settings]="{title: 'pages.home.labels.piuVotati', url: 'top_rated', data$: topRatedMovies$}"></app-home-category>
     </div>
 </ion-content>

@@ -24,7 +24,7 @@ import { MovieListService } from 'src/app/services/movie-list.service';
 export class MovieReviewDialogComponent {
   private listService = inject(MovieListService);
   dialog = inject(ModalController);
-  movie = input.required<{ id: string; poster_path: string }>();
+  movie = input.required<{ id: string; poster_path: string, title: string }>();
 
   constructor() {}
 

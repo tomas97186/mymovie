@@ -20,7 +20,6 @@ import { TranslateModule } from '@ngx-translate/core';
 import { map } from 'rxjs';
 import { FriendListComponent } from 'src/app/components/friend-list/friend-list.component';
 import { InviteUserListComponent } from 'src/app/components/invite-user-list/invite-user-list.component';
-import { FriendStatusEnum } from 'src/app/enum/friend-status.enum';
 import { InfoListModel } from 'src/app/models/movie-list.model';
 import { FriendsService } from 'src/app/services/friends.service';
 import { UserService } from 'src/app/services/user.service';

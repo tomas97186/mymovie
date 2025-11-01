@@ -1,4 +1,4 @@
-import { DestroyRef, inject, Injectable, Signal, signal } from '@angular/core';
+import { DestroyRef, inject, Injectable, Injector, Signal, signal } from '@angular/core';
 import {
   collection,
   doc,
@@ -20,6 +20,9 @@ import { UserModel } from '../models/user.model';
 import { User } from '@angular/fire/auth';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { UserDataService } from './userdata.service';
+import { FriendsService } from './friends.service';
+import { USER_SERVICE } from '../tokens';
+import { AppSettingsService } from './app-settings.service';
 
 @Injectable({
   providedIn: 'root',
@@ -28,9 +31,11 @@ export class UserService {
   private firestore = inject(Firestore);
   private destroyRef = inject(DestroyRef);
   private authService = inject(AuthService);
+  private injector = inject(Injector);
   private __currentUser?: User;
   private __userInfo = signal<UserModel | undefined>(undefined);
   private userDataService = inject(UserDataService);
+  private settings = inject(AppSettingsService).settings;
 
   constructor() {
     this.authService.currentUser$
@@ -105,11 +110,16 @@ export class UserService {
     return userInfo;
   }
 
-  async setUsername(username: string, uid?: string) {
+  async setUsername(username: string, uid?: string, lastUsernameChange?: string) {
+    if (this.daysFromLastChange(lastUsernameChange) < this.settings!.changeUsernameDaysInterval) {
+      throw new Error('Non puoi cambiare username prima di 7 giorni dall\'ultima modifica.');
+    }
+
     const batch = writeBatch(this.firestore);
     uid ??= this.currentUser?.uid;
     batch.update(doc(this.firestore, `${CollectionEnum.USERS}/${uid}`), {
       username,
+      lastUsernameChange: new Date().toISOString(),
     });
 
     const oldUsername = await getDocs(query(collection(this.firestore, CollectionEnum.USERNAMES), where('uid', '==', uid)));
@@ -120,8 +130,9 @@ export class UserService {
     batch.set(doc(this.firestore, `${CollectionEnum.USERNAMES}/${username}`), { 'uid': uid });
 
     this.userDataService.setUsername(username, uid!, batch);
+    await this.injector.get(FriendsService).setUsername(username, batch);
 
-    return batch.commit();
+    await batch.commit();
   }
 
   async setBio(bio: string, uid?: string) {
@@ -145,5 +156,17 @@ export class UserService {
     const user = await getDoc(doc(this.firestore, `${CollectionEnum.USERNAMES}/${username}`));
 
     return user.exists() ? user.data() as { uid: string } : undefined;
+  }
+
+  private daysFromLastChange(lastUsernameChange?: string): number {
+    if (!lastUsernameChange) {
+      return 0;
+    }
+    const lastChangeDate = new Date(lastUsernameChange);
+    const now = new Date();
+    const diffInMs = now.getTime() - lastChangeDate.getTime();
+    const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
+
+    return diffInDays;
   }
 }

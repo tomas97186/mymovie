@@ -200,6 +200,8 @@ export class ListSettingsPageComponent {
     this.listService
       .deleteList(this.details().id)
       .then(() => {
+        this.dialog.dismiss();
+        this.router.navigate(['/lists'], { queryParamsHandling: 'replace' });
         this.snackBar.open(
           this.translate.instant(this.MESSAGE_LABELS + 'eliminaLista.successo'),
           {

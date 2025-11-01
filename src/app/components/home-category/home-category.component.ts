@@ -33,5 +33,6 @@ export interface HomeCategorySettings {
   title: string,
   url?: string,
   filter?: DiscoverMovieRequestModel,
-  data$: Observable<SearchResultsModel>
+  data$: Observable<SearchResultsModel>,
+  hideSeeAllButton?: boolean
 }
