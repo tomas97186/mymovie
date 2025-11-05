@@ -1,5 +1,5 @@
 .container {
-  overflow-y: auto;
+  // overflow-y: auto;
   padding-top: 56px !important;
 }
 
@@ -49,7 +49,7 @@
 
 .watched-filter {
   position: sticky;
-  top: 0px;
+  top: 65px;
   z-index: 1000;
   display: flex;
   justify-content: center;
@@ -73,10 +73,10 @@ ion-segment-content {
   overflow-y: hidden;
 }
 
-ion-content {
-  --overflow: hidden !important;
-  --offset-bottom: 100px !important;
-}
+// ion-content {
+//   --overflow: hidden !important;
+//   --offset-bottom: 100px !important;
+// }
 
 .info-section {
   padding: .6rem;

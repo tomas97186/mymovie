@@ -96,6 +96,7 @@ export class NewListDetailsComponent {
     },
   });
   selectedTab = signal<string>('like');
+  currentList: SearchItemModel[] = [];
   movies = rxResource({
     request: () => ({
       selectedTab: this.selectedTab(),
@@ -103,26 +104,17 @@ export class NewListDetailsComponent {
       page: this.currentPage(),
     }),
     loader: ({ request: { selectedTab, listDetails, page } }) => {
+      console.log('Reading data: page: ', page, ' tab: ', selectedTab);
+      if (!selectedTab || !listDetails || !page) {
+        return of(undefined);
+      }
       return this.listService
         .getListMovies(listDetails?.id!, selectedTab === 'watched', page)
         .pipe(
-          map(
-            (movies) =>
-              ({
-                results: movies,
-                current_page: page,
-                total_results:
-                  selectedTab === 'watched'
-                    ? this.listDetails!.value()!.watchedMovies
-                    : this.listDetails!.value()!.moviesCount -
-                      this.listDetails!.value()!.watchedMovies,
-                total_pages:
-                  selectedTab === 'watched'
-                    ? listDetails!.watchedPages
-                    : listDetails!.toWatchPages,
-              } as SearchResultsModel)
-          ),
-          tap(console.log)
+          tap((movies) => {
+            this.currentList = [...this.currentList, ...movies];
+            console.log(this.currentList);
+          })
         );
     },
   });
@@ -135,7 +127,15 @@ export class NewListDetailsComponent {
         this.listDetails!.value()!.watchedMovies
   );
 
+  loadMoreMovies() {
+    if (this.currentList.length < (this.total() ?? 0)) {
+      this.currentPage.set(this.currentPage() + 1);
+    }
+  }
+
   onSegmentChange(event: CustomEvent) {
+    this.currentList = [];
+    this.currentPage.set(1);
     this.selectedTab.set(event.detail.value);
   }
 

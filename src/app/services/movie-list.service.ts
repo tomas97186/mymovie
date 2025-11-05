@@ -290,7 +290,7 @@ export class MovieListService {
       (listInfo.watchedMovies + 1) / this.appSettings.settings!.pageSize
     );
 
-    const movie = (await getDoc(movieRef)).data() as MovieModel;
+    const movie = (await getDoc(movieRef)).get('movie') as MovieModel;
 
     batch.update(movieRef, {
       watched: true,
@@ -316,7 +316,8 @@ export class MovieListService {
       ),
       {
         [id]: {
-          ...movie,
+          poster_path: movie.poster_path,
+          title: movie.title,
           watchedDate: new Date().toISOString(),
         },
       },
