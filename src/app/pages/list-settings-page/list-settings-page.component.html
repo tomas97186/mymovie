@@ -115,7 +115,7 @@ this.details()!; @let members = this.members() | async;
           {{ "pages.listDetails.settings.labels.creataIl" | translate }}
         </ion-label>
         <div class="metadata-end-wrapper" slot="end">
-          <ion-note color="medium">{{ details.createdDate }}</ion-note>
+          <ion-note color="medium">{{ details.createdDate | date:'shortDate' }}</ion-note>
         </div>
       </ion-item>
     </ion-list>

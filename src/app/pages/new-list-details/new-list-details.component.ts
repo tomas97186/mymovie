@@ -15,29 +15,28 @@ import {
   IonHeader,
   IonIcon,
   IonLabel,
-  IonProgressBar,
-  IonTitle,
-  IonToolbar,
-  IonSegmentContent,
-  IonSegmentView,
-  ModalController,
   IonNote,
+  IonProgressBar,
   IonSegment,
   IonSegmentButton,
+  IonSegmentContent,
+  IonSegmentView,
+  IonTitle,
+  IonToolbar,
+  ModalController,
 } from '@ionic/angular/standalone';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { map, of, Subject, Subscription, tap } from 'rxjs';
+import { of, Subscription, tap } from 'rxjs';
+import { MovieListDynamicComponent } from 'src/app/components/movie-list-dynamic/movie-list-dynamic.component';
+import { InvitationResponseEnum } from 'src/app/enum/invitation.response.enum';
 import { ToastService } from 'src/app/services/toast.service';
 import { BUTTONS, INPUTS } from 'src/app/variables';
 import { MovieListComponent } from '../../components/movie-list/movie-list.component';
 import { SearchItemModel } from '../../models/search-item.model';
 import { AuthService } from '../../services/auth.service';
 import { MovieListService } from '../../services/movie-list.service';
-import { ListSettingsPageComponent } from '../list-settings-page/list-settings-page.component';
-import { InvitationResponseEnum } from 'src/app/enum/invitation.response.enum';
 import { InviteUserPageComponent } from '../invite-user-page/invite-user-page.component';
-import { MovieListDynamicComponent } from 'src/app/components/movie-list-dynamic/movie-list-dynamic.component';
-import { SearchResultsModel } from 'src/app/models/search-results.model';
+import { ListSettingsPageComponent } from '../list-settings-page/list-settings-page.component';
 
 @Component({
   selector: 'app-list-details',
@@ -85,7 +84,6 @@ export class NewListDetailsComponent {
   private userListsSub!: Subscription;
   private alertController = inject(AlertController);
   private dialog = inject(ModalController);
-  selectedFilter = signal<'toWatch' | 'watched'>('toWatch');
   location = inject(Location);
   currentPage = signal<number>(1);
   listDetails = rxResource({
@@ -95,21 +93,32 @@ export class NewListDetailsComponent {
       return this.listService.getListInfo(request);
     },
   });
-  selectedTab = signal<string>('like');
   currentList: SearchItemModel[] = [];
+  private tabWithPage = signal<{ page: number; selectedTab: string }>({
+    page: 1,
+    selectedTab: 'toWatch',
+  });
   movies = rxResource({
     request: () => ({
-      selectedTab: this.selectedTab(),
+      tabWithpage: this.tabWithPage(),
       listDetails: this.listDetails.value(),
-      page: this.currentPage(),
     }),
-    loader: ({ request: { selectedTab, listDetails, page } }) => {
-      console.log('Reading data: page: ', page, ' tab: ', selectedTab);
-      if (!selectedTab || !listDetails || !page) {
+    loader: ({ request: { tabWithpage, listDetails } }) => {
+      console.log(
+        'Reading data: page: ',
+        tabWithpage.page,
+        ' tab: ',
+        tabWithpage.selectedTab
+      );
+      if (!tabWithpage.selectedTab || !listDetails || !tabWithpage.page) {
         return of(undefined);
       }
       return this.listService
-        .getListMovies(listDetails?.id!, selectedTab === 'watched', page)
+        .getListMovies(
+          listDetails?.id!,
+          tabWithpage.selectedTab === 'watched',
+          tabWithpage.page
+        )
         .pipe(
           tap((movies) => {
             this.currentList = [...this.currentList, ...movies];
@@ -121,7 +130,7 @@ export class NewListDetailsComponent {
   total = computed(() =>
     !this.listDetails.hasValue()
       ? undefined
-      : this.selectedTab() === 'watched'
+      : this.tabWithPage().selectedTab === 'watched'
       ? this.listDetails!.value()!.watchedMovies
       : this.listDetails!.value()!.moviesCount -
         this.listDetails!.value()!.watchedMovies
@@ -130,13 +139,16 @@ export class NewListDetailsComponent {
   loadMoreMovies() {
     if (this.currentList.length < (this.total() ?? 0)) {
       this.currentPage.set(this.currentPage() + 1);
+      this.tabWithPage.update((val) => ({ ...val, page: this.currentPage() }));
     }
   }
 
   onSegmentChange(event: CustomEvent) {
     this.currentList = [];
-    this.currentPage.set(1);
-    this.selectedTab.set(event.detail.value);
+    this.tabWithPage.set({
+      page: 1,
+      selectedTab: event.detail.value,
+    });
   }
 
   async openSettings() {
@@ -145,7 +157,7 @@ export class NewListDetailsComponent {
       initialBreakpoint: 1,
       componentProps: {
         details: this.listDetails.value()!,
-        inviteUser: this.openInviteUserDialog.bind(this),
+        inviteUser: this.openInvite.bind(this),
         shareList: this.shareListCode.bind(this),
       },
     });

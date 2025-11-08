@@ -1,4 +1,5 @@
 export interface UserPartialModel {
     uid: string,
-    username: string
+    username: string,
+    avatarUrl?: string
 }

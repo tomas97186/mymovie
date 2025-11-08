@@ -98,7 +98,15 @@ $avatar-colors: #e53935,
 ion-list {
   border-radius: 10px !important;
 
+  & ion-item {
+    --padding-end: 0px !important;
+  }
+
   & ion-button {
     --box-shadow: none !important;
   }
+}
+
+ion-note {
+  color: gray;
 }

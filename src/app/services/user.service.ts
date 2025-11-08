@@ -30,6 +30,7 @@ import { UserDataService } from './userdata.service';
 import { FriendsService } from './friends.service';
 import { USER_SERVICE } from '../tokens';
 import { AppSettingsService } from './app-settings.service';
+import { UserPartialModel } from '../models/user.partial.model';
 
 @Injectable({
   providedIn: 'root',
@@ -69,6 +70,16 @@ export class UserService {
 
   public get currentUser(): User | undefined {
     return this.__currentUser;
+  }
+
+  public get partialUser(): UserPartialModel | undefined {
+    return this.currentUser
+      ? {
+          uid: this.currentUser!.uid,
+          avatarUrl: this.userInfo?.avatarUrl,
+          username: this.userInfo?.username!,
+        }
+      : undefined;
   }
 
   public get userInfo(): UserModel | undefined {

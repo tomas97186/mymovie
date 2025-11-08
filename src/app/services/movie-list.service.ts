@@ -60,7 +60,7 @@ export class MovieListService {
       batch.set(listRef, {
         name,
         privateList,
-        createdBy: this.userService.currentUser!.uid,
+        createdBy: this.userService.partialUser,
         watchedMovies: 0,
         moviesCount: 0,
         toWatchPages: 0,
